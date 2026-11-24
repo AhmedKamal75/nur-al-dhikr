@@ -25,13 +25,13 @@ function fakeEl(sel) {
   };
 }
 
-test('D: every arm survived the move (40 change + 22 input)', () => {
-  // 40 = 36 inherited + city-preset change arm + the two storage switches
-  // + the tajweed course's guided/open radio; 22 inputs include gift history and hidden-hadith recovery filters.
+test('D: every arm survived the move (41 change + 22 input)', () => {
+  // 41 = 36 inherited + city-preset change arm + the two storage switches
+  // + the tajweed course's guided/open radio + the need-selection checkbox; 22 inputs include gift history and hidden-hadith recovery filters.
   // which moved OFF the click table in v5.17.17 because a click-dispatched
   // checkbox has its native toggle cancelled; 20 = 18 inherited +
   // verse-volume live input (v5.17.5).
-  assert.equal(changeRegistry.length, 40);
+  assert.equal(changeRegistry.length, 41);
   assert.equal(inputRegistry.length, 22);
 });
 
