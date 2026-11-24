@@ -102,3 +102,68 @@ test('normal category focus and exit remain unchanged', () => {
   assert.equal(queue.idx, 0);
   assert.deepEqual(focusExitRoute(state), { view: 'category', params: { id: 'x' } });
 });
+
+test('beginning navigation changes only route and collection position, not progress', async () => {
+  const { renderCollection } = await import('../js/views/collection.js');
+  const state = fixture();
+  state.activeParams = { id: 'col', q: 'no matching title' };
+  state.collections[0].sessionItemId = 'b';
+  state.counters = { c: { count: 3, target: 7, completedCycles: 4, lastUpdated: 12 } };
+  state.statistics.dailyHistory = { '2026-11-24': { recitations: 5, sessions: 2, itemIds: ['c'] } };
+  state.history = [{ itemId: 'b', categoryId: 'y', ts: 123 }];
+  const before = structuredClone(state);
+  assert.match(renderCollection(state), /data-action="collection-session-beginning"/);
+  const first = collectionSessionEntries(state, state.collections[0])[0];
+  const next = reduce(state, { type: 'NAVIGATE', view: 'focus', params: focusRoute(first, 'col') });
+  assert.equal(next.collections[0].sessionItemId, 'c');
+  assert.deepEqual(next, {
+    ...before,
+    ui: { contentManage: false },
+    activeView: 'focus',
+    activeParams: focusRoute(first, 'col'),
+    collections: [{ ...before.collections[0], sessionItemId: 'c' }],
+  });
+  assert.equal(collectionSessionStart(next, next.collections[0]).item.id, 'c');
+  assert.doesNotMatch(
+    renderCollection({ ...next, activeParams: { id: 'col' } }),
+    /data-action="collection-session-beginning"/
+  );
+});
+
+for (const [label, prefs] of Object.entries({
+  hiddenItem: { hiddenItems: { c: true } },
+  deletedItem: { deletedItems: { c: true } },
+  hiddenCategory: { hiddenCategories: { x: true } },
+  deletedCategory: { deletedCategories: { x: true } },
+  hiddenLibrary: { hiddenLibraries: { dx: true } },
+  deletedLibrary: { deletedLibraries: { dx: true } },
+})) {
+  test(`beginning skips missing, duplicate and ${label} entries in saved order`, () => {
+    const state = fixture();
+    for (const id of ['a', 'c']) state.library.itemIndex[id].document = { metadata: { id: 'dx' } };
+    state.collections[0].items = ['ghost', 'c', 'c', 'b', 'a'];
+    state.settings.contentPrefs = prefs;
+    assert.equal(collectionSessionEntries(state, state.collections[0])[0].item.id, 'b');
+    state.collections[0].sessionItemId = 'ghost';
+    assert.equal(collectionSessionStart(state, state.collections[0]).item.id, 'b');
+    state.collections[0].items = ['a', 'b', 'c'];
+    const first = collectionSessionEntries(state, state.collections[0])[0];
+    assert.equal(first.item.id, label.endsWith('Item') ? 'a' : 'b');
+    state.settings.contentPrefs = { hiddenItems: { a: true, b: true, c: true } };
+    assert.equal(collectionSessionEntries(state, state.collections[0])[0], undefined);
+    assert.equal(collectionSessionStart(state, state.collections[0]), null);
+  });
+}
+
+test('beginning action is absent for stale bookmarks at first entry and all-ineligible queues', async () => {
+  const { renderCollection } = await import('../js/views/collection.js');
+  const state = fixture();
+  state.activeParams = { id: 'col' };
+  state.collections[0].sessionItemId = 'missing';
+  assert.doesNotMatch(renderCollection(state), /data-action="collection-session-beginning"/);
+  state.settings.contentPrefs = { hiddenCategories: { x: true, y: true } };
+  assert.doesNotMatch(
+    renderCollection(state),
+    /data-action="collection-session-(?:beginning|start)"/
+  );
+});

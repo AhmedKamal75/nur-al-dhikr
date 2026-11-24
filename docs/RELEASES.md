@@ -1,3 +1,8 @@
+## v5.17.156 - Begin a collection again without losing progress
+
+- Collection detail offers a quieter Start from beginning action alongside Continue only when the saved reading position differs from the first readable entry. It follows saved order, skips unavailable entries and ignores collection search.
+- Existing Focus routing updates only the reading position. Counters, lifetime cycles, today's progress, history and collection order are preserved. Live-state click resolution, bilingual phone layout and keyboard activation have regression coverage. No religious data changed.
+
 ## v5.17.155 - Readable reciter identities
 
 - Audio catalog names and metadata wrap instead of hiding behind ellipsis. Translation and whole-surah badges sit below the name instead of interrupting it. Selection and custom-delete controls remain separate. Other pickers are unchanged.

@@ -51,7 +51,11 @@ import {
 import { hasVerifiedDhikrAudio } from '../../core/schema.js';
 import * as tasbih from '../../services/tasbih.js';
 import { pickRandomHadith } from '../../services/hadith.js';
-import { collectionSessionStart, focusRoute } from '../../services/focusQueue.js';
+import {
+  collectionSessionStart,
+  collectionSessionEntries,
+  focusRoute,
+} from '../../services/focusQueue.js';
 import { dismissCompleted, noteCompleted } from '../../domain/completedCards.js';
 
 /** (v5.0.0) The counting ripple: one span, radial bloom at the tap point,
@@ -243,6 +247,13 @@ export const clickHandlers = {
     const col = selectors.getCollection(state, ds.id);
     const entry = collectionSessionStart(state, col);
     if (entry) go(VIEWS.FOCUS, focusRoute(entry, col.id));
+  },
+
+  'collection-session-beginning': (ds) => {
+    const state = store.getState();
+    const col = selectors.getCollection(state, ds.id);
+    const first = collectionSessionEntries(state, col)[0];
+    if (first) go(VIEWS.FOCUS, focusRoute(first, col.id));
   },
 
   'focus-adjacent': (ds) => {

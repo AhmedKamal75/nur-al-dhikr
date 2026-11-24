@@ -724,6 +724,7 @@ export const en = {
   'category.backToTop': 'Back to top',
   // (v5.17.52) session queue entry: play through the whole category in Focus.
   'collections.sessionStart': 'Read collection in Focus',
+  'collections.sessionBeginning': 'Start from beginning',
   'collections.sessionContinue': 'Continue collection',
   'category.sessionStart': 'Read through in Focus',
   // v5.2.89 waqf & portion-marks legend in the Mushaf settings (P0-2).
