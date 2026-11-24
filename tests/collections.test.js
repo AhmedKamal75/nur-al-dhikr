@@ -152,7 +152,7 @@ describe('buildCollectionShareText: numbered titles, locale-correct', () => {
 
 describe('collection view: manage controls', () => {
   function viewState(over = {}) {
-    return {
+    const state = {
       settings: { language: 'en', showTransliteration: true, showTranslation: true },
       activeParams: { id: 'col1' },
       collections: [
@@ -170,6 +170,9 @@ describe('collection view: manage controls', () => {
       counters: {},
       ...over,
     };
+    const category = { ...CAT, items: Object.values(state.library.itemIndex).map((e) => e.item) };
+    for (const entry of Object.values(state.library.itemIndex)) entry.category = category;
+    return state;
   }
 
   test('header carries rename, share and delete', () => {

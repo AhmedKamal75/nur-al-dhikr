@@ -678,6 +678,7 @@ export const ar = {
   'category.backToTop': 'العودة إلى الأعلى',
   // (v5.17.52) session queue entry — parity with en.
   'collections.sessionStart': 'قراءة المجموعة في وضع التركيز',
+  'collections.matchedCount': '{n} من {total} عناصر',
   'collections.sessionBeginning': 'البدء من البداية',
   'collections.sessionContinue': 'متابعة المجموعة',
   'category.sessionStart': 'قراءة متتابعة في وضع التركيز',
