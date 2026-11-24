@@ -289,10 +289,26 @@ function renderRootDetail(state, lang, root) {
   const tab = state.activeParams?.tab === 'confusables' ? 'confusables' : 'forms';
   const tabBtn = (id, label, pressed) => `
     <button type="button" class="chip ${pressed ? 'chip--active' : ''}" data-action="roots-tab" data-root="${escapeHTML(root)}" data-tab="${id}" aria-pressed="${pressed}">${escapeHTML(label)}</button>`;
+  const pairPages = Math.max(1, Math.ceil(confusables.length / 12));
+  const pairPage = Math.min(
+    pairPages,
+    Math.max(1, Math.floor(Number(state.activeParams?.page)) || 1)
+  );
+  const pairFrom = confusables.length ? (pairPage - 1) * 12 + 1 : 0;
+  const pairTo = Math.min(pairPage * 12, confusables.length);
+  const pairPager = `<p class="panel__subtext">${t('roots.pairScope', lang)}</p><p class="panel__subtext">${t('list.shown', lang, { n: `${pairFrom}-${pairTo}`, total: confusables.length })}</p>
+    ${
+      pairPages > 1
+        ? `<div class="pager" data-root-pager>
+    <button type="button" class="btn btn--secondary btn--sm" data-action="roots-confusables-page" data-root="${escapeHTML(root)}" data-page="${pairPage - 1}" ${pairPage <= 1 ? 'disabled' : ''}>${t('common.prev', lang)}</button>
+    <span>${pairPage} / ${pairPages}</span>
+    <button type="button" class="btn btn--secondary btn--sm" data-action="roots-confusables-page" data-root="${escapeHTML(root)}" data-page="${pairPage + 1}" ${pairPage >= pairPages ? 'disabled' : ''}>${t('common.next', lang)}</button></div>`
+        : ''
+    }`;
   const confusablesBlock =
     confusables.length > 0
-      ? `<div class="root-confusables">${confusables
-          .slice(0, 12)
+      ? `${pairPager}<div class="root-confusables">${confusables
+          .slice((pairPage - 1) * 12, pairPage * 12)
           .map(
             (p) => `
         <div class="root-confusable">

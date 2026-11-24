@@ -753,6 +753,15 @@ export const clickHandlers = {
   // (v5.2.75, UP-09) root detail tabs (forms/confusables): replaceGo keeps
   // the root id and drops the default tab — the roots-page no-history-
   // spam discipline, with a shareable URL per the deep-link contract.
+  'roots-confusables-page': (ds) => {
+    if (!ds.root) return;
+    replaceGo(VIEWS.ROOTS, {
+      id: ds.root,
+      tab: 'confusables',
+      page: String(Math.max(1, Math.floor(Number(ds.page)) || 1)),
+    });
+  },
+
   'roots-tab': (ds) => {
     if (!ds.root) return;
     replaceGo(VIEWS.ROOTS, {

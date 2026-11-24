@@ -1,3 +1,8 @@
+# v5.17.163 - Continue root and study matches
+
+- Root look-alike pairs page through the complete computed loaded-text pool, 12 pairs per page, with exact counts and explicit previous/next controls. Root and tab stay in the URL; hostile pages clamp to the available pool.
+- Study-mode hadith previews show five of the exact loaded-index matches and link to all matches with the derived text query intact. The text-match and loaded-book disclosures remain unchanged.
+
 # v5.17.162 - Browse hidden hadiths and older gifts
 
 - Hidden-hadith recovery has an independent number/text filter, exact matching count and Show more in batches of 40. The reader's query, page and chapter stay separate; recovery state resets when changing books.
