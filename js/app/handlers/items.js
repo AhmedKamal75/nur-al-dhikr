@@ -540,6 +540,13 @@ export const clickHandlers = {
     speech.speakItem({ id: `hadith-${bookId}-${h.n}`, arabic: h.ar, english: '' }, {});
   },
 
+  'hadith-recovery-more': () => {
+    const view = store.getState().hadith.bookView;
+    store.dispatch(
+      actions.setHadithView({ recoveryLimit: Math.max(40, Number(view.recoveryLimit) || 40) + 40 })
+    );
+  },
+
   'hadith-page-prev': () => {
     const page = Math.max(1, (store.getState().hadith.bookView.page || 1) - 1);
     store.dispatch(actions.setHadithView({ page }));

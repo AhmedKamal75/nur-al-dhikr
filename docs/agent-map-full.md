@@ -4,7 +4,7 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 This is the exhaustive dump. For the one-page version — chrome spine, where-to-change table, counted inventory — read `docs/AGENT-MAP.md` instead. This file is ~530 KB by design; it is meant to be searched for one named thing, not read end to end.
 
-- js modules: 251 — data files: 29 — tests: 296
+- js modules: 251 — data files: 29 — tests: 297
 
 Conventions: `js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;
 `js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;
@@ -404,7 +404,7 @@ job: (no header comment)
 
 - exports: `triggerRipple` (function), `shareAyahCard` (function), `clickHandlers` (object), `changeHandlers` (const)
 - emits: `collection-picker-toggle`, `counter-tap`, `hadith-note-delete`, `modal-close`
-- handles: `ambient-mode`, `ayah-share`, `byheart-exit`, `byheart-reveal`, `byheart-review`, `byheart-start`, `clear-search-history`, `collection-add-favorites`, `collection-move`, `collection-session-beginning`, `collection-session-start`, `confirm-delete-collection`, `confirm-unfavorite-all`, `copy-ayah`, `copy-item`, `counter-tap`, `create-collection`, `create-collection-inline`, `create-collection-inline-move`, `create-collection-suggested`, `delete-collection`, `favorites-sort`, `focus-adjacent`, `focus-exit`, `focus-reset`, `focus-wake-toggle`, `hadith-bookmark`, `hadith-copy`, `hadith-daily-shuffle`, `hadith-grid-next`, `hadith-grid-prev`, `hadith-index-all`, `hadith-mem-reveal`, `hadith-mem-review`, `hadith-memorize`, `hadith-note-delete`, `hadith-note-open`, `hadith-page-next`, `hadith-page-prev`, `hadith-retry`, `hadith-retry-index`, `hadith-section`, `hadith-share`, `hadith-speak`, `kids-quiz-answer`, `kids-quiz-exit`, `kids-quiz-start`, `move-to-collection`, `open-card-menu`, `open-collection-picker`, `open-focus`, `open-move-picker`, `play-dhikr-audio`, `rename-collection`, `run-search`, `search-page`, `session-start`, `share-collection`, `share-item`, `toggle-favorite`, `toggle-speech`, `unfavorite-all`, `collection-picker-toggle` (change/input)
+- handles: `ambient-mode`, `ayah-share`, `byheart-exit`, `byheart-reveal`, `byheart-review`, `byheart-start`, `clear-search-history`, `collection-add-favorites`, `collection-move`, `collection-session-beginning`, `collection-session-start`, `confirm-delete-collection`, `confirm-unfavorite-all`, `copy-ayah`, `copy-item`, `counter-tap`, `create-collection`, `create-collection-inline`, `create-collection-inline-move`, `create-collection-suggested`, `delete-collection`, `favorites-sort`, `focus-adjacent`, `focus-exit`, `focus-reset`, `focus-wake-toggle`, `hadith-bookmark`, `hadith-copy`, `hadith-daily-shuffle`, `hadith-grid-next`, `hadith-grid-prev`, `hadith-index-all`, `hadith-mem-reveal`, `hadith-mem-review`, `hadith-memorize`, `hadith-note-delete`, `hadith-note-open`, `hadith-page-next`, `hadith-page-prev`, `hadith-recovery-more`, `hadith-retry`, `hadith-retry-index`, `hadith-section`, `hadith-share`, `hadith-speak`, `kids-quiz-answer`, `kids-quiz-exit`, `kids-quiz-start`, `move-to-collection`, `open-card-menu`, `open-collection-picker`, `open-focus`, `open-move-picker`, `play-dhikr-audio`, `rename-collection`, `run-search`, `search-page`, `session-start`, `share-collection`, `share-item`, `toggle-favorite`, `toggle-speech`, `unfavorite-all`, `collection-picker-toggle` (change/input)
 - i18n: `card.copied`, `card.copyFailed`, `card.imageSaved`, `collections.itemCount`, `collections.namePrompt`, `collections.shareEmpty`, `common.delete`, `common.error`, `common.retry`, `common.save`, `dhikrAudio.failed`, `editor.cancel`, `editor.deleteConfirm`, `favorites.clearConfirm`, `hadith.note`, `hadith.noteDeleted`, `hadith.notePh`, `hadith.noteTitle`, `hadith.speechUnsupported`, `kids.quizWin` (+1 more)
 - routes: `#/hadith`, `VIEWS.COLLECTION`, `VIEWS.COLLECTIONS`, `VIEWS.FAVORITES`, `VIEWS.FOCUS`, `VIEWS.HADITH`, `VIEWS.SEARCH`
 
@@ -512,9 +512,9 @@ job: The per-view "⋯" menus: one 'view-menu' entry point that opens the right 
 
 job: app/handlers — feature-scoped controller modules. Each exports a partial click-handler map (pure (dataset, element, event) functions); app/events.js merges them into the single delegation table.
 
-- exports: `clickHandlers` (object), `changeHandlers` (const)
+- exports: `clickHandlers` (object), `changeHandlers` (const), `inputHandlers` (const)
 - emits: `checklist-toggle`, `sunnah-toggle`, `toggle-prayer-quiet`, `toggle-prayer-quiet-cancel`
-- handles: `calendar-delete-note`, `calendar-edit-note`, `calendar-goto-fasting`, `calendar-new-note`, `calendar-open-day`, `fasting-cycle-remind-time`, `fasting-toggle-category`, `fasting-toggle-remind`, `gap-telemetry-clear`, `home-invite-dismiss`, `install-later`, `install-reoffer`, `khatma-ramadan-preset`, `location-profile-apply`, `location-profile-remove`, `location-profile-save`, `notifications-enable`, `nudge-dismiss`, `onboarding-comfort`, `onboarding-confirm`, `onboarding-dismiss`, `onboarding-install`, `onboarding-language`, `onboarding-reshow`, `onboarding-step`, `prayer-adhan-clear`, `prayer-adhan-import`, `prayer-enable-notifications`, `prayer-log-cycle`, `prayer-set-alert-mode`, `prayer-test-sound`, `qada-add`, `qada-clear-prayer`, `qada-complete`, `ramadan-enable-notifications`, `ramadan-planner-toggle`, `ramadan-toggle-fast`, `sadaqah-log`, `sadaqah-open-editor`, `sadaqah-remove`, `stats-heatmap-export`, `stats-heatmap-shift`, `toggle-prayer-alert`, `toggle-ramadan-alert`, `checklist-toggle` (change/input), `sunnah-toggle` (change/input), `toggle-prayer-quiet` (change/input), `toggle-prayer-quiet-cancel` (change/input)
+- handles: `calendar-delete-note`, `calendar-edit-note`, `calendar-goto-fasting`, `calendar-new-note`, `calendar-open-day`, `fasting-cycle-remind-time`, `fasting-toggle-category`, `fasting-toggle-remind`, `gap-telemetry-clear`, `home-invite-dismiss`, `install-later`, `install-reoffer`, `khatma-ramadan-preset`, `location-profile-apply`, `location-profile-remove`, `location-profile-save`, `notifications-enable`, `nudge-dismiss`, `onboarding-comfort`, `onboarding-confirm`, `onboarding-dismiss`, `onboarding-install`, `onboarding-language`, `onboarding-reshow`, `onboarding-step`, `prayer-adhan-clear`, `prayer-adhan-import`, `prayer-enable-notifications`, `prayer-log-cycle`, `prayer-set-alert-mode`, `prayer-test-sound`, `qada-add`, `qada-clear-prayer`, `qada-complete`, `ramadan-enable-notifications`, `ramadan-planner-toggle`, `ramadan-toggle-fast`, `sadaqah-history-more`, `sadaqah-log`, `sadaqah-open-editor`, `sadaqah-remove`, `stats-heatmap-export`, `stats-heatmap-shift`, `toggle-prayer-alert`, `toggle-ramadan-alert`, `checklist-toggle` (change/input), `sunnah-toggle` (change/input), `toggle-prayer-quiet` (change/input), `toggle-prayer-quiet-cancel` (change/input)
 - i18n: `common.error`, `common.retry`, `khatma.presetFilled`, `onboarding.installAccepted`, `onboarding.installDeferred`, `plog.allLoggedToast`, `prayer.adhanCleared`, `prayer.notifGranted`, `profiles.applied`, `profiles.namePlaceholder`, `profiles.namePrompt`, `profiles.saved`, `qada.added`, `qada.cleared`, `qada.doneOne`, `qada.offerAdd`, `qada.offerMissed`, `ramadan.alertsDenied`, `stats.gapCleared`, `stats.heatmapSaved` (+1 more)
 - routes: `VIEWS.SETTINGS`
 
@@ -2367,9 +2367,9 @@ job: The Garden — the growth view driven by a lifetime of counted dhikr (see d
 job: The Ahadeeth screens — one module, two faces: • no params.id → the book grid (the library's front door) • params.id set → the book reader: chapter filter, in-book search,
 
 - exports: `renderHadith` (function)
-- emits: `hadith-book-move`, `hadith-delete-book`, `hadith-grid-next`, `hadith-grid-prev`, `hadith-hide-book`, `hadith-index-all`, `hadith-page-next`, `hadith-page-prev`, `hadith-retry`, `hadith-retry-index`, `hadith-section`, `hadith-unhide-item`, `navigate` (+ dynamic `data-action="${...}"`)
+- emits: `hadith-book-move`, `hadith-delete-book`, `hadith-grid-next`, `hadith-grid-prev`, `hadith-hide-book`, `hadith-index-all`, `hadith-page-next`, `hadith-page-prev`, `hadith-recovery-more`, `hadith-retry`, `hadith-retry-index`, `hadith-section`, `hadith-unhide-item`, `navigate` (+ dynamic `data-action="${...}"`)
 - handles: —
-- i18n: `common.next`, `common.prev`, `common.retry`, `content.hiddenBanners`, `content.hiddenCount`, `content.hideSection`, `content.moveDown`, `content.moveUp`, `editor.delete`, `hadith.aboutBook`, `hadith.allChapters`, `hadith.author`, `hadith.backToLibrary`, `hadith.bookDetails`, `hadith.bookmarked`, `hadith.contents`, `hadith.coverage`, `hadith.grading`, `hadith.indexAll`, `hadith.indexAllHint` (+20 more)
+- i18n: `common.next`, `common.prev`, `common.retry`, `content.hiddenBanners`, `content.hiddenCount`, `content.hideSection`, `content.moveDown`, `content.moveUp`, `editor.delete`, `hadith.aboutBook`, `hadith.allChapters`, `hadith.author`, `hadith.backToLibrary`, `hadith.bookDetails`, `hadith.bookmarked`, `hadith.contents`, `hadith.coverage`, `hadith.grading`, `hadith.indexAll`, `hadith.indexAllHint` (+24 more)
 - routes: `VIEWS.HADITH`
 
 ### `js/views/hadithCard.js`
@@ -2386,10 +2386,10 @@ job: shared hadith card builders. (v5.2.18) Extracted from views/hadith.js so Ho
 
 job: (header names file only — no job line)
 
-- exports: `quickTilesHTML` (function), `worshipTodayCardHTML` (function), `resumePanelHTML` (function), `nudgeCardHTML` (function), `resolveBrowserWindow` (function), `prayerRibbonHTML` (function), `adhkarWindowLabel` (function), `rankBrowserDocuments` (function), `docCorpusCount` (function), `rankBrowserCategories` (function), `homeTodayStripHTML` (function), `homeInvitesHTML` (function), `adhkarBrowserHTML` (function), `renderHome` (function), `hifzReviewCardHTML` (function), `reviewDigestCardHTML` (function), `buildSadaqahEditor` (function)
-- emits: `home-invite-dismiss`, `modal-close`, `mushaf-open-at-surah`, `navigate`, `nudge-dismiss`, `practice-start`, `quick-tile`, `sadaqah-log`, `sadaqah-open-editor`, `sadaqah-remove`
+- exports: `quickTilesHTML` (function), `worshipTodayCardHTML` (function), `resumePanelHTML` (function), `nudgeCardHTML` (function), `resolveBrowserWindow` (function), `prayerRibbonHTML` (function), `adhkarWindowLabel` (function), `rankBrowserDocuments` (function), `docCorpusCount` (function), `rankBrowserCategories` (function), `homeTodayStripHTML` (function), `homeInvitesHTML` (function), `adhkarBrowserHTML` (function), `renderHome` (function), `hifzReviewCardHTML` (function), `reviewDigestCardHTML` (function), `sadaqahHistoryHTML` (function), `buildSadaqahEditor` (function)
+- emits: `home-invite-dismiss`, `modal-close`, `mushaf-open-at-surah`, `navigate`, `nudge-dismiss`, `practice-start`, `quick-tile`, `sadaqah-history-more`, `sadaqah-log`, `sadaqah-open-editor`, `sadaqah-remove`
 - handles: —
-- i18n: `app.name`, `app.tagline`, `calendar.estimateNote`, `category.progressToday`, `certificate.title`, `checklist.today`, `collections.itemCount`, `common.am`, `common.delete`, `common.pm`, `editor.cancel`, `editor.save`, `hifz.availableHint`, `hifz.cardTitle`, `hifz.memorizedBadge`, `hifz.openLedger`, `hifz.suggestHint`, `home.blankPage`, `home.browserSub`, `home.browserTitle` (+80 more)
+- i18n: `app.name`, `app.tagline`, `calendar.estimateNote`, `category.progressToday`, `certificate.title`, `checklist.today`, `collections.itemCount`, `common.am`, `common.delete`, `common.pm`, `editor.cancel`, `editor.save`, `hifz.availableHint`, `hifz.cardTitle`, `hifz.memorizedBadge`, `hifz.openLedger`, `hifz.suggestHint`, `home.blankPage`, `home.browserSub`, `home.browserTitle` (+83 more)
 - routes: `VIEWS.CALENDAR`, `VIEWS.CATEGORY`, `VIEWS.CERTIFICATE`, `VIEWS.CHECKLIST`, `VIEWS.COLLECTION`, `VIEWS.COLLECTIONS`, `VIEWS.FAVORITES`, `VIEWS.HADITH`, `VIEWS.HOME`, `VIEWS.LIBRARY`, `VIEWS.MOOD`, `VIEWS.MUSHAF`, `VIEWS.PRAYER`, `VIEWS.QUIZ`, `VIEWS.QURAN`, `VIEWS.RAMADAN`, `VIEWS.SETTINGS`, `VIEWS.STATISTICS`, `VIEWS.TAJWEED_COURSE`, `VIEWS.TASBIH`, `VIEWS.ZAKAT`
 
 ### `js/views/installRow.js`
@@ -2860,6 +2860,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `hadith-note-open`: emitted by `js/views/hadithCard.js`; handled in `js/app/handlers/items.js`
 - `hadith-page-next`: emitted by `js/views/hadith.js`; handled in `js/app/handlers/items.js`
 - `hadith-page-prev`: emitted by `js/views/hadith.js`; handled in `js/app/handlers/items.js`
+- `hadith-recovery-more`: emitted by `js/views/hadith.js`; handled in `js/app/handlers/items.js`
 - `hadith-retry`: emitted by `js/views/hadith.js`; handled in `js/app/handlers/items.js`
 - `hadith-retry-index`: emitted by `js/views/hadith.js`; handled in `js/app/handlers/items.js`
 - `hadith-section`: emitted by `js/views/hadith.js`; handled in `js/app/handlers/items.js`
@@ -3040,6 +3041,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `roots-page`: emitted by `js/views/roots.js`; handled in `js/app/handlers/quran.js`
 - `roots-tab`: emitted by `js/views/roots.js`; handled in `js/app/handlers/quran.js`
 - `run-search`: emitted by `js/views/search.js`; handled in `js/app/handlers/items.js`
+- `sadaqah-history-more`: emitted by `js/views/home.js`; handled in `js/app/handlers/worship.js`
 - `sadaqah-log`: emitted by `js/views/home.js`; handled in `js/app/handlers/worship.js`
 - `sadaqah-open-editor`: emitted by `js/views/home.js`; handled in `js/app/handlers/worship.js`
 - `sadaqah-remove`: emitted by `js/views/home.js`; handled in `js/app/handlers/worship.js`
@@ -3890,7 +3892,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `initialReaderWindow`: `js/domain/readerWindow.js`
 - `initialState`: `js/core/state/initial.js`, `js/core/state.js`
 - `initialTimerState`: `js/domain/sleepTimer.js`
-- `inputHandlers`: `js/app/handlers/audio.js`, `js/app/handlers/navigation.js`, `js/app/handlers/quran.js`, `js/app/handlers/quranAudio.js`, `js/app/handlers/system.js`, `js/app/handlers/zakat.js`
+- `inputHandlers`: `js/app/handlers/audio.js`, `js/app/handlers/navigation.js`, `js/app/handlers/quran.js`, `js/app/handlers/quranAudio.js`, `js/app/handlers/system.js`, `js/app/handlers/worship.js`, `js/app/handlers/zakat.js`
 - `inputRegistry`: `js/app/events.js`
 - `installMediaHandlers`: `js/services/mediaSession.js`
 - `installRowHTML`: `js/views/installRow.js`
@@ -4417,6 +4419,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `runInstallPrompt`: `js/domain/install.js`
 - `runOfflineBatch`: `js/app/offlineJobs.js`
 - `sadaqahGivenToday`: `js/domain/worship.js`
+- `sadaqahHistoryHTML`: `js/views/home.js`
 - `safe`: `js/core/utils.js`
 - `safeDecode`: `js/core/router.js`
 - `sameSurfaceWord`: `js/domain/tajweed.js`
@@ -5877,7 +5880,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `initrouter`: `js/core/router.js`
 - `inline`: `js/core/icons.js`, `js/views/studyTray.js`
 - `input`: `js/app/palette.js`, `js/app/renderer.js`
-- `inputhandlers`: `js/app/handlers/audio.js`, `js/app/handlers/navigation.js`, `js/app/handlers/quran.js`, `js/app/handlers/quranAudio.js`, `js/app/handlers/system.js`, `js/app/handlers/zakat.js`
+- `inputhandlers`: `js/app/handlers/audio.js`, `js/app/handlers/navigation.js`, `js/app/handlers/quran.js`, `js/app/handlers/quranAudio.js`, `js/app/handlers/system.js`, `js/app/handlers/worship.js`, `js/app/handlers/zakat.js`
 - `inputregistry`: `js/app/events.js`
 - `inputs`: `js/app/inputs.js`
 - `insensitive`: `js/domain/quranSearch.js`, `js/views/search.js`
@@ -6949,6 +6952,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `runtime`: `js/app/boot.js`, `js/app/focusRuntime.js`, `js/app/net.js`, `js/app/rt.js`, `js/core/fetch.js`, `js/domain/tajweedRules.js`, `js/domain/tajweedSources.js`
 - `sadaqah`: `js/core/state/slices/worship.js`, `js/domain/worship.js`
 - `sadaqahgiventoday`: `js/domain/worship.js`
+- `sadaqahhistoryhtml`: `js/views/home.js`
 - `safari`: `js/domain/install.js`
 - `safe`: `js/core/utils.js`
 - `safedecode`: `js/core/router.js`
@@ -7826,6 +7830,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/recitation-honesty.test.js` — two claims that audits have reported as open, repeatedly, and which are in fact shipped. Both are pinned here by EXECUTION so the report stops costing time: (pins: `../js/core/config/sanitize.js`, `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/views/playerBar.js`)
 - `tests/recitation-listeners.test.js` — B3 regression: verse-failure listeners coexist (toast wiring + verse session) instead of clobbering one slot, and a stopped session unregisters so later single-ayah failures still (pins: —)
 - `tests/reciter-catalog-page.test.js` — (no header comment) (pins: `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/services/audioCatalog.js`)
+- `tests/recovery-gift-lists.test.js` — (no header comment) (pins: `../js/views/hadith.js`, `../js/views/home.js`)
 - `tests/referenceAr.test.js` — audit §5.4 first light (v5.2.70) gates: 1. collection matching folds diacritics + curly quotes (Ṣaḥīḥ, Aḥmad, Tirmidhī, Jami’, Qur’an) with byte-identical remainders from RAW; (pins: `../js/core/schema.js`, `../js/domain/localeContent.js`)
 - `tests/reminder-settings.test.js` — B-2: the first-class clock settings (Jumu'ah, daily verse, Zakat al-Fitr) persisted since v4.4 now fire through the scheduler. Firing is observed two ways: captured (pins: `../js/core/utils.js`, `../js/domain/calendar.js`, `../js/services/notifications.js`)
 - `tests/reminderPresets.test.js` — Jumu'ah + daily-verse presets (v5.2.0). Date math, recurrence shape, dedupe, and null-safety. Pure domain. (pins: `../js/domain/reminderPresets.js`, `../js/services/calendarNotes.js`)

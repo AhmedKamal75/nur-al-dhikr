@@ -14,7 +14,7 @@
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
-import { pickLocale, escapeHTML } from '../core/utils.js';
+import { pickLocale, escapeHTML, normalizeSearch } from '../core/utils.js';
 import { VIEWS } from '../core/config.js';
 import { hadithCardHTML } from './hadithCard.js';
 import { HADITH_PAGE_SIZE, filterHadiths, clampPage, pageCount } from '../services/hadith.js';
@@ -446,14 +446,27 @@ function renderBookReader(state, lang) {
   const to = Math.min(page * HADITH_PAGE_SIZE, filtered.length);
   const sectionNames = new Map(doc.sections.map((s) => [s.id, s.name]));
 
+  const recoveryQuery = String(view.recoveryQuery || '');
+  const recoveryTerms = normalizeSearch(recoveryQuery).split(' ').filter(Boolean);
+  const recoveryDocs = new Map(doc.hadiths.map((h) => [String(h.n), h]));
+  const recoveryRows = hiddenInBook.filter((k) => {
+    const n = k.slice(bookId.length + 1);
+    const h = recoveryDocs.get(n);
+    const hay = normalizeSearch(`${n} ${h?.ar || ''} ${h?.en || ''}`);
+    return recoveryTerms.every((term) => hay.includes(term));
+  });
+  const recoveryLimit = Math.max(40, Number(view.recoveryLimit) || 40);
+  const recoveryShown = Math.min(recoveryRows.length, recoveryLimit);
   const unhideBar =
     manage && hiddenInBook.length
       ? `
     <div class="unhide-bar">
       <span class="unhide-bar__count">${t('content.hiddenCount', lang, { n: hiddenInBook.length })}</span>
+      <label class="field">${t('list.filterHidden', lang)}<input id="hadith-recovery-filter" type="search" class="input" data-bind="hadith-recovery-filter" value="${escapeHTML(recoveryQuery)}" aria-label="${t('list.filterHidden', lang)}" /></label>
+      <span class="unhide-bar__count" data-recovery-count>${t('list.shown', lang, { n: recoveryShown, total: recoveryRows.length })}</span>
       <div class="unhide-bar__chips">
-        ${hiddenInBook
-          .slice(0, 40)
+        ${recoveryRows
+          .slice(0, recoveryLimit)
           .map(
             (k) => `
         <button type="button" class="unhide-bar__chip" data-action="hadith-unhide-item" data-key="${escapeHTML(k)}">
@@ -461,7 +474,8 @@ function renderBookReader(state, lang) {
         </button>`
           )
           .join('')}
-        ${hiddenInBook.length > 40 ? `<span class="unhide-bar__count">+${hiddenInBook.length - 40}</span>` : ''}
+        ${!recoveryRows.length ? `<span class="empty-hint">${t('list.noMatches', lang)}</span>` : ''}
+        ${recoveryRows.length > recoveryLimit ? `<button type="button" class="btn btn--secondary btn--sm" data-action="hadith-recovery-more">${t('list.more', lang)}</button>` : ''}
       </div>
     </div>`
       : '';

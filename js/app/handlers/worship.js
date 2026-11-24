@@ -103,12 +103,32 @@ export const clickHandlers = {
     openModal(buildSadaqahEditor(store.getState()), { labelledBy: 'modal-title-sadaqah' });
   },
 
+  'sadaqah-history-more': async () => {
+    const list = document.querySelector('[data-gift-list]');
+    if (!list) return;
+    const { sadaqahHistoryHTML } = await import('../../views/home.js');
+    const scroll = document.querySelector('.modal__body')?.scrollTop || 0;
+    list.outerHTML = sadaqahHistoryHTML(
+      store.getState(),
+      list.dataset.query,
+      Number(list.dataset.limit) + 20
+    );
+    const body = document.querySelector('.modal__body');
+    if (body) body.scrollTop = scroll;
+  },
+
   'sadaqah-remove': async (ds) => {
     if (!ds.id) return;
     store.dispatch(actions.removeSadaqah(ds.id));
     if (isModalOpen()) {
-      const { buildSadaqahEditor } = await import('../../views/home.js');
-      openModal(buildSadaqahEditor(store.getState()), { labelledBy: 'modal-title-sadaqah' });
+      const { sadaqahHistoryHTML } = await import('../../views/home.js');
+      const list = document.querySelector('[data-gift-list]');
+      if (list)
+        list.outerHTML = sadaqahHistoryHTML(
+          store.getState(),
+          list.dataset.query,
+          Number(list.dataset.limit)
+        );
     }
   },
 
@@ -812,6 +832,19 @@ export const changeHandlers = [
       const form = el.closest('form');
       const group = form.querySelector('[data-reminder-group]');
       if (group) group.hidden = !el.checked;
+    },
+  },
+];
+
+export const inputHandlers = [
+  {
+    sel: '[data-bind="sadaqah-history-filter"]',
+    run: async (ds, el) => {
+      const query = el.value;
+      const { sadaqahHistoryHTML } = await import('../../views/home.js');
+      const list = document.querySelector('[data-gift-list]');
+      if (list && el.isConnected && el.value === query)
+        list.outerHTML = sadaqahHistoryHTML(store.getState(), query, 20);
     },
   },
 ];

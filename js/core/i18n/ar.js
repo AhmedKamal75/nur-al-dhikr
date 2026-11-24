@@ -7,6 +7,13 @@
  */
 
 export const ar = {
+  'list.shown': 'عرض {n} من {total}',
+  'list.total': 'الإجمالي {n}',
+  'list.noMatches': 'لا توجد نتائج.',
+  'list.older': 'عرض الصدقات الأقدم',
+  'list.more': 'عرض المزيد',
+  'list.filterGifts': 'تصفية الصدقات بالملاحظة أو المبلغ أو التاريخ',
+  'list.filterHidden': 'تصفية الأحاديث المخفية بالرقم أو النص',
   'app.name': 'نور الذكر',
   'app.tagline': 'اقرأ. اذكر. تدبّر. اعمل.',
   'nav.home': 'الرئيسية',

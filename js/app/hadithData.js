@@ -194,7 +194,16 @@ export function ensureHadithData(state) {
   if (rt.hadithBookViewLastId !== bookId) {
     rt.hadithBookViewLastId = bookId;
     rt.hadithDeepRef = null;
-    store.dispatch(actions.setHadithView({ query: '', section: 'all', page: 1, consumedN: null }));
+    store.dispatch(
+      actions.setHadithView({
+        query: '',
+        section: 'all',
+        page: 1,
+        consumedN: null,
+        recoveryQuery: '',
+        recoveryLimit: 40,
+      })
+    );
   }
   const doc = state.hadith.docs[bookId];
   // (v4.1) THE missing trigger: nothing ever fetched a non-bundled book on

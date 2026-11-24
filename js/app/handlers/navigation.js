@@ -153,7 +153,20 @@ export const clickHandlers = {
 };
 
 /** input registry (Blueprint D): { sel, run(ds, el, e) }. */
+let recoveryTimer;
 export const inputHandlers = [
+  {
+    sel: '[data-bind="hadith-recovery-filter"]',
+    run: (ds, el) => {
+      clearTimeout(recoveryTimer);
+      const bookId = store.getState().activeParams?.id;
+      const query = el.value;
+      recoveryTimer = setTimeout(() => {
+        if (el.isConnected && store.getState().activeParams?.id === bookId)
+          store.dispatch(actions.setHadithView({ recoveryQuery: query, recoveryLimit: 40 }));
+      }, 180);
+    },
+  },
   {
     sel: '[data-bind="search-query"]',
     run: (ds, el) => {

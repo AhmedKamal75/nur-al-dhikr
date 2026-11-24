@@ -54,6 +54,7 @@ import { clickHandlers as hifzClick } from './handlers/hifz.js';
 import {
   clickHandlers as worshipClick,
   changeHandlers as worshipChange,
+  inputHandlers as worshipInput,
 } from './handlers/worship.js';
 import { clickHandlers as zakatClick, inputHandlers as zakatInput } from './handlers/zakat.js';
 import {
@@ -156,6 +157,7 @@ export const changeRegistry = [
 ];
 
 export const inputRegistry = [
+  ...worshipInput,
   ...audioInput,
   ...systemInput,
   ...navigationInput,
