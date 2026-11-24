@@ -148,7 +148,7 @@ for (const lang of ['en', 'ar']) {
         const { counters, statistics, history, collections } = store.getState();
         return { counters, statistics, history, items: collections[0].items };
       });
-    const before = await progress();
+    let before = await progress();
     await beginning.focus();
     await expect(beginning).toBeFocused();
     const geometry = await beginning.evaluate((el) => {
@@ -177,6 +177,13 @@ for (const lang of ['en', 'ar']) {
     await page.locator('[data-action="collection-session-start"]').click();
     await expect(page.locator('.focus')).toHaveAttribute('data-item-id', 'adh-mor-001');
     expect(await progress()).toEqual(before);
+    // Verify persisted position before making intentionally unpersisted
+    // all-ineligible mutations later in this test.
+    await page.locator('[data-action="focus-exit"]').click();
+    await page.reload();
+    await page.locator('[data-action="collection-session-start"]').click();
+    await expect(page.locator('.focus')).toHaveAttribute('data-item-id', 'adh-mor-001');
+    before = await progress();
     // A stale DOM button must resolve current state, not the rendered first ID.
     await page.locator('[data-action="focus-exit"]').click();
     await page.evaluate(async () => {
@@ -204,10 +211,5 @@ for (const lang of ['en', 'ar']) {
     });
     await expect(page).toHaveURL(/#\/collection\/session-test$/);
     expect(await progress()).toEqual(before);
-    // Reload uses the app's existing fresh-session counter policy. The
-    // bookmark still resumes the newly chosen first position.
-    await page.reload();
-    await page.locator('[data-action="collection-session-start"]').click();
-    await expect(page.locator('.focus')).toHaveAttribute('data-item-id', 'adh-eve-001');
   });
 }
