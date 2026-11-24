@@ -4,7 +4,7 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 This is the exhaustive dump. For the one-page version — chrome spine, where-to-change table, counted inventory — read `docs/AGENT-MAP.md` instead. This file is ~530 KB by design; it is meant to be searched for one named thing, not read end to end.
 
-- js modules: 251 — data files: 29 — tests: 295
+- js modules: 251 — data files: 29 — tests: 296
 
 Conventions: `js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;
 `js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;
@@ -2539,7 +2539,7 @@ job: command palette ("search all things", Spotlight-style). One overlay to reac
 - exports: `buildPaletteGroups` (function), `paletteGroupsHTML` (function), `paletteRowCount` (function), `paletteShellHTML` (function), `searchLibrary` (re-export), `searchSurahs` (re-export), `searchQuran` (re-export), `searchReciters` (re-export)
 - emits: — (+ dynamic `data-action="${...}"`)
 - handles: —
-- i18n: `content.reviewPending`, `nav.search`, `palette.action`, `palette.ayah`, `palette.book`, `palette.hint`, `palette.journal`, `palette.library`, `palette.navigate`, `palette.reciter`, `palette.settings`, `palette.surah`, `palette.tafsir`, `search.placeholder`, `search.recent`
+- i18n: `content.reviewPending`, `nav.search`, `palette.action`, `palette.ayah`, `palette.book`, `palette.hint`, `palette.journal`, `palette.library`, `palette.navigate`, `palette.reciter`, `palette.seeAll`, `palette.settings`, `palette.shown`, `palette.surah`, `palette.tafsir`, `search.placeholder`, `search.recent`
 - routes: `VIEWS.AMBIENT`, `VIEWS.AUDIO`, `VIEWS.CALENDAR`, `VIEWS.CERTIFICATE`, `VIEWS.EDITOR`, `VIEWS.FAVORITES`, `VIEWS.FOCUS`, `VIEWS.HADITH`, `VIEWS.HOME`, `VIEWS.JOURNAL`, `VIEWS.LIBRARY`, `VIEWS.MOOD`, `VIEWS.MUTASHABIHAT`, `VIEWS.PRAYER`, `VIEWS.QIBLA`, `VIEWS.QUIZ`, `VIEWS.QURAN`, `VIEWS.ROOTS`, `VIEWS.SEARCH`, `VIEWS.SETTINGS`, `VIEWS.TAJWEED_COURSE`, `VIEWS.TASBIH`
 
 ### `js/views/playerBar.js`
@@ -7781,6 +7781,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/p0-tajweed-rounds.test.js` — P0-5 gates (v5.3.0): 1. shipped pool covers EVERY TAJWEED_RULES id with >= 5 real corpus rows (the "لا توجد آيات تدريب لهذا الحكم بعد" dead end is dead); (pins: `../js/core/config.js`, `../js/core/state.js`, `../js/domain/quiz.js`, `../js/domain/tajweed.js`, `../js/domain/tajweedPractice.js`, `../js/views/tajweedPracticeView.js`, `./helpers/seedMode.mjs`)
 - `tests/p1-roadmap-fixes.test.js` — v5.2.74 P1 regressions for Nur-al-Dhikr-Agent2-Overhaul-Roadmap-v5.2.72: 1. BUG-05: Arabic scripture runs carry lang="ar" (WCAG 3.1.2). (pins: `../js/core/config.js`, `../js/core/state.js`, `../js/core/state/restore.js`, `../js/core/state/store.js`, `../js/core/storage.js`, `../js/domain/gestures.js`, `../js/domain/tafsirSearch.js`, `../js/domain/translationCompare.js`, `../js/services/backup.js`, `../js/views/ayahStudy.js`, `../js/views/kids.js`, `../js/views/quran.js`, `../js/views/ramadan.js`, `../js/views/search.js`, `../js/views/tafsirPanel.js`)
 - `tests/p2-roadmap-fixes.test.js` — v5.2.75 P2 regressions for Nur-al-Dhikr-Agent2-Overhaul-Roadmap-v5.2.72: 1. BUG-08: rapid double-tap on two ayah play buttons must not toast a (pins: `../js/app/drawer.js`, `../js/app/hadithData.js`, `../js/core/config.js`, `../js/core/i18n.js`, `../js/core/state.js`, `../js/domain/hifz.js`, `../js/services/alertTriggers.js`, `../js/services/audioStore.js`, `../js/services/mushaf.js`, `../js/services/prayerSound.js`, `../js/services/recitation.js`, `../js/views/hadithCard.js`, `../js/views/qibla.js`, `../js/views/quran.js`, `../js/views/statistics.js`, `./helpers/seedMode.mjs`)
+- `tests/palette-expansion.test.js` — (no header comment) (pins: `../js/views/palette.js`)
 - `tests/palette-glass.test.js` — v5.17.62 palette + liquid-glass upgrade (HANDOFF §5d: worship instrument, paper-not-screen, gilt restraint; 4-LLM consensus: cream paper, deep green ink, gold only for now/here, (pins: `../js/core/config.js`)
 - `tests/palette.test.js` — command-palette providers (pure, store-free). Pins the Spotlight-style overlay logic: literal-match highlighting, provider grouping/caps, surah names in every script, translation-aware (pins: `../js/core/utils.js`, `../js/domain/search.js`, `../js/views/palette.js`)
 - `tests/phaseC.test.js` — v3.14 Phase C (loading & feedback) gates: - skeleton builders: shape, bounds, sr-only signal, no raw HTML leakage - empty-state builder: escaping, optional hint/action (pins: `../js/core/config.js`, `../js/core/state.js`, `../js/services/soundDesign.js`, `../js/ui/emptyState.js`, `../js/ui/skeleton.js`)

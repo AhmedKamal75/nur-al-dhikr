@@ -278,6 +278,8 @@ export const ar = {
   'palette.tafsir': 'التفسير',
   'palette.journal': 'اليوميات',
   'palette.settings': 'الإعدادات',
+  'palette.seeAll': 'عرض الكل ({n})',
+  'palette.shown': 'عرض {n} من {total}',
   'palette.hint': '↑↓ للتنقل · Enter للفتح · Esc للإغلاق',
   'audio.batchCancelled': 'أُوقف التحميل — حُفظ {n} سورة.',
   'audio.quota': 'مساحة الجهاز ممتلئة — احذف بعض التحميلات.',
