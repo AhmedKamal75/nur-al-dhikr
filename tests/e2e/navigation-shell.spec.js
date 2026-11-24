@@ -96,7 +96,7 @@ test('navigation shell: parent section names navigate and summaries only disclos
   const closed = page.locator(
     `#bottomnav .nav__scroller div.nav__section[data-section="${sectionId}"] details.nav__section-details`
   );
-  await expect(closed).toBeVisible();
+  await expect(closed.locator('summary')).toBeVisible();
   await expect(closed, 'this section starts collapsed').not.toHaveAttribute('open', '');
   const summary = closed.locator('summary.nav__section-toggle');
   await expect(summary).toHaveAttribute('aria-controls', /nav-sub-/);
