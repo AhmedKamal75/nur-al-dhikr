@@ -79,6 +79,30 @@ test('floating counter: opens a second window that follows the count', async ({ 
   expect(after, 'the floating window is not a second, stale source of truth').not.toBe(before);
   expect(after).toMatch(/^\d+ \/ \d+$/);
 
+  // Reset review blocks repeated counting/retargeting while the live mirror stays open.
+  await page.locator('[data-action="tasbih-reset"]').click();
+  await expect(page.locator('[data-reset-cancel]')).toBeFocused();
+  const reviewed = await page.evaluate(
+    () =>
+      window.documentPictureInPicture.window.document.getElementById('nur-float-count').textContent
+  );
+  await page.evaluate(async () => {
+    const { increment, setTarget } = await import('/js/services/tasbih.js');
+    for (let i = 0; i < 10; i++) {
+      increment('tasbih:subhanallah', 'tasbih-dhikr', 33);
+      setTarget('tasbih:subhanallah', 100);
+    }
+  });
+  expect(
+    await page.evaluate(
+      () =>
+        window.documentPictureInPicture.window.document.getElementById('nur-float-count')
+          .textContent
+    )
+  ).toBe(reviewed);
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+
   // A second tap closes it, so no orphan window is left floating.
   await button.click();
   await expect(button).toHaveAttribute('aria-pressed', 'false');
