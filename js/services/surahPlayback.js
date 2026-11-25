@@ -561,13 +561,17 @@ async function playCurrentSeq(afterDispatch) {
  * so the session can never advance underneath a pause.
  */
 export function pause() {
-  if (!session || !session.active || session.paused) return snapshot();
-  clearEchoWait();
+  if (!session || !session.active) return snapshot();
+  // A paused session can still acquire pending source work via skip/voice
+  // changes. A repeated pause must cancel that work even when no driver
+  // transition or notification is needed.
   if (sourcePending) {
     playTickets.mint();
     sourcePending = false;
     sourceNeedsReplay = true;
   }
+  if (session.paused) return snapshot();
+  clearEchoWait();
   session.paused = true;
   driverPause();
   notify(session.surah, session.ayah);

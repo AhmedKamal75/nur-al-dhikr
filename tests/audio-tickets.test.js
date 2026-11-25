@@ -315,3 +315,51 @@ for (const reset of [false, true]) {
     });
   }
 }
+
+for (const action of ['pause', 'expiry', 'displacement']) {
+  test(`already paused skip cancels pending source at ${action}, then resumes fresh`, async () => {
+    const h = setupVerse();
+    try {
+      h.start();
+      h.requests[0].resolve(null);
+      await tick();
+      verse.pause();
+      verse.skip(1);
+      assert.equal(verse.snapshot().paused, true);
+      assert.equal(verse.snapshot().ayah, 2);
+      const seen = h.seen.length;
+      if (action === 'expiry') {
+        verse.armSleepTimer(5);
+        verse._expireSleepForTests();
+      } else {
+        verse.pause();
+        if (action === 'displacement') {
+          const { clearDisplacedSleep } = await import('../js/services/sleepTimerController.js');
+          clearDisplacedSleep(new Set(['speech']));
+        }
+      }
+      assert.equal(h.seen.length, seen, 'ordinary repeated pause does not notify');
+      h.requests[1].resolve(new Blob(['stale']));
+      await tick();
+      assert.deepEqual(
+        h.played.map((x) => x.key),
+        ['1:1']
+      );
+      assert.equal(verse.snapshot().paused, true);
+      assert.equal(verse.snapshot().ayah, 2);
+      verse.resume();
+      assert.equal(h.requests.length, 3);
+      assert.equal(h.resumed(), 0);
+      h.requests[2].resolve(null);
+      await tick();
+      assert.deepEqual(
+        h.played.map((x) => x.key),
+        ['1:1', '1:2']
+      );
+      assert.equal(verse.snapshot().paused, false);
+      assert.equal(verse.sleepSnapshot().enabled, false);
+    } finally {
+      h.cleanup();
+    }
+  });
+}
