@@ -4,7 +4,7 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 This is the exhaustive dump. For the one-page version — chrome spine, where-to-change table, counted inventory — read `docs/AGENT-MAP.md` instead. This file is ~530 KB by design; it is meant to be searched for one named thing, not read end to end.
 
-- js modules: 257 — data files: 29 — tests: 306
+- js modules: 257 — data files: 29 — tests: 307
 
 Conventions: `js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;
 `js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;
@@ -532,7 +532,7 @@ job: app/handlers — feature-scoped controller modules. Each exports a partial 
 
 job: The per-view "⋯" menus: one 'view-menu' entry point that opens the right sheet for the current tab, plus the handful of sheet behaviors that had no handler of their own (opening the Prayer sub-panels…
 
-- exports: `clickHandlers` (object)
+- exports: `openMonthTimetable` (function), `clickHandlers` (object)
 - emits: —
 - handles: `checklist-reset-day`, `garden-how-it-works`, `hadith-copy-book`, `library-field-toggles`, `library-sheet-reset-hidden`, `prayer-export-ics`, `prayer-month-ics`, `prayer-month-nav`, `prayer-month-open`, `prayer-month-print`, `prayer-open-adhan`, `prayer-open-calc`, `prayer-open-location`, `prayer-open-qada`, `prayer-open-sunnah`, `schedule-open-manager`, `statistics-export-csv`, `statistics-share-csv`, `statistics-share-week`, `view-menu`, `view-sheet-manage`, `view-toggle-traveler`
 - i18n: `card.copied`, `card.copyFailed`, `checklist.sheet.resetDone`, `hadith.bookLinkCopied`, `library.sheet.resetHiddenDone`, `prayer.exportedIcs`, `prayer.locationNeeded`, `stats.activeDays`, `stats.currentStreak`, `stats.exportEmpty`, `stats.exportedCsv`, `stats.readingToday`, `stats.shareTitle`, `stats.totalRecitations`
@@ -2616,10 +2616,10 @@ job: The persistent full-surah player bar, rendered once a moshaf+surah is selec
 
 job: (v4.6.0) The Prayer page is FOCUSED: the next-prayer hero, the day's times, and the log strip. Everything that used to stack below — sunnah tracker, qada' backlog, traveler mode, adhan & alerts, calc…
 
-- exports: `PRAYER_ICONS` (object), `prayerPlaceName` (function), `alertStatusHTML` (function), `renderPrayer` (function), `sunnahPanelHTML` (function), `qadaPanelHTML` (function), `adhanPanelHTML` (function), `buildMonthModal` (function), `calcPanelHTML` (function), `profilesPanelHTML` (function)
+- exports: `PRAYER_ICONS` (object), `prayerPlaceName` (function), `alertStatusHTML` (function), `renderPrayer` (function), `sunnahPanelHTML` (function), `qadaPanelHTML` (function), `adhanPanelHTML` (function), `monthTimetableContext` (function), `buildMonthModal` (function), `calcPanelHTML` (function), `profilesPanelHTML` (function)
 - emits: `location-profile-apply`, `location-profile-save`, `prayer-adhan-clear`, `prayer-adhan-import`, `prayer-enable-notifications`, `prayer-log-cycle`, `prayer-manual-location`, `prayer-month-ics`, `prayer-month-nav`, `prayer-month-print`, `prayer-request-location`, `prayer-set-alert-mode`, `prayer-test-sound`, `prayer-use-city`, `qada-add`, `qada-clear-prayer`, `qada-complete`, `sunnah-toggle`, `toggle-prayer-alert`, `toggle-prayer-quiet`, `toggle-prayer-quiet-cancel`
 - handles: —
-- i18n: `checklist.today`, `common.am`, `common.pm`, `common.print`, `missingData.location-missing`, `nav.prayer`, `plog.bestStreak`, `plog.hint`, `plog.jamaahRate`, `plog.monthCount`, `plog.mostMissed`, `plog.rate30`, `plog.streak`, `plog.title`, `prayer.`, `prayer.addToCalendar`, `prayer.adhanBundled`, `prayer.adhanClear`, `prayer.adhanCustomSet`, `prayer.adhanImport` (+75 more)
+- i18n: `checklist.today`, `common.am`, `common.pm`, `common.print`, `missingData.location-missing`, `nav.prayer`, `plog.bestStreak`, `plog.hint`, `plog.jamaahRate`, `plog.monthCount`, `plog.mostMissed`, `plog.rate30`, `plog.streak`, `plog.title`, `prayer.`, `prayer.addToCalendar`, `prayer.adhanBundled`, `prayer.adhanClear`, `prayer.adhanCustomSet`, `prayer.adhanImport` (+81 more)
 - routes: —
 
 ### `js/views/qibla.js`
@@ -4144,6 +4144,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `missingDataKeyFor`: `js/ui/missingData.js`
 - `missingSurahs`: `js/services/moshafAvailability.js`
 - `monthEntry`: `js/domain/ramadanPlanner.js`
+- `monthTimetableContext`: `js/views/prayer.js`
 - `monthTotal`: `js/domain/statistics.js`
 - `monthWindow`: `js/domain/statistics.js`
 - `moodById`: `js/domain/moods.js`
@@ -4239,6 +4240,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `openFloatingCounter`: `js/services/floatingCounter.js`
 - `openLazyModal`: `js/ui/modal.js`
 - `openModal`: `js/ui/modal.js`
+- `openMonthTimetable`: `js/app/handlers/viewMenus.js`
 - `openNavDrawer`: `js/app/drawer.js`
 - `openPalette`: `js/app/palette.js`
 - `openParentGate`: `js/app/events.js`
@@ -6347,6 +6349,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `month`: `js/domain/fasting.js`, `js/domain/ramadan.js`, `js/views/calendar.js`
 - `monthentry`: `js/domain/ramadanPlanner.js`
 - `monthly`: `js/ui/calendarModals.js`
+- `monthtimetablecontext`: `js/views/prayer.js`
 - `monthtotal`: `js/domain/statistics.js`
 - `monthwindow`: `js/domain/statistics.js`
 - `mood`: `js/domain/grammarDrill.js`, `js/domain/moods.js`, `js/domain/wordStudy.js`, `js/views/library.js`
@@ -6520,6 +6523,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `opening`: `js/app/handlers/viewMenus.js`
 - `openlazymodal`: `js/ui/modal.js`
 - `openmodal`: `js/ui/modal.js`, `js/views/tajweedPracticeView.js`
+- `openmonthtimetable`: `js/app/handlers/viewMenus.js`
 - `opennavdrawer`: `js/app/drawer.js`
 - `openpalette`: `js/app/palette.js`
 - `openparentgate`: `js/app/events.js`
@@ -7875,6 +7879,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/mediaSession.test.js` — (no header comment) (pins: `../js/services/mediaSession.js`)
 - `tests/milestone.test.js` — tasbih milestone pings (v5.2.0): the pure "buzz every Nth count" predicate used by services/tasbih.js. (pins: `../js/domain/celebrate.js`)
 - `tests/missing-data.test.js` — merged-plan item 6 (v5.17.53), permanent. ONE honest-absence pattern (js/ui/missingData.js): dashed warm-gray, plain words, calm — never red — bilingual EN+AR, unifying unknown grade / (pins: `../js/core/i18n.js`, `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/domain/grades.js`, `../js/ui/card.js`, `../js/ui/emptyState.js`, `../js/ui/missingData.js`)
+- `tests/month-context.test.js` — (no header comment) (pins: `../js/domain/locations.js`, `../js/domain/prayer.js`, `../js/domain/prayerExport.js`, `../js/views/prayer.js`)
 - `tests/mood-selection.test.js` — (no header comment) (pins: `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/services/moodSelection.js`, `../js/views/mood.js`)
 - `tests/moods.test.js` — "Browse by need" cross-library matcher (pins: `../js/domain/moods.js`)
 - `tests/motion.test.js` — v3.12 UI/UX Phase B gates. Three layers are pinned here: 1. js/celebrate.js — the transient celebration registry (behavioral). (pins: `../js/app/renderer.js`, `../js/domain/celebrate.js`, `../js/domain/khatma.js`)

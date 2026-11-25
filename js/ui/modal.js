@@ -17,6 +17,7 @@ let trapHandler = null;
 // (v5.2.75, UX-05) pending exit-teardown timer (animated close only).
 let closeTimer = null;
 let generation = 0;
+let disposeContent = null;
 const CLOSE_MS = 120;
 
 const FOCUSABLE_SELECTOR =
@@ -37,8 +38,10 @@ function reducedMotion() {
 
 export function openModal(
   innerHTML,
-  { labelledBy = null, focusSelector = null, returnSelector = null } = {}
+  { labelledBy = null, focusSelector = null, returnSelector = null, onDispose = null } = {}
 ) {
+  disposeContent?.();
+  disposeContent = onDispose;
   returnFocusSelector = returnSelector;
   generation += 1;
   const root = document.getElementById('modal-root');
@@ -112,6 +115,8 @@ export function openModal(
 }
 
 export function closeModal() {
+  disposeContent?.();
+  disposeContent = null;
   generation += 1;
   const root = document.getElementById('modal-root');
   if (closeTimer) {

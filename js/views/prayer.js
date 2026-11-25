@@ -16,6 +16,7 @@ import { escapeHTML } from '../core/utils.js';
 import { wasCelebrated } from '../domain/celebrate.js';
 import {
   calculateTimes,
+  applyPrayerOffsets,
   formatClock,
   nextPrayer,
   prayerMethodLine,
@@ -25,7 +26,7 @@ import {
   OFFSET_PRAYERS,
 } from '../domain/prayer.js';
 import { buildTimeline } from '../domain/prayerTimeline.js';
-import { prayerClock } from '../domain/timezone.js';
+import { zoneOffsetHours, prayerClock } from '../domain/timezone.js';
 import { SOUND_IDS, ADHAN_MODES, customAdhanFlags } from '../services/prayerSound.js';
 import { buildMonthTimetable, timetableCell, PRAYER_EXPORT_ORDER } from '../domain/prayerExport.js';
 import { selectors } from '../core/state.js';
@@ -531,6 +532,53 @@ function volumeScheduleHTML(state, lang) {
  * month prev/next, .ics download, and a print button (print CSS keeps
  * only the table — see layout.css).
  */
+/** Context from the same saved settings and calendar dates used for rows. */
+export function monthTimetableContext(p, year, month, lang) {
+  const hasCoords =
+    p.latitude != null &&
+    p.longitude != null &&
+    Number.isFinite(p.latitude) &&
+    Number.isFinite(p.longitude);
+  const city = CITY_PRESETS.find(
+    (c) => c.id === p.cityId && c.lat === p.latitude && c.lng === p.longitude
+  );
+  const place = !hasCoords
+    ? t('prayer.month.noLocation', lang)
+    : city
+      ? lang === 'ar'
+        ? city.ar
+        : city.en
+      : `${t('prayer.month.coordinates', lang)}: ${p.latitude.toFixed(2)}, ${p.longitude.toFixed(2)}`;
+  const zone = typeof p.timezone === 'string' ? p.timezone.trim() : '';
+  const days = new Date(year, month, 0).getDate();
+  const validZone =
+    zone &&
+    Array.from({ length: days }, (_, i) =>
+      zoneOffsetHours(zone, new Date(year, month - 1, i + 1))
+    ).every((v) => v != null);
+  const method =
+    typeof p.method === 'string' && Object.hasOwn(METHODS, p.method) ? p.method : 'MWL';
+  const asr = typeof p.asr === 'string' && Object.hasOwn(ASR_FACTORS, p.asr) ? p.asr : 'Standard';
+  // Run the engine's normalization against zero-valued times, not a copy
+  // of its coercion/range rules. Only effective nonzero minutes are shown.
+  const normalized = applyPrayerOffsets(
+    Object.fromEntries(PRAYER_EXPORT_ORDER.map((n) => [n, 0])),
+    p.offsets
+  );
+  const offsets = PRAYER_EXPORT_ORDER.filter((n) => normalized[n] !== 0).map((n) => {
+    const minutes = Math.round(normalized[n] * 60);
+    return `${t(`prayer.${n}`, lang)} ${t('units.m', lang, { n: minutes > 0 ? `+${minutes}` : String(minutes) })}`;
+  });
+  return {
+    place,
+    coordinates: hasCoords && !city,
+    timezone: validZone ? zone : t('prayer.month.deviceClock', lang),
+    method: t(`prayer.method.${method}`, lang),
+    asr: t(`prayer.asr.${asr}`, lang),
+    offsets,
+  };
+}
+
 export function buildMonthModal(state, year, month) {
   const lang = state.settings.language;
   const p = state.settings.prayer;
@@ -545,6 +593,7 @@ export function buildMonthModal(state, year, month) {
     timezone: p.timezone,
   });
   if (!table) return '';
+  const context = monthTimetableContext(p, table.year, table.month, lang);
   const monthName = new Date(year, month - 1, 1).toLocaleDateString(
     lang === 'ar' ? 'ar' : 'en-US',
     {
@@ -569,8 +618,15 @@ export function buildMonthModal(state, year, month) {
         .join('')
     : `<tr><td colspan="7">${t('prayer.locationNeeded', lang)}</td></tr>`;
   return `
-  <div class="prayer-month">
+  <div class="prayer-month" data-year="${table.year}" data-month="${table.month}" lang="${lang}" dir="${isRTL(lang) ? 'rtl' : 'ltr'}">
     <h2 id="modal-title-prayer-month">${escapeHTML(monthName)}</h2>
+    <div class="prayer-month__context">
+      <p><strong>${t('prayer.month.place', lang)}:</strong> <bdi dir="${context.coordinates ? 'ltr' : 'auto'}">${escapeHTML(context.place)}</bdi></p>
+      <p><strong>${t('prayer.month.timezone', lang)}:</strong> <bdi>${escapeHTML(context.timezone)}</bdi></p>
+      <p>${escapeHTML(context.method)} · ${t('prayer.asrMethod', lang)}: ${escapeHTML(context.asr)}</p>
+      ${context.offsets.length ? `<p>${context.offsets.map((v) => `<bdi>${escapeHTML(v)}</bdi>`).join(' · ')}</p>` : ''}
+      <p class="prayer-month__caveat">${t('prayer.month.caveat', lang)}</p>
+    </div>
     <div class="editor-form__actions">
       <button type="button" class="btn btn--secondary btn--sm" data-action="prayer-month-nav" data-y="${prev.y}" data-m="${prev.m}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 14 })} ${t('prayer.prevMonth', lang)}</button>
       <button type="button" class="btn btn--secondary btn--sm" data-action="prayer-month-nav" data-y="${next.y}" data-m="${next.m}">${t('prayer.nextMonth', lang)} ${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 14 })}</button>

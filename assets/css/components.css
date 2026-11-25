@@ -2570,6 +2570,18 @@ body.is-mushaf-fullscreen #playerbar:has(.player-bar--min) {
   overflow-x: auto;
   scrollbar-width: thin;
 }
+.prayer-month__context {
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.prayer-month__context p {
+  margin: 0 0 var(--space-1);
+}
+.prayer-month__caveat {
+  color: var(--color-text-muted);
+}
 .prayer-month__table {
   width: 100%;
   border-collapse: collapse;

@@ -342,6 +342,9 @@ html[data-dyslexia='true'][dir='rtl'] body {
    Print — cards only; chrome and navigation never print.
    ========================================================================== */
 @media print {
+  html:has(body.print-timetable) {
+    background: white !important;
+  }
   #topbar,
   #bottomnav,
   #playerbar,
@@ -396,12 +399,72 @@ html[data-dyslexia='true'][dir='rtl'] body {
   }
   /* Monthly timetable: print ONLY the open modal's table (the handler
      sets body.print-timetable around window.print()). */
+  body.print-timetable > :not(#modal-root) {
+    display: none !important;
+  }
+  body.print-timetable {
+    display: block !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
   body.print-timetable #main {
     display: none !important;
+  }
+  body.print-timetable #modal-root * {
+    color: black !important;
+    background-color: white !important;
+    text-shadow: none !important;
   }
   body.print-timetable #modal-root {
     display: block !important;
     position: static !important;
+    inset: auto !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    background: white !important;
+  }
+  body.print-timetable .modal-overlay,
+  body.print-timetable .modal,
+  body.print-timetable .modal__body {
+    position: static !important;
+    display: block !important;
+    max-height: none !important;
+    height: auto !important;
+    overflow: visible !important;
+    max-width: none !important;
+    width: 100% !important;
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    animation: none !important;
+  }
+  body.print-timetable .prayer-month {
+    display: block;
+    font-size: 10pt;
+  }
+  body.print-timetable .prayer-month__table {
+    font-size: 9pt;
+  }
+  body.print-timetable .prayer-month h2 {
+    break-after: avoid;
+  }
+  body.print-timetable .prayer-month__context {
+    break-inside: avoid;
+    color: black;
+  }
+  body.print-timetable .prayer-month__caveat {
+    color: black;
+  }
+  body.print-timetable .prayer-month__table thead {
+    display: table-header-group;
+  }
+  body.print-timetable .prayer-month__table tr {
+    break-inside: avoid;
   }
   body.print-timetable .prayer-month .editor-form__actions {
     display: none !important;

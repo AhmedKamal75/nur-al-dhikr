@@ -32,6 +32,23 @@ import { openModal, closeModal } from '../../ui/modal.js';
 import { showToast } from '../../ui/toast.js';
 import { dateKey } from '../../core/utils.js';
 
+/** Keep a displayed month and its context/rows on one settings snapshot. */
+export function openMonthTimetable(year, month) {
+  const state = store.getState();
+  const prayer = state.settings.prayer;
+  const language = state.settings.language;
+  let unsubscribe = null;
+  openModal(buildMonthModal(state, year, month), {
+    labelledBy: 'modal-title-prayer-month',
+    onDispose: () => unsubscribe?.(),
+  });
+  unsubscribe = store.subscribe(() => {
+    const next = store.getState();
+    if (next.settings.prayer !== prayer || next.settings.language !== language)
+      openMonthTimetable(year, month);
+  });
+}
+
 /** Download a text blob (calendar exports). Same pattern as the daily .ics. */
 function downloadTextFile(text, filename, mime) {
   const blob = new Blob([text], { type: mime });
@@ -197,16 +214,14 @@ export const clickHandlers = {
   // the modal), with month .ics download + print.
   'prayer-month-open': () => {
     const now = new Date();
-    openModal(buildMonthModal(store.getState(), now.getFullYear(), now.getMonth() + 1), {
-      labelledBy: 'modal-title-prayer-month',
-    });
+    openMonthTimetable(now.getFullYear(), now.getMonth() + 1);
   },
 
   'prayer-month-nav': (ds) => {
     const y = parseInt(ds.y, 10);
     const m = parseInt(ds.m, 10);
     if (!Number.isFinite(y) || !Number.isFinite(m) || m < 1 || m > 12) return;
-    openModal(buildMonthModal(store.getState(), y, m), { labelledBy: 'modal-title-prayer-month' });
+    openMonthTimetable(y, m);
   },
 
   'prayer-month-ics': (ds) => {
