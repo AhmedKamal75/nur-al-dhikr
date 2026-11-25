@@ -20,6 +20,8 @@ const ROUTES = [
 ];
 
 test('smoke: core routes render with zero console errors', async ({ page }) => {
+  // Ten real route transitions share this budget, including cold corpus loads.
+  test.slow();
   const consoleErrors = [];
   const pageErrors = [];
   page.on('console', (msg) => {
@@ -31,7 +33,20 @@ test('smoke: core routes render with zero console errors', async ({ page }) => {
   await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
 
   for (const route of ROUTES) {
-    await page.goto(`#/${route}`);
+    // Exercise same-document router navigation. page.goto(hash) can abort
+    // WebKit fetches still belonging to the preceding route.
+    await page.evaluate((route) => {
+      location.hash = `#/${route}`;
+    }, route);
+    await expect
+      .poll(
+        () =>
+          page.evaluate(
+            async () => (await import('/js/core/state.js')).store.getState().activeView
+          ),
+        { timeout: 20000 }
+      )
+      .toBe(route);
     // The renderer swaps views into #main; a blank main is the failure.
     await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
   }
