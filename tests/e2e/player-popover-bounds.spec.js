@@ -61,3 +61,59 @@ for (const language of ['en', 'ar']) {
     await expect(page.locator('.player-bar__more')).not.toHaveAttribute('open', '');
   });
 }
+
+for (const language of ['en', 'ar']) {
+  test(`file More settings scrolls within short landscape (${language})`, async ({
+    page,
+  }, testInfo) => {
+    test.slow();
+    await page.addInitScript(
+      (language) =>
+        localStorage.setItem(
+          'nurAlDhikr:v2:state',
+          JSON.stringify({ settings: { language, reduceMotion: true, themeMode: 'dark' } })
+        ),
+      language
+    );
+    await page.goto('#/quran');
+    await expect(page.locator('#main')).not.toBeEmpty();
+    await page.evaluate(async () => {
+      const { store, actions } = await import('/js/core/state.js');
+      store.dispatch(
+        actions.setAudioPlayer({
+          moshafId: 'test',
+          surah: 1,
+          playing: false,
+          sleepEnabled: true,
+          sleepLabel: '04:59',
+        })
+      );
+    });
+    for (const [width, height] of [
+      [568, 320],
+      [667, 375],
+      [844, 390],
+      [1280, 500],
+    ]) {
+      await page.setViewportSize({ width, height });
+      await page.locator('.player-bar__more').evaluate((el) => (el.open = true));
+      const panel = page.locator('.player-bar__more .player-bar__secondary');
+      const box = await panel.boundingBox();
+      expect(box.x).toBeGreaterThanOrEqual(0);
+      expect(box.y).toBeGreaterThanOrEqual(0);
+      expect(box.x + box.width).toBeLessThanOrEqual(width);
+      expect(box.y + box.height).toBeLessThanOrEqual(height);
+      for (const control of await panel.locator('button,input').all()) {
+        await control.scrollIntoViewIfNeeded();
+        const r = await control.boundingBox();
+        expect(r.y).toBeGreaterThanOrEqual(box.y);
+        expect(r.y + r.height).toBeLessThanOrEqual(box.y + box.height);
+      }
+      await page.screenshot({ path: testInfo.outputPath(`landscape-${language}-${width}.png`) });
+      await panel.evaluate((el) => (el.scrollTop = 0));
+      await page.screenshot({
+        path: testInfo.outputPath(`landscape-top-${language}-${width}.png`),
+      });
+    }
+  });
+}

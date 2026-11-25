@@ -1,3 +1,8 @@
+## v5.17.170 - Keep player settings reachable in short landscape
+
+- Limit the file-player More panel height in short viewports and allow vertical scrolling, keeping the first controls on-screen and all later controls reachable. Portrait and desktop settings remain unchanged.
+- English and Arabic regression checks cover 568x320, 667x375, 844x390 and 1280x500, including scrolling each control into the visible panel.
+
 ## v5.17.169 - Keep file-player settings inside narrow screens
 
 - Anchor the More settings panel to the full player header at narrow widths in both writing directions. Remove the inherited 42vw strip cap so every control fits within the panel. No playback behavior changed.
