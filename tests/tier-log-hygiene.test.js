@@ -79,10 +79,13 @@ describe('tier log hygiene: 404 warns, real failures error', () => {
 
   test('bulk builders thread the abort signal and swallow cancels silently', () => {
     for (const [file, needs] of [
-      ['js/app/quranSearch.js', ['quranBulkAbort', 'loadSurahDoc(n, signal)', 'isBulkAbortError']],
+      [
+        'js/app/quranSearch.js',
+        ['quranBulkResource', 'loadSurahDoc(n, signal)', 'isBulkAbortError'],
+      ],
       [
         'js/app/tafsirSearch.js',
-        ['tafsirBulkAbort', 'fetchJSON(TAFSIR_TEXT_URL(edition.id, n), { signal })'],
+        ['tafsirBulkResource', 'fetchJSON(TAFSIR_TEXT_URL(edition.id, n), { signal })'],
       ],
       ['js/app/stateSub.js', ['bulkViewWasSearch', 'quranBulkAbort', 'tafsirBulkAbort']],
     ]) {

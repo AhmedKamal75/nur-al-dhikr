@@ -1,3 +1,5 @@
+import { createAsyncResource } from './asyncResource.js';
+import { cancelBulkResources } from './bulkResources.js';
 import { rt } from './rt.js';
 import { fetchJSON, isMissingResourceError, isTimeoutError } from './net.js';
 import {
@@ -60,14 +62,36 @@ const mushafPageFetchesInFlight = new Map();
 const quranWordsFetchesInFlight = new Map();
 const tafsirTextFetchesInFlight = new Map();
 let lazyDataGeneration = 0;
-let quranMetaInFlight = null;
-let mushafMetaInFlight = null;
-let wordDictInFlight = null;
-let rootsMeaningInFlight = null;
-let quranRootsInFlight = null;
-let quranRootsFullInFlight = null;
-let tafsirEditionsInFlight = null;
-let tajweedPoolInFlight = null;
+
+const singletonResources = [];
+function singleton(startKey = null, cooldownKey = null) {
+  const resource = createAsyncResource({
+    generation: () => lazyDataGeneration,
+    cooldownUntil: () => (cooldownKey ? rt[cooldownKey] : 0),
+    start: () => {
+      if (startKey) rt[startKey] = true;
+    },
+    reset: () => {
+      if (startKey) rt[startKey] = false;
+    },
+  });
+  singletonResources.push(resource);
+  return resource;
+}
+const quranMetaResource = singleton('quranMetaFetchStarted');
+const mushafMetaResource = singleton('mushafMetaFetchStarted');
+const wordDictResource = singleton(null);
+const rootsMeaningResource = singleton(null);
+const quranRootsResource = singleton('quranRootsFetchStarted', 'quranRootsCooldownUntil');
+const quranRootsFullResource = singleton(
+  'quranRootsFullFetchStarted',
+  'quranRootsFullCooldownUntil'
+);
+const tafsirEditionsResource = singleton(
+  'tafsirEditionsFetchStarted',
+  'tafsirEditionsCooldownUntil'
+);
+const tajweedPoolResource = singleton('tajweedPoolFetchStarted', 'tajweedPoolCooldownUntil');
 
 function isCurrentGeneration(generation) {
   return generation === lazyDataGeneration;
@@ -153,21 +177,23 @@ export async function ensureMushafNavigationPages(page) {
  */
 function fetchQuranMetaShared({ announce = false } = {}) {
   if (store.getState().quran.meta) return Promise.resolve(true);
-  if (!quranMetaInFlight) {
-    const generation = lazyDataGeneration;
-    rt.quranMetaFetchStarted = true;
-    const request = (async () => {
-      try {
-        const meta = await fetchJSON(QURAN_META_URL);
-        if (!isCurrentGeneration(generation)) return false;
+  return quranMetaResource.run(
+    async () => {
+      const meta = await fetchJSON(QURAN_META_URL);
+      return meta;
+    },
+    {
+      success: (meta, { current }) => {
         store.dispatch(actions.setQuranMeta(meta));
+        if (!current()) return false;
         flagLoad('quran-meta', false);
         return true;
-      } catch (err) {
-        if (!isCurrentGeneration(generation)) return false;
+      },
+      failure: (err, { current }) => {
         console.error('[quran] failed to load meta', err);
         rt.quranMetaFetchStarted = false;
         flagLoad('quran-meta', true);
+        if (!current()) return false;
         if (announce) {
           const retryLang = store.getState().settings.language;
           showToast(t('quran.loadFailed', retryLang), {
@@ -179,39 +205,33 @@ function fetchQuranMetaShared({ announce = false } = {}) {
           });
         }
         return false;
-      } finally {
-        if (quranMetaInFlight === request) quranMetaInFlight = null;
-      }
-    })();
-    quranMetaInFlight = request;
-  }
-  return quranMetaInFlight;
+      },
+    }
+  );
 }
 
 export function ensureMushafMeta() {
   if (store.getState().mushaf.meta) return Promise.resolve(true);
-  if (mushafMetaInFlight) return mushafMetaInFlight;
-  const generation = lazyDataGeneration;
-  rt.mushafMetaFetchStarted = true;
-  const request = (async () => {
-    try {
+  return mushafMetaResource.run(
+    async () => {
       const meta = await fetchJSON(MUSHAF_META_URL);
-      if (!isCurrentGeneration(generation)) return false;
-      store.dispatch(actions.setMushafMeta(meta));
-      flagLoad('mushaf-meta', false);
-      return true;
-    } catch (err) {
-      if (!isCurrentGeneration(generation)) return false;
-      console.error('[mushaf] failed to load page index', err);
-      rt.mushafMetaFetchStarted = false;
-      flagLoad('mushaf-meta', true);
-      throw err;
-    } finally {
-      if (mushafMetaInFlight === request) mushafMetaInFlight = null;
+      return meta;
+    },
+    {
+      success: (meta, { current }) => {
+        store.dispatch(actions.setMushafMeta(meta));
+        if (!current()) return false;
+        flagLoad('mushaf-meta', false);
+        return true;
+      },
+      failure: (err) => {
+        console.error('[mushaf] failed to load page index', err);
+        rt.mushafMetaFetchStarted = false;
+        flagLoad('mushaf-meta', true);
+        throw err;
+      },
     }
-  })();
-  mushafMetaInFlight = request;
-  return request;
+  );
 }
 
 /** Record a tier's fetch outcome in the store so views can swap their
@@ -265,7 +285,7 @@ export async function ensureQuranData(state) {
         },
       });
     } finally {
-      quranSurahFetchesInFlight.delete(id);
+      if (isCurrentGeneration(generation)) quranSurahFetchesInFlight.delete(id);
     }
   }
 
@@ -438,20 +458,8 @@ export function invalidateLazyFetches() {
   rt.lazyDataGeneration = lazyDataGeneration;
   clearLazyInFlightFetches();
   clearQuranDataFetches();
-  quranMetaInFlight = null;
-  mushafMetaInFlight = null;
-  wordDictInFlight = null;
-  rootsMeaningInFlight = null;
-  quranRootsInFlight = null;
-  quranRootsFullInFlight = null;
-  tafsirEditionsInFlight = null;
-  tajweedPoolInFlight = null;
-  rt.quranMetaFetchStarted = false;
-  rt.mushafMetaFetchStarted = false;
-  rt.quranRootsFetchStarted = false;
-  rt.quranRootsFullFetchStarted = false;
-  rt.tafsirEditionsFetchStarted = false;
-  rt.tajweedPoolFetchStarted = false;
+  for (const resource of singletonResources) resource.invalidate();
+  cancelBulkResources();
 }
 
 /**
@@ -463,32 +471,32 @@ export function invalidateLazyFetches() {
 export function ensureWordDict() {
   const snap = store.getState().wordDict;
   if (snap?.index) return Promise.resolve(true);
-  if (wordDictInFlight) return wordDictInFlight;
-  const generation = lazyDataGeneration;
-  const request = (async () => {
-    try {
+  return wordDictResource.run(
+    async () => {
       const raw = await fetchJSON(QURAN_DICT_URL);
       const entries = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw.entries : null;
       if (!entries || typeof entries !== 'object' || Array.isArray(entries)) {
         throw new Error('malformed dict file');
       }
-      if (!isCurrentGeneration(generation)) return false;
-      store.dispatch(actions.setWordDict(entries));
-      flagLoad('word-dict', false);
-      return true;
-    } catch (err) {
-      if (!isCurrentGeneration(generation)) return false;
-      if (isMissingResourceError(err)) console.warn('[wordStudy] dict not bundled', err);
-      else console.error('[wordStudy] failed to load dict', err);
-      store.dispatch(actions.setWordDict(null));
-      flagLoad('word-dict', true);
-      return false;
-    } finally {
-      if (wordDictInFlight === request) wordDictInFlight = null;
+      return entries;
+    },
+    {
+      success: (entries, { current }) => {
+        store.dispatch(actions.setWordDict(entries));
+        if (!current()) return false;
+        flagLoad('word-dict', false);
+        return true;
+      },
+      failure: (err, { current }) => {
+        if (isMissingResourceError(err)) console.warn('[wordStudy] dict not bundled', err);
+        else console.error('[wordStudy] failed to load dict', err);
+        store.dispatch(actions.setWordDict(null));
+        if (!current()) return false;
+        flagLoad('word-dict', true);
+        return false;
+      },
     }
-  })();
-  wordDictInFlight = request;
-  return request;
+  );
 }
 
 /**
@@ -501,32 +509,32 @@ export function ensureWordDict() {
 export function ensureRootsMeaning() {
   const snap = store.getState().rootsMeaning;
   if (snap?.index) return Promise.resolve(true);
-  if (rootsMeaningInFlight) return rootsMeaningInFlight;
-  const generation = lazyDataGeneration;
-  const request = (async () => {
-    try {
+  return rootsMeaningResource.run(
+    async () => {
       const raw = await fetchJSON(ROOTS_MEANING_URL);
       const entries = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw.entries : null;
       if (!entries || typeof entries !== 'object' || Array.isArray(entries)) {
         throw new Error('malformed roots-meaning file');
       }
-      if (!isCurrentGeneration(generation)) return false;
-      store.dispatch(actions.setRootsMeaning(entries));
-      flagLoad('roots-meaning', false);
-      return true;
-    } catch (err) {
-      if (!isCurrentGeneration(generation)) return false;
-      if (isMissingResourceError(err)) console.warn('[wordStudy] roots-meaning not bundled', err);
-      else console.error('[wordStudy] failed to load roots-meaning', err);
-      store.dispatch(actions.setRootsMeaning(null));
-      flagLoad('roots-meaning', true);
-      return false;
-    } finally {
-      if (rootsMeaningInFlight === request) rootsMeaningInFlight = null;
+      return entries;
+    },
+    {
+      success: (entries, { current }) => {
+        store.dispatch(actions.setRootsMeaning(entries));
+        if (!current()) return false;
+        flagLoad('roots-meaning', false);
+        return true;
+      },
+      failure: (err, { current }) => {
+        if (isMissingResourceError(err)) console.warn('[wordStudy] roots-meaning not bundled', err);
+        else console.error('[wordStudy] failed to load roots-meaning', err);
+        store.dispatch(actions.setRootsMeaning(null));
+        if (!current()) return false;
+        flagLoad('roots-meaning', true);
+        return false;
+      },
     }
-  })();
-  rootsMeaningInFlight = request;
-  return request;
+  );
 }
 
 /**
@@ -563,7 +571,7 @@ export async function ensureMushafSurahDocs(state) {
         if (!isCurrentGeneration(generation)) return;
         console.error('[mushaf-tray] failed to load surah', id, err);
       } finally {
-        quranSurahFetchesInFlight.delete(id);
+        if (isCurrentGeneration(generation)) quranSurahFetchesInFlight.delete(id);
       }
     }
   }
@@ -639,32 +647,29 @@ export async function ensureQuranWordsData(state, surahNumber) {
 
 export async function ensureQuranRoots(state) {
   if (state.quranRoots) return true;
-  if (quranRootsInFlight) return quranRootsInFlight;
-  if (Date.now() < rt.quranRootsCooldownUntil) return false;
-  const generation = lazyDataGeneration;
-  rt.quranRootsFetchStarted = true;
-  const request = (async () => {
-    try {
+  return quranRootsResource.run(
+    async () => {
       const roots = await fetchJSON(QURAN_ROOTS_URL);
-      if (!isCurrentGeneration(generation)) return false;
-      store.dispatch(actions.setQuranRoots(roots));
-      flagLoad('quran-roots', false);
-      return true;
-    } catch (err) {
-      if (!isCurrentGeneration(generation)) return false;
-      if (isMissingResourceError(err)) console.warn('[wordStudy] root index not bundled', err);
-      else if (isTimeoutError(err)) console.warn('[wordStudy] root index timed out', err);
-      else console.error('[wordStudy] failed to load root index', err);
-      rt.quranRootsFetchStarted = false;
-      rt.quranRootsCooldownUntil = Date.now() + 30_000;
-      flagLoad('quran-roots', true);
-      return false;
-    } finally {
-      if (quranRootsInFlight === request) quranRootsInFlight = null;
+      return roots;
+    },
+    {
+      success: (roots, { current }) => {
+        store.dispatch(actions.setQuranRoots(roots));
+        if (!current()) return false;
+        flagLoad('quran-roots', false);
+        return true;
+      },
+      failure: (err) => {
+        if (isMissingResourceError(err)) console.warn('[wordStudy] root index not bundled', err);
+        else if (isTimeoutError(err)) console.warn('[wordStudy] root index timed out', err);
+        else console.error('[wordStudy] failed to load root index', err);
+        rt.quranRootsFetchStarted = false;
+        rt.quranRootsCooldownUntil = Date.now() + 30_000;
+        flagLoad('quran-roots', true);
+        return false;
+      },
     }
-  })();
-  quranRootsInFlight = request;
-  return request;
+  );
 }
 
 // The root-family browser's uncapped index (~2.3 MB): fetched once the
@@ -674,92 +679,83 @@ export async function ensureQuranRoots(state) {
 // degraded capped index with no recovery path.
 export async function ensureQuranRootsFull(state) {
   if (state.quranRootsFull) return true;
-  if (quranRootsFullInFlight) return quranRootsFullInFlight;
-  if (Date.now() < rt.quranRootsFullCooldownUntil) return false;
-  const generation = lazyDataGeneration;
-  rt.quranRootsFullFetchStarted = true;
-  const request = (async () => {
-    try {
+  return quranRootsFullResource.run(
+    async () => {
       const roots = await fetchJSON(QURAN_ROOTS_FULL_URL);
-      if (!isCurrentGeneration(generation)) return false;
-      store.dispatch(actions.setQuranRootsFull(roots));
-      flagLoad('quran-roots-full', false);
-      return true;
-    } catch (err) {
-      if (!isCurrentGeneration(generation)) return false;
-      if (isMissingResourceError(err)) console.warn('[roots] full root index not bundled', err);
-      else if (isTimeoutError(err)) console.warn('[roots] full root index timed out', err);
-      else console.error('[roots] failed to load full root index', err);
-      rt.quranRootsFullFetchStarted = false;
-      rt.quranRootsFullCooldownUntil = Date.now() + 30_000;
-      flagLoad('quran-roots-full', true);
-      return false;
-    } finally {
-      if (quranRootsFullInFlight === request) quranRootsFullInFlight = null;
+      return roots;
+    },
+    {
+      success: (roots, { current }) => {
+        store.dispatch(actions.setQuranRootsFull(roots));
+        if (!current()) return false;
+        flagLoad('quran-roots-full', false);
+        return true;
+      },
+      failure: (err) => {
+        if (isMissingResourceError(err)) console.warn('[roots] full root index not bundled', err);
+        else if (isTimeoutError(err)) console.warn('[roots] full root index timed out', err);
+        else console.error('[roots] failed to load full root index', err);
+        rt.quranRootsFullFetchStarted = false;
+        rt.quranRootsFullCooldownUntil = Date.now() + 30_000;
+        flagLoad('quran-roots-full', true);
+        return false;
+      },
     }
-  })();
-  quranRootsFullInFlight = request;
-  return request;
+  );
 }
 
 export async function ensureTafsirEditions(state) {
   if (state.tafsirEditions) return true;
-  if (tafsirEditionsInFlight) return tafsirEditionsInFlight;
-  if (Date.now() < rt.tafsirEditionsCooldownUntil) return false;
-  const generation = lazyDataGeneration;
-  rt.tafsirEditionsFetchStarted = true;
-  const request = (async () => {
-    try {
+  return tafsirEditionsResource.run(
+    async () => {
       const editions = await fetchJSON(TAFSIR_EDITIONS_URL);
-      if (!isCurrentGeneration(generation)) return false;
-      store.dispatch(actions.setTafsirEditions(editions));
-      flagLoad('tafsir-editions', false);
-      return true;
-    } catch (err) {
-      if (!isCurrentGeneration(generation)) return false;
-      if (isMissingResourceError(err)) console.warn('[tafsir] editions catalog not bundled', err);
-      else if (isTimeoutError(err)) console.warn('[tafsir] editions catalog timed out', err);
-      else console.error('[tafsir] failed to load editions catalog', err);
-      rt.tafsirEditionsFetchStarted = false;
-      rt.tafsirEditionsCooldownUntil = Date.now() + 30_000;
-      flagLoad('tafsir-editions', true);
-      return false;
-    } finally {
-      if (tafsirEditionsInFlight === request) tafsirEditionsInFlight = null;
+      return editions;
+    },
+    {
+      success: (editions, { current }) => {
+        store.dispatch(actions.setTafsirEditions(editions));
+        if (!current()) return false;
+        flagLoad('tafsir-editions', false);
+        return true;
+      },
+      failure: (err) => {
+        if (isMissingResourceError(err)) console.warn('[tafsir] editions catalog not bundled', err);
+        else if (isTimeoutError(err)) console.warn('[tafsir] editions catalog timed out', err);
+        else console.error('[tafsir] failed to load editions catalog', err);
+        rt.tafsirEditionsFetchStarted = false;
+        rt.tafsirEditionsCooldownUntil = Date.now() + 30_000;
+        flagLoad('tafsir-editions', true);
+        return false;
+      },
     }
-  })();
-  tafsirEditionsInFlight = request;
-  return request;
+  );
 }
 
 export async function ensureTajweedPool(state) {
   if (state.tajweedPool) return true;
-  if (tajweedPoolInFlight) return tajweedPoolInFlight;
-  if (Date.now() < rt.tajweedPoolCooldownUntil) return false;
-  const generation = lazyDataGeneration;
-  rt.tajweedPoolFetchStarted = true;
-  const request = (async () => {
-    try {
+  return tajweedPoolResource.run(
+    async () => {
       const pool = await fetchJSON(TAJWEED_PRACTICE_POOL_URL);
-      if (!isCurrentGeneration(generation)) return false;
-      store.dispatch(actions.setTajweedPool(pool));
-      flagLoad('tajweed-pool', false);
-      return true;
-    } catch (err) {
-      if (!isCurrentGeneration(generation)) return false;
-      if (isMissingResourceError(err)) console.warn('[tajweed] practice pool not bundled', err);
-      else if (isTimeoutError(err)) console.warn('[tajweed] practice pool timed out', err);
-      else console.error('[tajweed] failed to load practice pool', err);
-      rt.tajweedPoolFetchStarted = false;
-      rt.tajweedPoolCooldownUntil = Date.now() + 30_000;
-      flagLoad('tajweed-pool', true);
-      return false;
-    } finally {
-      if (tajweedPoolInFlight === request) tajweedPoolInFlight = null;
+      return pool;
+    },
+    {
+      success: (pool, { current }) => {
+        store.dispatch(actions.setTajweedPool(pool));
+        if (!current()) return false;
+        flagLoad('tajweed-pool', false);
+        return true;
+      },
+      failure: (err) => {
+        if (isMissingResourceError(err)) console.warn('[tajweed] practice pool not bundled', err);
+        else if (isTimeoutError(err)) console.warn('[tajweed] practice pool timed out', err);
+        else console.error('[tajweed] failed to load practice pool', err);
+        rt.tajweedPoolFetchStarted = false;
+        rt.tajweedPoolCooldownUntil = Date.now() + 30_000;
+        flagLoad('tajweed-pool', true);
+        return false;
+      },
     }
-  })();
-  tajweedPoolInFlight = request;
-  return request;
+  );
 }
 
 /** Bundled editions fetch from the app's own data/ folder; on-demand

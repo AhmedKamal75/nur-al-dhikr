@@ -1,10 +1,11 @@
+import { quranBulkResource } from './bulkResources.js';
 /**
  * app/quranData.js — Qur'an surah document loading with translation
  * edition overlays (single-flight switching, per-edition caching).
  */
 
 import { rt } from './rt.js';
-import { fetchJSON } from './net.js';
+import { fetchJSON, isBulkAbortError } from './net.js';
 import { overlayTranslation, QURAN_SURAH_URL, TRANSLATION_URL } from '../core/config.js';
 import { actions, store } from '../core/state.js';
 import { translationBMap } from '../domain/translationCompare.js';
@@ -146,6 +147,7 @@ export async function loadSurahDoc(n, signal = null) {
       }
       // edition moved mid-fetch — loop and merge against the new one
     } catch (err) {
+      if (signal?.aborted || isBulkAbortError(err)) throw err;
       console.warn('[quran] translation file unavailable, keeping Sahih', edKey, id, err);
       return { ...doc, translationEdition: 'en-sahih' };
     }
@@ -214,7 +216,7 @@ export async function runEditionSwitch(edKey) {
   if (rt.editionSwitchTarget !== null && rt.editionSwitchTarget !== edKey) return;
   store.dispatch(actions.setQuranSurahsBulk(merged));
   setQuranIndexReady(false);
-  rt.quranSearchBuildStarted = false;
+  quranBulkResource.invalidate();
 }
 
 export async function applyTranslationEdition(edKey) {
