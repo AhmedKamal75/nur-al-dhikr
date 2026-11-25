@@ -4442,6 +4442,16 @@ html[dir='rtl'] .view--home .home-hero__greeting {
   }
 }
 
+/* Short landscape keeps the disclosure above transport without hiding its
+   first row off-screen. The remaining controls are reachable by scrolling. */
+@media (max-height: 500px) {
+  .player-bar__more .player-bar__secondary {
+    max-block-size: max(44px, calc(100dvh - 260px));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+
 /* Exact-origin study context: related study views keep one quiet route back
    to the ayah that started the session. It is navigation chrome, not another
    dashboard card. */
