@@ -1,3 +1,4 @@
+import { requestCounterReset, confirmCounterReset } from '../counterReset.js';
 import { toggleFocusWake } from '../focusWakeLock.js';
 /**
  * app/handlers — feature-scoped controller modules. Each exports a
@@ -11,7 +12,6 @@ import {
   navigateFocusAdjacent,
   exitFocus,
 } from '../focusRuntime.js';
-import { rt } from '../rt.js';
 import {
   ensureHadithBook,
   ensureHadithIndex,
@@ -202,6 +202,7 @@ export const clickHandlers = {
   },
 
   'counter-tap': (ds, e) => {
+    if (tasbih.counterResetReviewOpen()) return;
     const beforeState = store.getState();
     // Once a Focus item reaches its target, the stage remains visually
     // present for the brief transition into the next item. Do not let a
@@ -325,13 +326,8 @@ export const clickHandlers = {
   },
   'focus-wake-toggle': () => toggleFocusWake(),
 
-  'focus-reset': (ds) => {
-    // A pending auto-advance would otherwise yank the view right after the
-    // reset (the timer only checks view/params, which reset preserves).
-    clearTimeout(rt.pendingAutoAdvanceTimer);
-    rt.pendingAutoAdvanceTimer = null;
-    tasbih.reset(ds.itemId, parseInt(ds.target, 10) || 1);
-  },
+  'focus-reset': (ds) => requestCounterReset('focus', ds.itemId),
+  'counter-reset-confirm': (ds) => confirmCounterReset(ds.token),
 
   'open-card-menu': (ds) => {
     const entry = getItemEntry(ds.itemId);

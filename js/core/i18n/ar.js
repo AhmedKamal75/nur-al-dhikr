@@ -831,6 +831,11 @@ export const ar = {
   'focus.wake.released': 'أُوقف إبقاء الشاشة مضاءة؛ أوقف الخيار ثم فعّله للمحاولة',
   'focus.wake.denied': 'لم يسمح المتصفح بذلك؛ قد تنطفئ الشاشة',
   'focus.wake.unsupported': 'غير مدعوم هنا؛ قد تنطفئ الشاشة',
+  'counterReset.title': 'تصفير هذا العداد؟',
+  'counterReset.progress': 'العدد الحالي: {count} / {target}',
+  'counterReset.cycles': 'الدورات المكتملة التي ستُصفّر: {n}',
+  'counterReset.only': 'سيُصفّر هذا العداد فقط.',
+  'counterReset.confirm': 'تصفير العداد',
   'focus.size.title': 'حجم القراءة',
   'focus.size.shared':
     'هذا تفضيل مشترك لحجم النص العربي في الأذكار. يتغير الحجم في بقية شاشات الأذكار، ولا يتغير حجم المصحف.',

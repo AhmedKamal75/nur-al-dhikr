@@ -12,6 +12,7 @@ import { showToast } from '../../ui/toast.js';
 import { triggerRipple } from './items.js';
 import { PRESETS as TASBIH_PRESETS } from '../../views/tasbih.js';
 import * as floating from '../../services/floatingCounter.js';
+import { requestCounterReset } from '../counterReset.js';
 
 /**
  * The reader-facing name of a tasbih phrase, for the floating window's label.
@@ -29,6 +30,7 @@ function tasbihPhraseLabel(state, phraseId) {
 
 export const clickHandlers = {
   'tasbih-select': (ds) => {
+    if (tasbih.counterResetReviewOpen()) return;
     store.dispatch(actions.setTasbihActive(ds.phraseId));
   },
 
@@ -48,16 +50,7 @@ export const clickHandlers = {
     }
   },
 
-  'tasbih-reset': (ds) => {
-    const preset = TASBIH_PRESETS.find((p) => p.id === ds.phraseId);
-    const customs = store.getState().tasbihCustom;
-    const custom =
-      !preset && Array.isArray(customs) ? customs.find((c) => c && c.id === ds.phraseId) : null;
-    tasbih.reset(
-      'tasbih:' + ds.phraseId,
-      parseInt(ds.target, 10) || preset?.target || custom?.target || 33
-    );
-  },
+  'tasbih-reset': (ds) => requestCounterReset('tasbih', ds.phraseId),
 
   'tasbih-target-step': (ds) => {
     const key = 'tasbih:' + ds.phraseId;

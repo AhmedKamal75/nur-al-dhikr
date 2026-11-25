@@ -1,3 +1,8 @@
+## v5.17.167 - Confirm nonempty counter resets
+
+- Tasbih page/menu and adhkar Focus ask before resetting a nonempty counter, naming the phrase and showing count, target and completed cycles. Cancel is the default; truly empty counters do nothing. Only the existing counter reset is described, not history deletion.
+- Review blocks counting and target changes, cancels pending Focus auto-advance, rechecks the exact live item before confirmation and rejects stale or duplicate confirms. Escaped long phrases, RTL count order, keyboard/modal cancellation and focus return are covered.
+
 ## v5.17.166 - Adjust Arabic reading size from Focus
 
 - Adhkar Focus has a Reading size sheet using the existing shared Arabic-size preference, with 5% steps from 85% to 160%, current size, labeled controls and disabled bounds. The shared effect is explained in English and Arabic; Mushaf sizing is untouched.
