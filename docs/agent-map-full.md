@@ -4,7 +4,7 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 This is the exhaustive dump. For the one-page version — chrome spine, where-to-change table, counted inventory — read `docs/AGENT-MAP.md` instead. This file is ~530 KB by design; it is meant to be searched for one named thing, not read end to end.
 
-- js modules: 257 — data files: 29 — tests: 307
+- js modules: 258 — data files: 29 — tests: 308
 
 Conventions: `js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;
 `js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;
@@ -2168,6 +2168,16 @@ job: The one card template used everywhere an item appears: library lists, searc
 - i18n: `card.completedTimes`, `card.details`, `card.more`, `card.narratedBy`, `card.openFocus`, `card.virtue`, `content.fieldCategory`, `content.fieldGrade`, `content.fieldNotes`, `content.fieldReference`, `content.fieldReferenceNotes`, `content.fieldRepetitions`, `content.fieldReview`, `content.fieldTitle`, `content.fieldTranslation`, `content.fieldTranslit`, `content.reviewPending`, `hifz.again`, `hifz.easy`, `hifz.good` (+5 more)
 - routes: `view:category`
 
+### `js/ui/editorDiscardGuard.js`
+
+job: / Named, enabled values only. Reverting edits returns to the clean state.
+
+- exports: `editorFormSnapshot` (function), `installEditorDiscardGuard` (function)
+- emits: `modal-close`
+- handles: —
+- i18n: —
+- routes: —
+
 ### `js/ui/emptyState.js`
 
 job: Phase C (v3.14) — the shared empty-state builder. Every "nothing here yet" surface gets the same treatment: a soft icon medallion, a title that names what is empty, one short hint, and — where a next…
@@ -2205,7 +2215,7 @@ job: A single reusable modal/dialog host mounted once in index.html (#modal-root
 - exports: `openModal` (function), `closeModal` (function), `cycleTabFocus` (function), `isModalOpen` (function), `getModalGeneration` (function), `openLazyModal` (function)
 - emits: `modal-close`, `modal-close-overlay`
 - handles: —
-- i18n: `common.close`, `common.error`, `common.retry`
+- i18n: `common.close`, `common.error`, `common.retry`, `editor.discardChanges`, `editor.keepEditing`, `editor.unsavedMessage`
 - routes: —
 
 ### `js/ui/readingTokens.js`
@@ -2965,7 +2975,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `library-jump`: emitted by `js/views/library.js`; handled in `js/app/handlers/content.js`
 - `location-profile-apply`: emitted by `js/views/prayer.js`; handled in `js/app/handlers/worship.js`
 - `location-profile-save`: emitted by `js/views/prayer.js`; handled in `js/app/handlers/worship.js`
-- `modal-close`: emitted by `js/app/counterReset.js`, `js/app/events.js`, `js/app/forms.js`, `js/app/handlers/items.js`, `js/app/handlers/quranAudio.js`, `js/ui/calendarModals.js`, `js/ui/menus.js`, `js/ui/modal.js`, `js/views/editor.js`, `js/views/focus.js`, `js/views/home.js`, `js/views/mood.js`, `js/views/mushafBookmarks.js`, `js/views/tafsirPanel.js`; handled in `js/app/handlers/editor.js`
+- `modal-close`: emitted by `js/app/counterReset.js`, `js/app/events.js`, `js/app/forms.js`, `js/app/handlers/items.js`, `js/app/handlers/quranAudio.js`, `js/ui/calendarModals.js`, `js/ui/editorDiscardGuard.js`, `js/ui/menus.js`, `js/ui/modal.js`, `js/views/editor.js`, `js/views/focus.js`, `js/views/home.js`, `js/views/mood.js`, `js/views/mushafBookmarks.js`, `js/views/tafsirPanel.js`; handled in `js/app/handlers/editor.js`
 - `modal-close-overlay`: emitted by `js/ui/modal.js`; handled in `js/app/events.js`
 - `mood-select-all`: emitted by `js/views/mood.js`; handled in `js/app/handlers/items.js`
 - `mood-select-cancel`: emitted by `js/views/mood.js`; handled in `js/app/handlers/items.js`
@@ -3817,6 +3827,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `duration`: `js/services/player.js`
 - `echoPauseOptions`: `js/app/handlers/quranAudio.js`
 - `editionBodyHTML`: `js/views/tafsirPanel.js`
+- `editorFormSnapshot`: `js/ui/editorDiscardGuard.js`
 - `effectiveAdhanVolume`: `js/services/prayerSound.js`
 - `effectiveRuleColor`: `js/domain/tajweed.js`
 - `elapsedSeconds`: `js/app/readingTimer.js`
@@ -3981,6 +3992,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `initialTimerState`: `js/domain/sleepTimer.js`
 - `inputHandlers`: `js/app/handlers/audio.js`, `js/app/handlers/navigation.js`, `js/app/handlers/quran.js`, `js/app/handlers/quranAudio.js`, `js/app/handlers/system.js`, `js/app/handlers/worship.js`, `js/app/handlers/zakat.js`
 - `inputRegistry`: `js/app/events.js`
+- `installEditorDiscardGuard`: `js/ui/editorDiscardGuard.js`
 - `installMediaHandlers`: `js/services/mediaSession.js`
 - `installRowHTML`: `js/views/installRow.js`
 - `installStepsKey`: `js/domain/install.js`
@@ -5205,6 +5217,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `classifyconventionayah`: `js/domain/tajweed.js`
 - `classifymemosizefortests`: `js/domain/tajweed.js`
 - `classifywordtajweed`: `js/domain/tajweed.js`
+- `clean`: `js/ui/editorDiscardGuard.js`
 - `cleanobject`: `js/core/utils.js`
 - `cleansadaqahamount`: `js/domain/worship.js`
 - `cleansnapshotbytes`: `js/views/backupSummary.js`
@@ -5578,7 +5591,8 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `editionbodyhtml`: `js/views/tafsirPanel.js`
 - `editions`: `js/core/config/quran.js`
 - `editor`: `js/ui/modal.js`, `js/views/editor.js`, `js/views/khatma.js`
-- `edits`: `js/domain/contentLens.js`
+- `editorformsnapshot`: `js/ui/editorDiscardGuard.js`
+- `edits`: `js/domain/contentLens.js`, `js/ui/editorDiscardGuard.js`
 - `effect`: `js/app/fullscreen.js`
 - `effectiveadhanvolume`: `js/services/prayerSound.js`
 - `effectiverulecolor`: `js/domain/tajweed.js`
@@ -5595,6 +5609,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `emptystate`: `js/ui/missingData.js`
 - `emptystatehtml`: `js/ui/emptyState.js`
 - `emulates`: `js/domain/gestures.js`
+- `enabled`: `js/ui/editorDiscardGuard.js`
 - `enforceaudiocachecap`: `js/services/audioStore.js`
 - `engine`: `js/app/autoFit.js`, `js/core/icons.js`, `js/domain/audioQueue.js`, `js/domain/offline.js`, `js/domain/prayerExport.js`, `js/domain/prayerTimeline.js`, `js/domain/sleepTimer.js`, `js/services/hadith.js`, `js/views/playerBar.js`, `js/views/ramadan.js`
 - `english`: `js/core/i18n/en.js`
@@ -5998,6 +6013,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `inside`: `js/app/rt.js`
 - `install`: `js/app/installPrompt.js`, `js/domain/install.js`, `js/views/installRow.js`
 - `installable`: `js/services/appBadge.js`
+- `installeditordiscardguard`: `js/ui/editorDiscardGuard.js`
 - `installmediahandlers`: `js/services/mediaSession.js`
 - `installrow`: `js/views/backupSummary.js`
 - `installrowhtml`: `js/views/installRow.js`
@@ -6392,7 +6408,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `mutation`: `js/views/tajweedCourseView.js`
 - `mute`: `js/domain/playerShortcuts.js`
 - `name`: `js/core/config/app.js`, `js/core/icons.js`, `js/domain/kids.js`, `js/domain/wmm-coefs.js`, `js/views/calendar.js`, `js/views/palette.js`
-- `named`: `js/domain/fasting.js`, `js/services/prayerSound.js`
+- `named`: `js/domain/fasting.js`, `js/services/prayerSound.js`, `js/ui/editorDiscardGuard.js`
 - `names`: `js/app/quizDeck.js`, `js/ui/emptyState.js`, `js/views/collections.js`, `js/views/home.js`, `js/views/quiz.js`, `js/views/search.js`, `js/views/statistics.js`, `js/views/tasbih.js`
 - `narrator`: `js/domain/hadithStudy.js`
 - `narratorfor`: `js/domain/localeContent.js`
@@ -7025,12 +7041,13 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `retry`: `js/app/hadithData.js`
 - `retrylibraryload`: `js/app/net.js`
 - `return`: `js/views/studyContext.js`
-- `returns`: `js/core/state/slices/hadith.js`, `js/core/storage.js`, `js/domain/prayer.js`
+- `returns`: `js/core/state/slices/hadith.js`, `js/core/storage.js`, `js/domain/prayer.js`, `js/ui/editorDiscardGuard.js`
 - `reusable`: `js/ui/modal.js`
 - `reuse`: `js/domain/tickets.js`
 - `reused`: `js/views/installRow.js`
 - `reuses`: `js/domain/prayerLog.js`, `js/views/qibla.js`
 - `reusin`: `js/domain/hadithSearch.js`
+- `reverting`: `js/ui/editorDiscardGuard.js`
 - `review`: `js/app/counterReset.js`, `js/domain/hifz.js`, `js/domain/quiz.js`, `js/domain/review.js`
 - `reviewdigestcardhtml`: `js/views/home.js`
 - `reviewisempty`: `js/domain/review.js`
@@ -7621,7 +7638,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `validation`: `js/core/schema.js`
 - `validdaykey`: `js/core/state/streak.js`
 - `value`: `js/core/storage.js`, `js/domain/prayerLog.js`
-- `values`: `js/domain/grades.js`
+- `values`: `js/domain/grades.js`, `js/ui/editorDiscardGuard.js`
 - `variables`: `js/core/theme.js`
 - `variants`: `js/services/moshafAvailability.js`
 - `vars`: `js/domain/tajweed.js`
@@ -7813,6 +7830,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/deslopify-regressions.test.js` — (no header comment) (pins: —)
 - `tests/dhikr-audio.test.js` — per-dhikr recitation INFRA ONLY (v5.17.30, OPEN-ISSUES #15 + #37). Zero real clips ship and none are fetched here: every case uses fixture (pins: `../js/app/events.js`, `../js/core/config.js`, `../js/core/schema.js`, `../js/services/dhikrAudio.js`, `../js/ui/card.js`, `../js/views/focus.js`)
 - `tests/docs-honesty.test.js` — F-003: docs must never hardcode a passing claim the tree cannot prove. Counts live in ARCHITECTURE/README tables, regenerated from actual runs per the release protocol; the badge and (pins: —)
+- `tests/editor-discard.test.js` — (no header comment) (pins: `../js/ui/editorDiscardGuard.js`, `../js/views/editor.js`)
 - `tests/editorReference.test.js` — audit rank 7 (v5.2.71) gates: 1. the item form carries book/chapter/reference-notes/Arabic-source inputs prefilled from the item (both languages render labels); (pins: `../js/core/config/sanitize.js`, `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/domain/localeContent.js`, `../js/views/editor.js`)
 - `tests/error-screen-a11y-v130.test.js` — (no header comment) (pins: —)
 - `tests/event-registries.test.js` — Blueprint D gates: the change/input arms moved out of events.js into feature-owned { sel, run } registries. Pins completeness (no arm lost in the move), selector uniqueness (pins: `../js/app/events.js`, `../js/core/state.js`)
