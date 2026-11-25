@@ -4420,10 +4420,22 @@ html[dir='rtl'] .view--home .home-hero__greeting {
   min-inline-size: 110px;
 }
 @media (max-width: 700px) {
+  /* Anchor the narrow disclosure to the full head, not its summary. The
+     summary sits between transport and dismiss buttons, so its end edge
+     cannot safely contain a 300px panel in either writing direction. */
+  .player-bar:not(.player-bar--recite) .player-bar__head {
+    position: relative;
+  }
+  .player-bar__more {
+    position: static;
+  }
   .player-bar__more .player-bar__secondary {
-    inset-inline-end: -4px;
+    inset-inline-end: 0;
+    inline-size: min(300px, 100%);
+    max-inline-size: 100%;
+    min-inline-size: 0;
+    overflow: visible;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    min-inline-size: min(300px, calc(100vw - 20px));
   }
   .player-bar__more .player-bar__chip {
     justify-content: center;

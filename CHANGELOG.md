@@ -1,3 +1,8 @@
+# v5.17.169 - Keep file-player settings inside narrow screens
+
+- Anchor the More settings panel to the full player header at narrow widths in both writing directions. Remove the inherited 42vw strip cap so every control fits within the panel. No playback behavior changed.
+- Browser regression covers 320, 360, 390, 700, 701 and 1280px in English and Arabic, including every control and volume slider.
+
 # v5.17.168 - Share one sleep-timer controller
 
 - File and verse playback share one sleep-timer controller, deadline, owner and interval. Countdown labels update each second; expiry pauses once and keeps position.
