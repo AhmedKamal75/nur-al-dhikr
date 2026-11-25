@@ -4,8 +4,8 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 Read this file first. It is deliberately short: the spine, the lookup tables and the counted inventories. For one specific module’s exports, one `data-action`’s handler, or one keyword’s owners, read the exhaustive dump next.
 
-- js modules: 257 — data files: 29 — tests: 307
-- exhaustive dump: `docs/agent-map-full.md` (593 entries)
+- js modules: 258 — data files: 29 — tests: 308
+- exhaustive dump: `docs/agent-map-full.md` (595 entries)
 
 ## 1. The spine: chrome section → routes → view module
 
@@ -76,15 +76,15 @@ Routes in VIEWS claimed by no section: `SEARCH`, `ZAKAT`, `SETTINGS`, `ABOUT`, `
 | `data/`           | offline-first corpora consumed by domain/app layers.                         | 29      | [open](agent-map-full.md#data)         |
 | `js/domain`       | pure logic: no DOM, no store; core-only imports (compass sensor excepted).   | 76      | [open](agent-map-full.md#domain)       |
 | `js/services`     | side-effect owners: audio, notifications, persistence helpers.               | 30      | [open](agent-map-full.md#services)     |
-| `js/ui`           | dumb chrome primitives: toasts, modals, cards, shells.                       | 12      | [open](agent-map-full.md#ui)           |
+| `js/ui`           | dumb chrome primitives: toasts, modals, cards, shells.                       | 13      | [open](agent-map-full.md#ui)           |
 | `js/views`        | pure state→HTML templates + their pure helpers.                              | 53      | [open](agent-map-full.md#views)        |
 
 ## 5. Lookup tables (counts; open the dump for the rows)
 
 - `data-action` values emitted anywhere: **379** — every one resolves to a handler (see the Allowlist section of the dump).
-- files that handle at least one click/change/form action: **19** of 257.
-- exported symbols: **1622**.
-- i18n keys touched by js/: **1570** of the two dictionaries.
+- files that handle at least one click/change/form action: **19** of 258.
+- exported symbols: **1624**.
+- i18n keys touched by js/: **1573** of the two dictionaries.
 
 ## 6. When you need the exhaustive dump
 

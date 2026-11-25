@@ -6,6 +6,7 @@
  * overlay/focus-trap logic.
  */
 
+import { installEditorDiscardGuard } from './editorDiscardGuard.js';
 import { t } from '../core/i18n.js';
 import { store } from '../core/state.js';
 import { icon } from '../core/icons.js';
@@ -18,6 +19,7 @@ let trapHandler = null;
 let closeTimer = null;
 let generation = 0;
 let disposeContent = null;
+let disposeEditorGuard = null;
 const CLOSE_MS = 120;
 
 const FOCUSABLE_SELECTOR =
@@ -40,6 +42,8 @@ export function openModal(
   innerHTML,
   { labelledBy = null, focusSelector = null, returnSelector = null, onDispose = null } = {}
 ) {
+  disposeEditorGuard?.();
+  disposeEditorGuard = null;
   disposeContent?.();
   disposeContent = onDispose;
   returnFocusSelector = returnSelector;
@@ -109,12 +113,24 @@ export function openModal(
   const preferredTarget = explicitTarget || body?.querySelector(FOCUSABLE_SELECTOR);
   (preferredTarget || panel)?.focus({ preventScroll: true });
 
+  const lang = store.getState().settings.language;
+  disposeEditorGuard = installEditorDiscardGuard(root, {
+    close: closeModal,
+    text: {
+      message: t('editor.unsavedMessage', lang),
+      keep: t('editor.keepEditing', lang),
+      discard: t('editor.discardChanges', lang),
+    },
+  });
+
   document.addEventListener('keydown', onModalKeydown);
   trapHandler = (e) => trapFocus(e, panel);
   document.addEventListener('keydown', trapHandler, true);
 }
 
 export function closeModal() {
+  disposeEditorGuard?.();
+  disposeEditorGuard = null;
   disposeContent?.();
   disposeContent = null;
   generation += 1;

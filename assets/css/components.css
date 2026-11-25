@@ -3357,3 +3357,15 @@ a.view-sheet__row {
   font-size: var(--fs-caption);
   color: var(--color-text-muted);
 }
+
+/* The form DOM stays mounted while its scoped discard choice is shown. */
+.editor-discard {
+  padding-block: var(--space-3);
+  overflow-wrap: anywhere;
+}
+.editor-discard h2 {
+  margin-block-end: var(--space-4);
+}
+.editor-discard .editor-form__actions {
+  flex-wrap: wrap;
+}

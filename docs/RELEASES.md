@@ -1,3 +1,8 @@
+## v5.17.176 - Keep unsaved custom-authoring edits before closing
+
+- Dirty custom item, category and library forms ask whether to keep editing or discard when closed with X, Cancel or Escape. Keep editing is focused by default, and the live form retains values, text selection, field focus and scroll. Reverted and untouched forms close immediately.
+- Successful Save still closes directly, validation failure stays editable, and bundled-content overrides and other modals are outside this opt-in. No automatic saving, persistent drafts, browser history interception or before-unload prompt.
+
 ## v5.17.174 - Keep prayer timetable context on screen and in print
 
 - Monthly prayer tables show the saved-coordinate context, resolved calculation and Asr labels, effective minute adjustments and an estimate/verify reminder. Unbound place names fall back to rounded coordinates. Valid saved zones are named without a misleading single DST offset.

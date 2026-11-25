@@ -90,7 +90,7 @@ export function buildItemForm(item, { libraryId, categoryId, lang = 'en', scope 
       `<option value="${g}" ${item.grade === g ? 'selected' : ''}>${escapeHTML(pickLocale(GRADE_LABELS[g], lang))}</option>`
   ).join('');
   return `
-  <form class="editor-form" data-form="item" data-scope="${escapeHTML(scope)}" data-library-id="${escapeHTML(libraryId)}" data-category-id="${escapeHTML(categoryId)}" data-item-id="${escapeHTML(item.id || '')}">
+  <form class="editor-form" data-form="item" data-scope="${escapeHTML(scope)}" ${scope === 'custom' ? 'data-editor-discard-guard' : ''} data-library-id="${escapeHTML(libraryId)}" data-category-id="${escapeHTML(categoryId)}" data-item-id="${escapeHTML(item.id || '')}">
     <h2 id="modal-title-item">${item.id ? t('editor.edit', lang) : t('editor.newItem', lang)}</h2>
     ${scope === 'builtin' ? `<p class="editor-form__note">${t('editor.builtinNote', lang)}</p>` : ''}
     ${hasPendingScholarlyReview(item) ? `<p class="content-review-warning" role="note">${icon('info', { size: 14 })} ${escapeHTML(t('content.reviewPending', lang))}</p>` : ''}
@@ -167,7 +167,7 @@ export function buildCategoryForm({
     (c) => `<option value="${c}" ${category?.color === c ? 'selected' : ''}>${c}</option>`
   ).join('');
   return `
-  <form class="editor-form" data-form="category" data-scope="${escapeHTML(scope)}" data-library-id="${escapeHTML(libraryId)}" data-category-id="${escapeHTML(categoryId)}">
+  <form class="editor-form" data-form="category" data-scope="${escapeHTML(scope)}" ${scope === 'custom' ? 'data-editor-discard-guard' : ''} data-library-id="${escapeHTML(libraryId)}" data-category-id="${escapeHTML(categoryId)}">
     <h2 id="modal-title-category">${editing ? t('editor.edit', lang) : t('editor.newCategory', lang)}</h2>
     ${scope === 'builtin' ? `<p class="editor-form__note">${t('editor.builtinNote', lang)}</p>` : ''}
     <label class="field">${t('editor.fieldTitleEn', lang)}<input class="input" name="nameEn" value="${escapeHTML(category?.name?.en || '')}" required /></label>
@@ -192,7 +192,7 @@ export function buildLibraryForm({
 } = {}) {
   const editing = !!library;
   return `
-  <form class="editor-form" data-form="library" data-scope="${escapeHTML(scope)}" data-library-id="${escapeHTML(libraryId)}">
+  <form class="editor-form" data-form="library" data-scope="${escapeHTML(scope)}" ${scope === 'custom' ? 'data-editor-discard-guard' : ''} data-library-id="${escapeHTML(libraryId)}">
     <h2 id="modal-title-library">${editing ? t('editor.edit', lang) : t('editor.newLibrary', lang)}</h2>
     ${scope === 'builtin' ? `<p class="editor-form__note">${t('editor.builtinNote', lang)}</p>` : ''}
     <label class="field">${t('editor.fieldTitleEn', lang)}<input class="input" name="nameEn" value="${escapeHTML(library?.name?.en || '')}" required /></label>
