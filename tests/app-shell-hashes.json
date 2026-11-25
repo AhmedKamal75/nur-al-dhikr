@@ -1,10 +1,10 @@
 {
-  "version": "5.17.171",
+  "version": "5.17.172",
   "files": {
     "index.html": "fb7741ae58391b597cfb84d72726296749c6d9f99e2b386a327928c850830ad2",
     "offline.html": "d68f3af959b6c2ddcd3a2ac490207de02ee1daa1cfe2ee34519931a09889b266",
     "favicon.ico": "c22c052f94e0ff0c329258ef5e87d2a1ee347db8545c3004774839d0a7d296fd",
-    "manifest.json": "4b3a3aa16480d41fae8f818c345eef79d8aa5e846ca737ecd450be3e07045f7a",
+    "manifest.json": "3b0820e997360de2a4b9717f5d1109f9fb5807250bd1c07a9b6b77467f3c88af",
     "assets/css/variables.css": "ac5f0036072fff1806d5cb6a26c651e82f15eb142ce189d3922740ad60e70be0",
     "assets/css/base.css": "e7e5af46db23c2ed72fa5a9d7542dee9ca127b01ce828ddcc23dfc8063c58d5e",
     "assets/css/layout.css": "18aee200a2019ab12d4241f2b161a166c95f89c629a87d05f956d60476da074f",
@@ -70,7 +70,7 @@
     "js/app/tafsirSearch.js": "d115fc908ebf75937098e00b0d1601eb735d93c7f1314abe83f9a06d5df435a7",
     "js/app/tickers.js": "151d274647f824f58bd0b38f770e8fa974eeb89aa8180cfa4ee06318e0d19290",
     "js/app/triggers.js": "45ea466de28bf5f848746e0ba7f57303c03cd2fe5e3082575ebf44548f0fd509",
-    "js/core/config.js": "2c6ccb0dffce223c2e674aa905f33176eb09d4213c3f5bcfbea16419d87e6d07",
+    "js/core/config.js": "3108faed5a5abc74a841896306870b5d40e34c2bfee54e9f70da3d14b4d6fba1",
     "js/core/config/app.js": "b8237b2ea9a82475822d0644fc591d95786e7cd017e92b5f5b5c8ac143363a39",
     "js/core/config/nav.js": "d5cbb42594260f138fabfb537dbde622abb1b4cf37872f7fedf5d7b6e7e4eeda",
     "js/core/config/quran.js": "9c381a47577d36d9dad78d8180f4335a8e99dcef9b64eff851806a2cad4dfade",
@@ -290,6 +290,6 @@
     "assets/fonts/ScheherazadeNew-Bold.woff2": "6b6d12c4d0d9f2ec3ed790cc168ec10af7bd57862a0aaf6be112624b027ae0ef",
     "assets/fonts/ScheherazadeNew-OFL.txt": "5b9fd21ce2377fc542debebd9edfe1c48f2d3525e78a2a8abdba4a0ec3280163",
     "assets/fonts/OFL.txt": "18aabf190848725e2576eefb5c29ba06aac1029d02132252a7f312eac2e50cf3",
-    "sw.js": "71ff441821f4055c3c8d76cd82d407ff8f2005a973c4e2f82993011e230c9440"
+    "sw.js": "8aefc32df2a031a4866b6c2f7098399c7067334baac02786c0b76f3848706c47"
   }
 }

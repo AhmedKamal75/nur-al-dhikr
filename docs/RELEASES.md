@@ -1,3 +1,7 @@
+## v5.17.172 - Exercise same-document route readiness in smoke tests
+
+- Core-route smoke uses hash navigation and waits for the matching active route before checking rendered content, avoiding WebKit fetch aborts caused by full page navigation. All console-error and uncaught-exception assertions remain unchanged. No production behavior changes.
+
 ## v5.17.171 - Share lazy-resource request ownership
 
 - Eight singleton lazy tiers share request deduplication, generation/identity guards and configured cooldowns while retaining tier-specific validation, failure returns, logging and retry UI.
