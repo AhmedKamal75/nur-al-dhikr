@@ -1,3 +1,4 @@
+import { createTickets } from '../domain/tickets.js';
 /**
  * surahPlayback.js
  * Continuous surah recitation: play a surah verse-by-verse with automatic
@@ -24,6 +25,12 @@
 
 import { ayahAudioUrl, globalAyahNumber } from './mushaf.js';
 import { getVerseAudio } from './audioStore.js';
+
+let sourceFetcher = getVerseAudio;
+/** Test seam for deterministic source-resolution races. Null restores storage. */
+export function setVerseAudioFetcherForTests(fetcher) {
+  sourceFetcher = fetcher || getVerseAudio;
+}
 import {
   QURAN_RECITER_IDS,
   DEFAULT_RECITER,
@@ -287,7 +294,7 @@ let errorCb = null; // (surah, ayah) — verse audio failed
 // module and is cleared on stop/skip/mode-off so a stale fire can never
 // advance a dead or moved session (guarded by session token + key).
 let waitTimer = null;
-let waitToken = 0;
+const waitTickets = createTickets();
 export const ECHO_PAUSE_MIN_MS = 3000;
 export const ECHO_PAUSE_MAX_MS = 30000;
 export const ECHO_PAUSE_DEFAULT_MS = 8000;
@@ -447,7 +454,9 @@ function playCurrent(afterDispatch) {
   playCurrentSeq(afterDispatch);
 }
 
-let playSeq = 0;
+const playTickets = createTickets();
+let sourcePending = false;
+let sourceNeedsReplay = false;
 let currentObjectUrl = null;
 
 /** Revoke the previous play's object URL (never the CDN URL in flight). */
@@ -470,7 +479,9 @@ function dropObjectUrl() {
  * created one — instead of double-playing.
  */
 async function playCurrentSeq(afterDispatch) {
-  const seq = ++playSeq;
+  const ticket = playTickets.mint();
+  sourcePending = true;
+  sourceNeedsReplay = false;
   const reciter = currentReciterId();
   const g = globalAyahNumber(session.surahsMeta, session.surah, session.ayah);
   const mirrors = verseAudioCandidates(reciter, session.surah, session.ayah, g);
@@ -479,7 +490,7 @@ async function playCurrentSeq(afterDispatch) {
   let owned = null;
   if (g != null && reciter) {
     try {
-      const blob = await getVerseAudio(reciter, g);
+      const blob = await sourceFetcher(reciter, g);
       if (blob) {
         owned = URL.createObjectURL(blob);
         url = owned;
@@ -488,7 +499,7 @@ async function playCurrentSeq(afterDispatch) {
       /* storage failure reads as streaming */
     }
   }
-  if (!session || seq !== playSeq) {
+  if (!session || !playTickets.isCurrent(ticket)) {
     if (owned) {
       try {
         URL.revokeObjectURL(owned);
@@ -498,6 +509,7 @@ async function playCurrentSeq(afterDispatch) {
     }
     return;
   }
+  sourcePending = false;
   // A new ayah or a new voice always restarts from the primary mirror;
   // repeats/echoes of the same ayah+voice keep the working mirror.
   const playKey = ayahKey(session.surah, session.ayah);
@@ -549,7 +561,16 @@ async function playCurrentSeq(afterDispatch) {
  * so the session can never advance underneath a pause.
  */
 export function pause() {
-  if (!session || !session.active || session.paused) return snapshot();
+  if (!session || !session.active) return snapshot();
+  // A paused session can still acquire pending source work via skip/voice
+  // changes. A repeated pause must cancel that work even when no driver
+  // transition or notification is needed.
+  if (sourcePending) {
+    playTickets.mint();
+    sourcePending = false;
+    sourceNeedsReplay = true;
+  }
+  if (session.paused) return snapshot();
   clearEchoWait();
   session.paused = true;
   driverPause();
@@ -563,9 +584,13 @@ export function pause() {
 export function resume() {
   if (!session || !session.active || !session.paused) return snapshot();
   session.paused = false;
-  if (driverHasEnded()) playCurrent();
-  else driverResume();
-  notify(session.surah, session.ayah);
+  if (sourceNeedsReplay) {
+    playCurrent(() => notify(session.surah, session.ayah));
+  } else {
+    if (driverHasEnded()) playCurrent();
+    else driverResume();
+    notify(session.surah, session.ayah);
+  }
   return snapshot();
 }
 
@@ -975,7 +1000,7 @@ export function setListenRepeat(on, pauseMs = ECHO_PAUSE_DEFAULT_MS) {
 function clearEchoWait() {
   if (waitTimer) clearTimeout(waitTimer);
   waitTimer = null;
-  waitToken += 1;
+  waitTickets.mint();
   if (session) session.waiting = false;
 }
 
@@ -1171,6 +1196,9 @@ export function setCompare(on) {
 
 /** Stop the session (user tap, other audio starting, engine failure). */
 export function stop() {
+  playTickets.mint();
+  sourcePending = false;
+  sourceNeedsReplay = false;
   // (v5.12.0) an armed timer must not fade the NEXT session early — the
   // file engine already clears on stop (player.js), the verse engine did
   // not. Clear before the no-session early return so a stray arm can never
@@ -1289,13 +1317,13 @@ function onVerseEnded(finishedKey) {
   // the ayah. The token + key guard means only the pause scheduled by THIS
   // ayah's end can advance it — a stop/skip/mode-off in between wins.
   if (session.listenRepeat === true && nextAyah(session.ayah, session.end) != null) {
-    const token = waitToken;
+    const token = waitTickets.current();
     const key = ayahKey(session.surah, session.ayah);
     session.waiting = true;
     notify(session.surah, session.ayah);
     waitTimer = setTimeout(() => {
       waitTimer = null;
-      if (!session || !session.active || token !== waitToken) return;
+      if (!session || !session.active || !waitTickets.isCurrent(token)) return;
       if (ayahKey(session.surah, session.ayah) !== key) return;
       session.waiting = false;
       advanceAyah();

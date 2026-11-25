@@ -1,3 +1,4 @@
+import { createTickets } from '../domain/tickets.js';
 /**
  * recitation.js
  * Shared verse-audio playback for streaming verse-by-verse Qur'an
@@ -44,7 +45,7 @@ let mutedFlag = false;
 // (Why not unbounded: every pooled fetch competes for the browser's ~6
 // per-host connections; a stampede would throttle the AUDIBLE file.)
 const MAX_SPARES = 10;
-let currentAttempt = null; // { urls, idx, seq } — the in-flight URL walk
+let currentAttempt = null; // { urls, idx, ticket } — the in-flight URL walk
 let currentKey = null; // e.g. "2:255" — lets a card ask "is *this* ayah playing?"
 const preloadSampleListeners = new Set();
 // Whether the latest play() promoted a pooled spare (gap controller
@@ -54,9 +55,9 @@ let customDriver = false;
 // (v5.2.75, BUG-08) supersede guard: tapping play on ayah B while ayah
 // A's play() is still pending aborts A's load, whose .catch must NOT emit
 // A's error toast nor clear B's key. Every play/resume/stop mints a
-// sequence number; a rejection only lands when it is still the latest
-// (mirrors the continuous engine's playSeq).
-let playSeq = 0;
+// opaque ticket; a rejection only lands when it is still the latest
+// (independent of continuous source and echo-wait ownership).
+const playTickets = createTickets();
 // (B3) listener SETS, not single slots: two owners (the toast wiring and
 // the continuous engine) used to share one slot, so starting a verse
 // session silently clobbered single-ayah failure toasts forever after.
@@ -237,7 +238,7 @@ function onElementError(el) {
  *  silent, so one dead CDN file never toasts while its mirror plays. */
 function walkOrFail(failedKey) {
   const attempt = currentAttempt;
-  if (!attempt || attempt.seq !== playSeq) return; // superseded/stopped
+  if (!attempt || !playTickets.isCurrent(attempt.ticket)) return; // superseded/stopped
   attempt.idx += 1;
   if (attempt.idx < attempt.urls.length) {
     playAttempt(attempt, failedKey);
@@ -321,7 +322,7 @@ function emitError(key) {
 
 /** One attempt step: swap onto a pooled match, else cold-play. */
 function playAttempt(attempt, key) {
-  if (attempt.seq !== playSeq) return;
+  if (!playTickets.isCurrent(attempt.ticket)) return;
   const url = attempt.urls[attempt.idx];
   // Pool-hit: a spare already buffers exactly this file and is healthy —
   // promote it instead of re-fetching + re-decoding on the front element.
@@ -335,7 +336,7 @@ function playAttempt(attempt, key) {
   el.src = url;
   lastSwapped = false;
   el.play().catch(() => {
-    if (attempt.seq !== playSeq) return; // superseded — the newer play owns the element
+    if (!playTickets.isCurrent(attempt.ticket)) return; // superseded — the newer play owns the element
     walkOrFail(key);
   });
 }
@@ -380,7 +381,7 @@ function promoteSpare(url, spare, key, attempt) {
   lastSwapped = true;
   setKey(key);
   spare.play().catch(() => {
-    if (attempt.seq !== playSeq) return;
+    if (!playTickets.isCurrent(attempt.ticket)) return;
     walkOrFail(key);
   });
 }
@@ -447,21 +448,21 @@ export function preload(url) {
  */
 export function play(url, key) {
   const urls = (Array.isArray(url) ? url : [url]).filter((u) => typeof u === 'string' && u);
-  const seq = ++playSeq;
+  const ticket = playTickets.mint();
   if (!urls.length) {
     currentAttempt = null;
     emitError(key);
     setKey(null);
     return;
   }
-  const attempt = { urls, idx: 0, seq };
+  const attempt = { urls, idx: 0, ticket };
   currentAttempt = attempt;
   setKey(key);
   playAttempt(attempt, key);
 }
 
 export function stop() {
-  ++playSeq; // pending play()/resume() rejections die silently below
+  playTickets.mint(); // pending play()/resume() rejections die silently below
   currentAttempt = null;
   lastSwapped = false;
   if (frontEl) {
@@ -508,11 +509,11 @@ export function pause() {
 export function resume() {
   if (!frontEl || !frontEl.paused || !frontEl.currentSrc) return;
   const key = currentKey;
-  const seq = ++playSeq;
-  const attempt = { urls: [frontEl.currentSrc], idx: 0, seq };
+  const ticket = playTickets.mint();
+  const attempt = { urls: [frontEl.currentSrc], idx: 0, ticket };
   currentAttempt = attempt;
   frontEl.play().catch(() => {
-    if (attempt.seq !== playSeq) return; // superseded — the newer play owns the element
+    if (!playTickets.isCurrent(attempt.ticket)) return; // superseded — the newer play owns the element
     walkOrFail(key);
   });
 }
@@ -648,7 +649,7 @@ export function resetRecitationForTests() {
   customDriver = false;
   lastSwapped = false;
   mutedFlag = false;
-  playSeq = 0;
+  playTickets.mint();
   currentAttempt = null;
   currentKey = null;
   if (frontEl) frontEl.__key = null;
