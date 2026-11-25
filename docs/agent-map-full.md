@@ -4,7 +4,7 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 This is the exhaustive dump. For the one-page version — chrome spine, where-to-change table, counted inventory — read `docs/AGENT-MAP.md` instead. This file is ~530 KB by design; it is meant to be searched for one named thing, not read end to end.
 
-- js modules: 253 — data files: 29 — tests: 302
+- js modules: 254 — data files: 29 — tests: 302
 
 Conventions: `js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;
 `js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;
@@ -2064,6 +2064,16 @@ job: Renders a dua / adhkar as a beautiful shareable image on a <canvas> — the
 - i18n: `content.reviewPending`
 - routes: —
 
+### `js/services/sleepTimerController.js`
+
+job: / One wall-clock sleep deadline and interval shared by all audio adapters.
+
+- exports: `registerSleepAdapter` (function), `sleepSnapshotFor` (function), `sleepVolumeFor` (function), `clearSleepFor` (function), `armSleepFor` (function), `clearDisplacedSleep` (function), `tickSleepForTests` (function), `expireSleepForTests` (function)
+- emits: —
+- handles: —
+- i18n: —
+- routes: —
+
 ### `js/services/soundDesign.js`
 
 job: Phase C (v3.14) — the optional, off-by-default soft sounds that pair with physical actions in the app (the Tier-2 "subtle sound design" item): • a page-turn for the Mushaf flip — a short filtered noi…
@@ -2088,7 +2098,7 @@ job: Thin wrapper around window.speechSynthesis for an optional "listen" action 
 
 job: Continuous surah recitation: play a surah verse-by-verse with automatic advance — the "listen to the whole surah and follow along" mode. Closes the last Critical TODO item; works in BOTH reading mode…
 
-- exports: `SLEEP_TIMER_CHOICES` (re-export), `nextAyah` (function), `ayahKey` (function), `verseAudioCandidates` (function), `verseDownloadCandidates` (function), `resolveQueueItem` (function), `queueSignature` (function), `normalizeQueue` (function), `REPEAT_CYCLE` (const), `normalizeRepeat` (function), `nextRepeat` (function), `LOOP_CYCLE` (const), `normalizeLoop` (function), `nextLoop` (function), `VERSE_RATES` (const), `normalizeSpeed` (function), `nextSpeed` (function), `consumeLastFinish` (function), `ECHO_PAUSE_MIN_MS` (const), `ECHO_PAUSE_MAX_MS` (const), `ECHO_PAUSE_DEFAULT_MS` (const), `ECHO_PAUSE_CHOICES` (const), `MAX_LOOKAHEAD` (const), `MIN_LOOKAHEAD` (const), `SEED_LOOKAHEAD` (const), `ewmaUpdate` (function), `lookaheadFor` (function), `smoothK` (function), `notePreloadSample` (function), `resetPlaybackNetStatsForTests` (function), `normalizeEchoPause` (function), `armSleepTimer` (function), `clearSleepTimer` (function), `_expireSleepForTests` (function), `sleepSnapshot` (function), `currentReciterId` (function), `pause` (function), `resume` (function), `peekNextUrl` (function), `peekNextTriples` (function), `computeWarmTriples` (function), `isActive` (function), `snapshot` (function), `start` (function), `setContinuous` (function), `setListenRepeat` (function), `setLoop` (function), `setSpeed` (function), `setBaseVolume` (function), `setReciter` (function), `setReciterB` (function), `setCompare` (function), `stop` (function), `setFollow` (function), `follow` (function), `setRepeat` (function), `skip` (function), `onAyahChange` (function), `onError` (function)
+- exports: `SLEEP_TIMER_CHOICES` (re-export), `nextAyah` (function), `ayahKey` (function), `verseAudioCandidates` (function), `verseDownloadCandidates` (function), `resolveQueueItem` (function), `queueSignature` (function), `normalizeQueue` (function), `REPEAT_CYCLE` (const), `normalizeRepeat` (function), `nextRepeat` (function), `LOOP_CYCLE` (const), `normalizeLoop` (function), `nextLoop` (function), `VERSE_RATES` (const), `normalizeSpeed` (function), `nextSpeed` (function), `consumeLastFinish` (function), `ECHO_PAUSE_MIN_MS` (const), `ECHO_PAUSE_MAX_MS` (const), `ECHO_PAUSE_DEFAULT_MS` (const), `ECHO_PAUSE_CHOICES` (const), `MAX_LOOKAHEAD` (const), `MIN_LOOKAHEAD` (const), `SEED_LOOKAHEAD` (const), `ewmaUpdate` (function), `lookaheadFor` (function), `smoothK` (function), `notePreloadSample` (function), `resetPlaybackNetStatsForTests` (function), `normalizeEchoPause` (function), `armSleepTimer` (function), `clearSleepTimer` (function), `sleepSnapshot` (function), `onSleepTick` (function), `_expireSleepForTests` (function), `currentReciterId` (function), `pause` (function), `resume` (function), `peekNextUrl` (function), `peekNextTriples` (function), `computeWarmTriples` (function), `isActive` (function), `snapshot` (function), `start` (function), `setContinuous` (function), `setListenRepeat` (function), `setLoop` (function), `setSpeed` (function), `setBaseVolume` (function), `setReciter` (function), `setReciterB` (function), `setCompare` (function), `stop` (function), `setFollow` (function), `follow` (function), `setRepeat` (function), `skip` (function), `onAyahChange` (function), `onError` (function)
 - emits: —
 - handles: —
 - i18n: —
@@ -3468,6 +3478,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `armFsControlsAfterEnter`: `js/app/fullscreen.js`
 - `armPaletteShortcut`: `js/app/palette.js`
 - `armPrayerTriggers`: `js/app/triggers.js`
+- `armSleepFor`: `js/services/sleepTimerController.js`
 - `armSleepTimer`: `js/services/player.js`, `js/services/surahPlayback.js`
 - `armTimer`: `js/domain/sleepTimer.js`
 - `asTranslationEdition`: `js/core/config/quran.js`
@@ -3609,6 +3620,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `clearCelebrations`: `js/domain/celebrate.js`
 - `clearClassifyMemo`: `js/domain/tajweed.js`
 - `clearDismissed`: `js/domain/completedCards.js`
+- `clearDisplacedSleep`: `js/services/sleepTimerController.js`
 - `clearLazyInFlightFetches`: `js/app/lazyData.js`
 - `clearMetadata`: `js/services/mediaSession.js`
 - `clearMoshafAvailability`: `js/services/moshafAvailability.js`
@@ -3616,6 +3628,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `clearQuizMiss`: `js/domain/quiz.js`
 - `clearQuranDataFetches`: `js/app/quranData.js`
 - `clearScrollMemory`: `js/app/renderer.js`
+- `clearSleepFor`: `js/services/sleepTimerController.js`
 - `clearSleepTimer`: `js/services/player.js`, `js/services/surahPlayback.js`
 - `clearStudyData`: `js/app/offlineJobs.js`
 - `clearTextCache`: `js/app/offlineJobs.js`
@@ -3809,6 +3822,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `exitFocus`: `js/app/focusRuntime.js`
 - `expandQueryWithRoots`: `js/domain/rootAwareSearch.js`
 - `expandWindow`: `js/domain/readerWindow.js`
+- `expireSleepForTests`: `js/services/sleepTimerController.js`
 - `fail`: `js/core/utils.js`
 - `failedLibraryIds`: `js/app/net.js`
 - `fastPhase`: `js/domain/ramadan.js`
@@ -4182,7 +4196,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `onPlayerPatch`: `js/services/player.js`
 - `onPlayingStateChange`: `js/services/player.js`
 - `onPreloadSample`: `js/services/recitation.js`
-- `onSleepTick`: `js/services/player.js`
+- `onSleepTick`: `js/services/player.js`, `js/services/surahPlayback.js`
 - `onStateChange`: `js/app/stateSub.js`
 - `onTrackEnded`: `js/services/player.js`
 - `onboardingComplete`: `js/domain/onboarding.js`
@@ -4331,6 +4345,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `refreshLibraryIndex`: `js/app/net.js`
 - `refreshMushafFit`: `js/app/autoFit.js`
 - `registerServiceWorker`: `js/app/triggers.js`
+- `registerSleepAdapter`: `js/services/sleepTimerController.js`
 - `releaseMushafNativeFullscreen`: `js/app/fullscreen.js`
 - `remainingAfter`: `js/domain/audioBatch.js`
 - `remindCategoriesFor`: `js/domain/fasting.js`
@@ -4582,6 +4597,8 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `skeletonSurahList`: `js/ui/skeleton.js`
 - `skip`: `js/services/surahPlayback.js`
 - `sleepSnapshot`: `js/services/player.js`, `js/services/surahPlayback.js`
+- `sleepSnapshotFor`: `js/services/sleepTimerController.js`
+- `sleepVolumeFor`: `js/services/sleepTimerController.js`
 - `smoothK`: `js/services/surahPlayback.js`
 - `snapshot`: `js/services/surahPlayback.js`
 - `sortFavorites`: `js/views/favorites.js`
@@ -4659,6 +4676,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `taraweehCount`: `js/domain/ramadanPlanner.js`
 - `throttle`: `js/core/utils.js`
 - `tickForTests`: `js/services/notifications.js`
+- `tickSleepForTests`: `js/services/sleepTimerController.js`
 - `timetableCell`: `js/domain/prayerExport.js`
 - `tint`: `js/services/shareCard.js`
 - `toEasternArabicNumerals`: `js/core/utils.js`
@@ -4782,6 +4800,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `activeview`: `js/app/renderer.js`
 - `actual`: `js/domain/mutashabihat.js`, `js/views/ramadan.js`
 - `actually`: `js/domain/statistics.js`, `js/views/about.js`, `js/views/installRow.js`
+- `adapters`: `js/services/sleepTimerController.js`
 - `addbacklog`: `js/domain/qada.js`
 - `addcategory`: `js/services/editor.js`
 - `addcategorytolibrary`: `js/services/contentPrefs.js`
@@ -4867,6 +4886,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `armpaletteshortcut`: `js/app/palette.js`
 - `armprayertriggers`: `js/app/triggers.js`
 - `arms`: `js/app/triggers.js`
+- `armsleepfor`: `js/services/sleepTimerController.js`
 - `armsleeptimer`: `js/services/player.js`, `js/services/surahPlayback.js`
 - `armtimer`: `js/domain/sleepTimer.js`
 - `around`: `js/domain/compass.js`, `js/services/speech.js`
@@ -4883,7 +4903,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `astronomical`: `js/domain/calendar.js`
 - `astronomy`: `js/domain/prayer.js`
 - `attributes`: `js/core/theme.js`
-- `audio`: `js/app/audioEngine.js`, `js/app/fileImports.js`, `js/core/config/quran.js`, `js/core/state/slices/audio.js`, `js/domain/sleepTimer.js`, `js/services/audioStore.js`, `js/services/mushaf.js`, `js/services/player.js`, `js/services/prayerSound.js`, `js/services/recitation.js`, `js/views/offline.js`
+- `audio`: `js/app/audioEngine.js`, `js/app/fileImports.js`, `js/core/config/quran.js`, `js/core/state/slices/audio.js`, `js/domain/sleepTimer.js`, `js/services/audioStore.js`, `js/services/mushaf.js`, `js/services/player.js`, `js/services/prayerSound.js`, `js/services/recitation.js`, `js/services/sleepTimerController.js`, `js/views/offline.js`
 - `audiocacheusage`: `js/services/audioStore.js`
 - `audiocontext`: `js/services/audioContext.js`
 - `audiocontexts`: `js/services/audioContext.js`
@@ -5160,6 +5180,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `clearcelebrations`: `js/domain/celebrate.js`
 - `clearclassifymemo`: `js/domain/tajweed.js`
 - `cleardismissed`: `js/domain/completedCards.js`
+- `cleardisplacedsleep`: `js/services/sleepTimerController.js`
 - `clearlazyinflightfetches`: `js/app/lazyData.js`
 - `clearmetadata`: `js/services/mediaSession.js`
 - `clearmoshafavailability`: `js/services/moshafAvailability.js`
@@ -5167,6 +5188,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `clearquizmiss`: `js/domain/quiz.js`
 - `clearqurandatafetches`: `js/app/quranData.js`
 - `clearscrollmemory`: `js/app/renderer.js`
+- `clearsleepfor`: `js/services/sleepTimerController.js`
 - `clearsleeptimer`: `js/services/player.js`, `js/services/surahPlayback.js`
 - `clearstudydata`: `js/app/offlineJobs.js`
 - `cleartextcache`: `js/app/offlineJobs.js`
@@ -5176,7 +5198,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `client`: `js/services/notifications.js`
 - `clipboard`: `js/ui/toast.js`
 - `clips`: `js/services/dhikrAudio.js`
-- `clock`: `js/app/readingTimer.js`, `js/domain/timezone.js`
+- `clock`: `js/app/readingTimer.js`, `js/domain/timezone.js`, `js/services/sleepTimerController.js`
 - `clone`: `js/core/utils.js`
 - `close`: `js/app/drawer.js`
 - `closeaudiostoreforreset`: `js/services/audioStore.js`
@@ -5344,6 +5366,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `dayssincebackup`: `js/services/dataHealth.js`
 - `daysuntilhawl`: `js/domain/zakat.js`
 - `deactivatemushafautofit`: `js/app/autoFit.js`
+- `deadline`: `js/services/sleepTimerController.js`
 - `debounce`: `js/core/utils.js`
 - `debouncecollectionsearchnavigate`: `js/app/inputs.js`
 - `debounced`: `js/app/inputs.js`
@@ -5607,7 +5630,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `expandwindow`: `js/domain/readerWindow.js`
 - `expansion`: `js/domain/rootAwareSearch.js`
 - `expect`: `js/services/shareCard.js`
-- `expiresleepfortests`: `js/services/surahPlayback.js`
+- `expiresleepfortests`: `js/services/sleepTimerController.js`, `js/services/surahPlayback.js`
 - `explicit`: `js/domain/searchPagination.js`, `js/services/recitation.js`, `js/views/mushafBookmarks.js`, `js/views/mushafJump.js`
 - `explicitly`: `js/core/utils.js`, `js/domain/grades.js`
 - `export`: `js/app/handlers/grammar.js`, `js/domain/duaJournal.js`, `js/domain/prayerExport.js`, `js/services/backup.js`, `js/views/journal.js`
@@ -5952,7 +5975,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `interactive`: `js/views/tajweedPracticeView.js`
 - `internal`: `js/ui/shell.js`
 - `international`: `js/domain/quranSearch.js`, `js/views/quran.js`, `js/views/search.js`
-- `interval`: `js/domain/reminderPresets.js`, `js/services/alertTriggers.js`
+- `interval`: `js/domain/reminderPresets.js`, `js/services/alertTriggers.js`, `js/services/sleepTimerController.js`
 - `intervals`: `js/domain/hifz.js`
 - `invalidatelazyfetches`: `js/app/lazyData.js`
 - `invented`: `js/domain/tajweedLessons.js`
@@ -6452,7 +6475,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `onplayerpatch`: `js/services/player.js`
 - `onplayingstatechange`: `js/services/player.js`
 - `onpreloadsample`: `js/services/recitation.js`
-- `onsleeptick`: `js/services/player.js`
+- `onsleeptick`: `js/services/player.js`, `js/services/surahPlayback.js`
 - `onstatechange`: `js/app/stateSub.js`
 - `ontrackended`: `js/services/player.js`
 - `open`: `js/app/drawer.js`, `js/domain/hadithSearch.js`, `js/services/alertTriggers.js`, `js/services/audioCatalog.js`, `js/services/dhikrAudio.js`, `js/services/notifications.js`, `js/views/about.js`
@@ -6803,6 +6826,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `refs`: `js/domain/tajweedLessons.js`
 - `regions`: `js/domain/locations.js`
 - `registerserviceworker`: `js/app/triggers.js`
+- `registersleepadapter`: `js/services/sleepTimerController.js`
 - `registry`: `js/domain/celebrate.js`, `js/domain/tajweedRules.js`, `js/services/hadith.js`
 - `related`: `js/views/studyContext.js`
 - `relative`: `js/domain/prayer.js`, `js/domain/prayerExport.js`, `js/domain/prayerTimeline.js`
@@ -7173,7 +7197,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `share`: `js/domain/launchIntents.js`, `js/services/focusQueue.js`, `js/views/ayahStudy.js`, `js/views/collection.js`
 - `shareable`: `js/services/shareCard.js`
 - `shareayahcard`: `js/app/handlers/items.js`
-- `shared`: `js/app/audioEngine.js`, `js/app/fileImports.js`, `js/app/shared.js`, `js/core/state/streak.js`, `js/domain/audioQueue.js`, `js/domain/celebrate.js`, `js/services/recitation.js`, `js/ui/emptyState.js`, `js/views/backupSummary.js`, `js/views/hadithCard.js`, `js/views/installRow.js`, `js/views/studyContext.js`, `js/views/viewSheets.js`
+- `shared`: `js/app/audioEngine.js`, `js/app/fileImports.js`, `js/app/shared.js`, `js/core/state/streak.js`, `js/domain/audioQueue.js`, `js/domain/celebrate.js`, `js/services/recitation.js`, `js/services/sleepTimerController.js`, `js/ui/emptyState.js`, `js/views/backupSummary.js`, `js/views/hadithCard.js`, `js/views/installRow.js`, `js/views/studyContext.js`, `js/views/viewSheets.js`
 - `sharing`: `js/domain/planExport.js`
 - `sheet`: `js/app/handlers/viewMenus.js`, `js/ui/menus.js`, `js/ui/viewSheet.js`
 - `sheetlinkrow`: `js/ui/viewSheet.js`
@@ -7227,9 +7251,11 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `skeletonsurahlist`: `js/ui/skeleton.js`
 - `skip`: `js/domain/onboarding.js`, `js/services/surahPlayback.js`, `js/views/onboardingPanel.js`
 - `skipped`: `js/services/alertTriggers.js`
-- `sleep`: `js/domain/sleepTimer.js`, `js/services/surahPlayback.js`
+- `sleep`: `js/domain/sleepTimer.js`, `js/services/sleepTimerController.js`, `js/services/surahPlayback.js`
 - `sleepsnapshot`: `js/services/player.js`, `js/services/surahPlayback.js`
+- `sleepsnapshotfor`: `js/services/sleepTimerController.js`
 - `sleeptickfortests`: `js/services/player.js`
+- `sleepvolumefor`: `js/services/sleepTimerController.js`
 - `slice`: `js/core/state/reducer.js`, `js/core/state/slices/audio.js`, `js/core/state/slices/hadith.js`, `js/core/state/slices/library.js`, `js/core/state/slices/quran.js`, `js/core/state/slices/shell.js`, `js/core/state/slices/worship.js`, `js/services/checklist.js`
 - `slices`: `js/core/state/reducer.js`, `js/core/state/slices/hadith.js`
 - `sliders`: `js/app/inputs.js`
@@ -7442,6 +7468,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `ticker`: `js/app/stateSub.js`
 - `tickers`: `js/app/tickers.js`
 - `tickfortests`: `js/services/notifications.js`
+- `ticksleepfortests`: `js/services/sleepTimerController.js`
 - `tier`: `js/services/soundDesign.js`
 - `tiers`: `js/app/renderer.js`
 - `tighter`: `js/services/audioContext.js`
@@ -7594,7 +7621,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `wake`: `js/app/focusWakeLock.js`
 - `walking`: `js/services/floatingCounter.js`
 - `walks`: `js/domain/offline.js`
-- `wall`: `js/app/readingTimer.js`
+- `wall`: `js/app/readingTimer.js`, `js/services/sleepTimerController.js`
 - `warm`: `js/app/hadithData.js`, `js/domain/nudge.js`
 - `warmhadithdaily`: `js/app/hadithData.js`
 - `warms`: `js/app/offlineJobs.js`, `js/domain/offline.js`

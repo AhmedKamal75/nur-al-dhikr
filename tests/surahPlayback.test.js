@@ -915,3 +915,29 @@ describe('per-ayah repeat (v3.17 hifz)', () => {
     configureDriver(null);
   });
 });
+
+test('shared sleep survives ayah advance, preserves base volume and clears for another voice while paused', async () => {
+  const d = makeDriver();
+  const volumes = [];
+  d.setVolume = (v) => volumes.push(v);
+  configureDriver(d);
+  const { setBaseVolume } = await import('../js/services/surahPlayback.js');
+  const { clearDisplacedSleep } = await import('../js/services/sleepTimerController.js');
+  try {
+    start({ surah: 1, total: 7, reciterId: 'ar.alafasy', surahsMeta: SURAHS, baseVolume: 0.4 });
+    await tick();
+    armSleepTimer(5);
+    setBaseVolume(0.4);
+    d.end('1:1');
+    await tick();
+    assert.equal(sleepSnapshot().enabled, true);
+    assert.equal(snapshot().ayah, 2);
+    pause();
+    clearDisplacedSleep(new Set(['speech']));
+    assert.equal(sleepSnapshot().enabled, false);
+    assert.equal(volumes.at(-1), 0.4);
+  } finally {
+    stop();
+    configureDriver(null);
+  }
+});

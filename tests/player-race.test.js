@@ -156,3 +156,24 @@ test('B1: sequential supersede revokes the previous track URL', async () => {
     restore();
   }
 });
+
+test('shared sleep deadline survives same-owner supersede and clears when docked owner loses speaker', async () => {
+  const { player, restore } = await loadPlayer();
+  const { clearDisplacedSleep } = await import('../js/services/sleepTimerController.js');
+  try {
+    player.resetPlayerForTests();
+    player.setAudioFetcher(async () => null);
+    await player.play('m', 1, 'https://cdn/001.mp3');
+    player.setVolume(0.35);
+    player.armSleepTimer(5);
+    await player.play('m', 2, 'https://cdn/002.mp3');
+    assert.equal(player.sleepSnapshot().enabled, true);
+    player.pause();
+    clearDisplacedSleep(new Set(['speech']));
+    assert.equal(player.sleepSnapshot().enabled, false);
+    assert.equal(player.userVolume(), 0.35);
+  } finally {
+    player.resetPlayerForTests();
+    restore();
+  }
+});
