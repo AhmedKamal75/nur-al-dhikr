@@ -36,3 +36,19 @@ test('Focus requires current live item and resolves effective target', () => {
   s.activeView = 'home';
   assert.equal(counterResetSnapshot(s, 'focus', 'a'), null);
 });
+
+test('Focus review preserves the displayed stored target rather than the item default', () => {
+  const s = initialState();
+  const item = { id: 'adh-mor-001', title: { en: 'Morning' }, repetitions: 1 };
+  const category = { id: 'morning', items: [item] };
+  s.library.documents = { lib: { metadata: { id: 'lib' }, categories: [category] } };
+  s.activeView = 'focus';
+  s.activeParams = { id: 'morning', subId: item.id };
+  s.counters[item.id] = { count: 1, target: 3, completedCycles: 5 };
+  const snapshot = counterResetSnapshot(s, 'focus', item.id);
+  assert.equal(snapshot.target, 3);
+  assert.equal(snapshot.storedTarget, 3);
+  assert.equal(snapshot.count, 1);
+  assert.equal(snapshot.cycles, 5);
+  assert.match(counterResetReviewHTML(snapshot, 'en', '1'), /1 \/ 3/);
+});

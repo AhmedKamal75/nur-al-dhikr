@@ -27,7 +27,7 @@ export function counterResetSnapshot(state, kind, id) {
     if (state.activeView !== 'focus' || item?.id !== id) return null;
     key = id;
     label = pickLocale(item.title, state.settings.language) || item.arabic || id;
-    target = itemTargetOf(state, item);
+    target = state.counters[key]?.target ?? itemTargetOf(state, item);
   } else return null;
   const counter = state.counters[key];
   return {

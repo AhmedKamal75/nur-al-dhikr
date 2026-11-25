@@ -123,14 +123,21 @@ for (const lang of ['en', 'ar'])
     await page.keyboard.press('Escape');
     await page.waitForTimeout(700);
     expect(page.url()).toBe(hash);
+    await page.evaluate(async () => {
+      const { store, actions } = await import('/js/core/state.js');
+      store.dispatch(
+        actions.setCounter('adh-mor-001', { count: 1, target: 3, completedCycles: 5 })
+      );
+    });
     await page.locator('[data-action="focus-reset"]').click();
+    await expect(page.locator('[data-counter-reset-review]')).toContainText('1 / 3');
     await page.locator('[data-action="counter-reset-confirm"]').click();
     expect(
       await page.evaluate(async () => {
         const { store } = await import('/js/core/state.js');
         return store.getState().counters['adh-mor-001'];
       })
-    ).toMatchObject({ count: 0, completedCycles: 0, target: 1 });
+    ).toMatchObject({ count: 0, completedCycles: 0, target: 3 });
     await expect(page.locator('[data-action="focus-reset"]')).toBeFocused();
     await page.evaluate(async () => {
       const { store, actions } = await import('/js/core/state.js');
