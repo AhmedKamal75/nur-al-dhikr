@@ -1,3 +1,8 @@
+## v5.17.168 - Share one sleep-timer controller
+
+- File and verse playback share one sleep-timer controller, deadline, owner and interval. Countdown labels update each second; expiry pauses once and keeps position.
+- Speaker ownership loss clears the previous timer and restores its base volume, including paused or docked owners. Same-owner track/ayah changes and the arbiter keep-list preserve it. File absolute fading and verse base-volume multiplication remain unchanged.
+
 ## v5.17.167 - Confirm nonempty counter resets
 
 - Tasbih page/menu and adhkar Focus ask before resetting a nonempty counter, naming the phrase and showing count, target and completed cycles. Cancel is the default; truly empty counters do nothing. Only the existing counter reset is described, not history deletion.

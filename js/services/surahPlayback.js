@@ -47,7 +47,15 @@ import {
   lastPlaySwapped,
   prunePool,
 } from './recitation.js';
-import { SLEEP_TIMER_CHOICES, volumeAt, countdownLabel } from '../domain/sleepTimer.js';
+import { SLEEP_TIMER_CHOICES } from '../domain/sleepTimer.js';
+import {
+  registerSleepAdapter,
+  armSleepFor,
+  clearSleepFor,
+  sleepSnapshotFor,
+  sleepVolumeFor,
+  expireSleepForTests,
+} from './sleepTimerController.js';
 
 export { SLEEP_TIMER_CHOICES };
 
@@ -394,65 +402,33 @@ export function normalizeEchoPause(ms) {
   return Math.min(ECHO_PAUSE_MAX_MS, Math.max(ECHO_PAUSE_MIN_MS, n));
 }
 
-/* (v4.4) Sleep timer — listen mode fades out and stops after N minutes.
- * The pure math lives in domain/sleepTimer.js; this is the ticking half. */
-let sleep = null; // { endsAtMs, minutes }
-let sleepTick = null; // interval id
-
-function applyVolumeNow() {
-  const v = volumeAt(sleep ? { enabled: true, endsAtMs: sleep.endsAtMs } : null, Date.now());
-  // (v5.15.0, V5) user base loudness × sleep-fade curve — the slider owns
-  // the floor, the fade owns the curve; neither fights the other.
-  const base = session && Number.isFinite(session.baseVolume) ? session.baseVolume : 1;
-  driverSetVolume(base * v);
-  if (sleep && v <= 0) {
-    clearSleepTimer();
-    // (v5.12.0 hostile review) pause — not stop — so the session and its
-    // position survive the night exactly like the file engine
-    // (player.js: pause() // position kept). A woken listener resumes in
-    // place; both engines now share one mornings-after contract.
-    pause();
-  }
+/** Verse playback retains baseVolume multiplied by the shared fade curve. */
+let sleepTickFn = null;
+function baseVolumeNow() {
+  return session && Number.isFinite(session.baseVolume) ? session.baseVolume : 1;
 }
-
-/** Arm the listen-mode sleep timer (minutes from SLEEP_TIMER_CHOICES). */
+registerSleepAdapter('verse', {
+  apply: (v) => driverSetVolume(baseVolumeNow() * v),
+  restore: () => driverSetVolume(baseVolumeNow()),
+  expire: () => pause(),
+  tick: () => sleepTickFn?.(),
+});
 export function armSleepTimer(minutes) {
-  const m = SLEEP_TIMER_CHOICES.includes(minutes) ? minutes : 30;
-  sleep = { minutes: m, endsAtMs: Date.now() + m * 60_000 };
-  if (sleepTick) clearInterval(sleepTick);
-  sleepTick = setInterval(applyVolumeNow, 1000);
-  applyVolumeNow();
-  return sleepSnapshot();
+  return armSleepFor('verse', minutes);
 }
-
-/** Cancel the sleep timer and restore user (not full) volume. */
 export function clearSleepTimer() {
-  sleep = null;
-  if (sleepTick) clearInterval(sleepTick);
-  sleepTick = null;
-  const base = session && Number.isFinite(session.baseVolume) ? session.baseVolume : 1;
-  driverSetVolume(base);
-  return sleepSnapshot();
+  const result = clearSleepFor('verse');
+  driverSetVolume(baseVolumeNow());
+  return result;
 }
-
-/** Test seam: force the armed timer past expiry and run the tick once, so
- *  tests pin the mornings-after contract (pause, position kept) without a
- *  15-minute wait. No-ops with no timer armed. */
-export function _expireSleepForTests() {
-  if (!sleep) return sleepSnapshot();
-  sleep.endsAtMs = Date.now() - 1;
-  applyVolumeNow();
-  return sleepSnapshot();
-}
-
-/** { enabled, minutes, endsAtMs, label } for the UI. */
 export function sleepSnapshot() {
-  if (!sleep) return { enabled: false, minutes: null, label: '' };
-  return {
-    enabled: true,
-    minutes: sleep.minutes,
-    label: countdownLabel({ enabled: true, endsAtMs: sleep.endsAtMs }, Date.now()),
-  };
+  return sleepSnapshotFor('verse');
+}
+export function onSleepTick(fn) {
+  sleepTickFn = typeof fn === 'function' ? fn : null;
+}
+export function _expireSleepForTests() {
+  return expireSleepForTests('verse');
 }
 
 function notify(surah, ayah) {
@@ -1037,7 +1013,7 @@ export function setBaseVolume(v) {
   const n = Number.isFinite(Number(v)) ? Math.min(1, Math.max(0, Number(v))) : 1;
   if (!session) return snapshot();
   session.baseVolume = n;
-  const fade = volumeAt(sleep ? { enabled: true, endsAtMs: sleep.endsAtMs } : null, Date.now());
+  const fade = sleepVolumeFor('verse');
   driverSetVolume(n * fade);
   return snapshot();
 }
@@ -1198,7 +1174,7 @@ export function stop() {
   // (v5.12.0) an armed timer must not fade the NEXT session early — the
   // file engine already clears on stop (player.js), the verse engine did
   // not. Clear before the no-session early return so a stray arm can never
-  // outlive its session. Idempotent: safe when called from applyVolumeNow.
+  // outlive its session. Idempotent: safe during shared-controller expiry.
   clearSleepTimer();
   if (!session) return;
   clearEchoWait();

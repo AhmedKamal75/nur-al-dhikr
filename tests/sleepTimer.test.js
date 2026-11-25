@@ -175,3 +175,74 @@ describe('verse engine sleep wiring', () => {
     }
   });
 });
+
+describe('one shared deadline controller', () => {
+  test('one interval, wall clock jumps, stale ticks, displacement, clear and once-only expiry', async () => {
+    const c = await import('../js/services/sleepTimerController.js');
+    const original = { setInterval, clearInterval, now: Date.now };
+    let now = 1000000,
+      next = 0;
+    const active = new Map(),
+      callbacks = [];
+    globalThis.setInterval = (fn, ms) => {
+      assert.equal(ms, 1000);
+      callbacks.push(fn);
+      active.set(++next, fn);
+      return next;
+    };
+    globalThis.clearInterval = (id) => active.delete(id);
+    Date.now = () => now;
+    const seen = { player: [], verse: [] },
+      restores = [],
+      expired = [];
+    for (const owner of ['player', 'verse'])
+      c.registerSleepAdapter(owner, {
+        apply: (v) => seen[owner].push(v),
+        restore: () => restores.push(owner),
+        expire: () => expired.push(owner),
+      });
+    try {
+      c.armSleepFor('player', 5);
+      assert.equal(active.size, 1);
+      const stale = callbacks.at(-1);
+      now += 255000;
+      c.tickSleepForTests();
+      assert.equal(seen.player.at(-1), 0.5);
+      assert.equal(c.sleepSnapshotFor('player').label, '00:45');
+      now -= 100000;
+      c.tickSleepForTests();
+      assert.equal(seen.player.at(-1), 1, 'backwards clock uses deadline');
+      c.armSleepFor('verse', 15);
+      assert.equal(active.size, 1);
+      assert.equal(c.sleepSnapshotFor('player').enabled, false);
+      assert.deepEqual(restores, ['player']);
+      const count = seen.verse.length;
+      stale();
+      assert.equal(seen.verse.length, count, 'old tick invalidated');
+      c.clearDisplacedSleep(new Set(['verse', 'player']));
+      assert.equal(c.sleepSnapshotFor('verse').enabled, true, 'alsoKeep retains');
+      c.clearDisplacedSleep(new Set(['speech']));
+      assert.equal(active.size, 0);
+      assert.equal(c.sleepSnapshotFor('verse').enabled, false);
+      assert.deepEqual(restores, ['player', 'verse']);
+      c.armSleepFor('player', 5);
+      now += 600000;
+      c.tickSleepForTests();
+      c.tickSleepForTests();
+      assert.equal(active.size, 0);
+      assert.deepEqual(expired, ['player']);
+      for (const voice of ['player', 'verse', 'speech', 'adhkar', 'adhan']) {
+        c.armSleepFor('verse', 5);
+        c.clearDisplacedSleep(new Set([voice]));
+        assert.equal(c.sleepSnapshotFor('verse').enabled, voice === 'verse');
+        c.clearSleepFor('verse');
+      }
+    } finally {
+      c.clearSleepFor('player');
+      c.clearSleepFor('verse');
+      globalThis.setInterval = original.setInterval;
+      globalThis.clearInterval = original.clearInterval;
+      Date.now = original.now;
+    }
+  });
+});

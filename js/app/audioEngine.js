@@ -26,6 +26,7 @@ import * as speech from '../services/speech.js';
 import { onAdhanStart } from '../services/prayerSound.js';
 import * as recitation from '../services/recitation.js';
 import * as surahPlayback from '../services/surahPlayback.js';
+import { clearDisplacedSleep } from '../services/sleepTimerController.js';
 
 /* Full-surah audio: catalog + player + offline downloads              */
 /* ------------------------------------------------------------------ */
@@ -87,6 +88,7 @@ export const VOICES = Object.freeze(['player', 'verse', 'speech', 'adhkar', 'adh
 export function claimSpeaker(voice, { alsoKeep = [] } = {}) {
   const keep = new Set([voice, ...alsoKeep, voice]);
   const displaced = [];
+  clearDisplacedSleep(keep);
 
   if (!keep.has('player') && yieldFullSurahPlayer()) displaced.push('player');
 
@@ -292,32 +294,26 @@ export function wirePlayer() {
       store.dispatch(actions.setAudioPlayer({ playing }));
     }
   });
-  // Sleep-timer countdown: the 1s engine tick syncs the store only
-  // when the displayed minute changes (≤60 tiny bar patches per hour),
-  // plus the final off-state when the timer expires mid-fade.
-  let lastSleepMinute = undefined;
+  // One-second countdowns are derived from the sole controller deadline.
+  let lastSleepLabel;
   player.onSleepTick(() => {
     const snap = player.sleepSnapshot();
-    if (!snap.enabled) {
-      if (lastSleepMinute !== null) {
-        lastSleepMinute = null;
-        store.dispatch(
-          actions.setAudioPlayer({ sleepEnabled: false, sleepMinutes: null, sleepLabel: '' })
-        );
-      }
-      return;
-    }
-    const minute = snap.label.replace(/:\d\d$/, '');
-    if (minute !== lastSleepMinute) {
-      lastSleepMinute = minute;
-      store.dispatch(
-        actions.setAudioPlayer({
-          sleepEnabled: true,
-          sleepMinutes: snap.minutes,
-          sleepLabel: snap.label,
-        })
-      );
-    }
+    if (snap.label === lastSleepLabel) return;
+    lastSleepLabel = snap.label;
+    store.dispatch(
+      actions.setAudioPlayer({
+        sleepEnabled: snap.enabled,
+        sleepMinutes: snap.minutes,
+        sleepLabel: snap.label,
+      })
+    );
+  });
+  let lastVerseSleepLabel;
+  surahPlayback.onSleepTick(() => {
+    const snap = surahPlayback.sleepSnapshot();
+    if (snap.label === lastVerseSleepLabel) return;
+    lastVerseSleepLabel = snap.label;
+    store.dispatch(actions.setSurahPlayback(surahPlayback.snapshot()));
   });
   // FIX (review A2/R12): a mid-stream drop (tunnel Wi-Fi) reverts the UI
   // and tells the person — no silent lying bar.
