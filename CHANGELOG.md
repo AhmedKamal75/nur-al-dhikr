@@ -1,3 +1,9 @@
+# v5.17.173 - Share independent audio ownership tickets
+
+- File playback, file resume attempts, verse source lookup, verse echo waits and recitation mirror attempts now use independent opaque tickets. Element identity and source intent remain separate checks.
+- An explicit verse pause, speaker displacement or sleep expiry cannot be undone by a late offline lookup. Resuming an unresolved ayah starts a fresh owned lookup and publishes only after dispatch.
+- Late file-resume completions cannot overwrite newer pause/play intent. Test resets never reuse ownership. No scripture, audible policy, pool or retry-order changes.
+
 # v5.17.172 - Exercise same-document route readiness in smoke tests
 
 - Core-route smoke uses hash navigation and waits for the matching active route before checking rendered content, avoiding WebKit fetch aborts caused by full page navigation. All console-error and uncaught-exception assertions remain unchanged. No production behavior changes.

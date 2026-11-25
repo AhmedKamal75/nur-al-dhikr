@@ -1,3 +1,4 @@
+import { createTickets } from '../domain/tickets.js';
 /**
  * player.js
  * The full-surah audio engine behind the persistent player bar.
@@ -35,7 +36,8 @@ let currentObjectUrl = null;
 let switching = false; // suppresses element→store sync while the CURRENT swap runs
 let intendPlay = false; // we WANT playback — covers stalled loads where the
 // element sits paused-but-loading with play() still pending
-let playSeq = 0; // THE guard: increments on every play()/stop()
+const playTickets = createTickets();
+const resumeTickets = createTickets();
 let audioFetcher = defaultGetAudio; // test seam (see setAudioFetcher)
 
 function el() {
@@ -149,7 +151,7 @@ function wireEventsOnce() {
   const a = el();
   if (a.__nurWired) return;
   a.__nurWired = true;
-  if (a.__nurSeq == null) a.__nurSeq = playSeq;
+  if (a.__nurSeq == null) a.__nurSeq = playTickets.current();
   a.addEventListener('timeupdate', emit);
   a.addEventListener('durationchange', emit);
   a.addEventListener('progress', emit);
@@ -166,7 +168,7 @@ function wireEventsOnce() {
   a.addEventListener('canplay', emit);
   a.addEventListener('ended', () => {
     // Stale 'ended' from a superseded track must not trigger autoplay chains.
-    if (a.__nurSeq !== playSeq) return;
+    if (!playTickets.isCurrent(a.__nurSeq)) return;
     intendPlay = false;
     emit();
     notifyState();
@@ -174,7 +176,7 @@ function wireEventsOnce() {
   });
   a.addEventListener('error', () => {
     console.error('[player] audio error', a.error?.code);
-    if (a.__nurSeq !== playSeq) return;
+    if (!playTickets.isCurrent(a.__nurSeq)) return;
     intendPlay = false;
     emit();
     errorFn?.();
@@ -196,7 +198,8 @@ export function resetPlayerForTests() {
   releaseObjectUrl();
   dropPrefetch();
   audioEl = null;
-  playSeq = 0;
+  playTickets.mint();
+  resumeTickets.mint();
   switching = false;
   intendPlay = false;
   mutedFlag = false;
@@ -215,7 +218,8 @@ export function resetPlayerForTests() {
 export async function play(moshafId, surahNumber, url) {
   wireEventsOnce();
   // (B1) single-flight guard: every entry invalidates pending predecessors.
-  const seq = ++playSeq;
+  const ticket = playTickets.mint();
+  resumeTickets.mint();
   releaseObjectUrl();
   // (v5.2.67) consume a prefetched next track on exact key match — its
   // IDB lookup already ran while the previous track played.
@@ -240,7 +244,7 @@ export async function play(moshafId, surahNumber, url) {
   // no blob URL, no ghost error. Clears THIS swap's suppression so the
   // pause propagates to the store exactly once.
   const unwindSilent = (offline) => {
-    if (seq === playSeq) {
+    if (playTickets.isCurrent(ticket)) {
       switching = false;
       notifyState();
     }
@@ -252,7 +256,7 @@ export async function play(moshafId, surahNumber, url) {
     if (pre?.objectUrl) {
       // Warmed blob: no lookup, no new URL. The guard below cannot fail
       // (no await ran since entry) — the revoke is airtightness only.
-      if (seq !== playSeq || !intendPlay) {
+      if (!playTickets.isCurrent(ticket) || !intendPlay) {
         try {
           URL.revokeObjectURL(pre.objectUrl);
         } catch {
@@ -266,12 +270,12 @@ export async function play(moshafId, surahNumber, url) {
     } else {
       const blob = await audioFetcher(moshafId, surahNumber);
       // Loser unwinds silently: no src swap, no blob URL, no ghost error.
-      if (seq !== playSeq || !intendPlay) return unwindSilent(false);
+      if (!playTickets.isCurrent(ticket) || !intendPlay) return unwindSilent(false);
       if (blob) {
         const objectUrl = URL.createObjectURL(blob);
         // Re-check after the sync URL creation: a swap may have landed while
         // we built the URL — revoke ours instead of leaking it (B1 leak).
-        if (seq !== playSeq || !intendPlay) {
+        if (!playTickets.isCurrent(ticket) || !intendPlay) {
           URL.revokeObjectURL(objectUrl);
           return unwindSilent(false);
         }
@@ -282,7 +286,7 @@ export async function play(moshafId, surahNumber, url) {
         a.src = url;
       }
     }
-    a.__nurSeq = seq;
+    a.__nurSeq = ticket;
     a.playbackRate = a.playbackRate || 1;
     // An armed sleep timer survives track changes: enter at the curve
     // volume instead of blipping full-loud for a second.
@@ -293,11 +297,11 @@ export async function play(moshafId, surahNumber, url) {
     } catch (err) {
       // A superseded call's abort — or the user's own pause aborting a
       // pending play() — is expected, never a user-facing failure.
-      if (seq !== playSeq || !intendPlay) return unwindSilent(offline);
+      if (!playTickets.isCurrent(ticket) || !intendPlay) return unwindSilent(offline);
       console.error('[player] play() rejected', err);
       intendPlay = false;
       emit();
-      if (seq === playSeq) {
+      if (playTickets.isCurrent(ticket)) {
         switching = false;
         notifyState();
       }
@@ -306,8 +310,8 @@ export async function play(moshafId, surahNumber, url) {
     // Late-resolving winner check: B's IDB read beat A's, A's src swap
     // must not clobber B's newer track (B1 wrong-track) — and a pause
     // that landed while play() resolved must not be papered over.
-    if (seq !== playSeq || !intendPlay) return unwindSilent(offline);
-    if (seq === playSeq) {
+    if (!playTickets.isCurrent(ticket) || !intendPlay) return unwindSilent(offline);
+    if (playTickets.isCurrent(ticket)) {
       switching = false;
       notifyState();
     }
@@ -315,11 +319,11 @@ export async function play(moshafId, surahNumber, url) {
   } catch (err) {
     // e.g. IndexedDB blew up mid-lookup — surface it, never swallow it,
     // unless we already lost the race (then stay silent for the winner).
-    if (seq !== playSeq) return { offline: false, error: false };
+    if (!playTickets.isCurrent(ticket)) return { offline: false, error: false };
     console.error('[player] track load failed', err);
     intendPlay = false;
     emit();
-    if (seq === playSeq) {
+    if (playTickets.isCurrent(ticket)) {
       switching = false;
       notifyState();
     }
@@ -331,17 +335,23 @@ export function toggle() {
   const a = el();
   if (a.paused) {
     intendPlay = true;
+    const sourceTicket = playTickets.current();
+    const resumeTicket = resumeTickets.mint();
+    const current = () =>
+      playTickets.isCurrent(sourceTicket) && resumeTickets.isCurrent(resumeTicket) && intendPlay;
     // (v5.12.0 hostile review) the handler used to dispatch playing:true
     // optimistically with no way to know a blocked play() failed — return
     // the outcome so the store reverts promptly instead of blipping a
     // false pause-icon until a later correction pass notices.
     return a.play().then(
       () => {
+        if (!current()) return false;
         emit();
         notifyState();
         return true;
       },
       () => {
+        if (!current()) return false;
         intendPlay = false;
         emit();
         notifyState();
@@ -349,12 +359,15 @@ export function toggle() {
       }
     );
   }
+  intendPlay = false;
+  resumeTickets.mint();
   a.pause();
   emit();
   return Promise.resolve(false);
 }
 
 export function pause() {
+  resumeTickets.mint();
   intendPlay = false;
   el().pause();
   emit();
@@ -454,14 +467,15 @@ export function _sleepTickForTests() {
 }
 
 export function stop() {
-  ++playSeq; // outstanding awaits become no-ops; stale ended/error ignored
+  playTickets.mint(); // outstanding awaits become no-ops; stale ended/error ignored
+  resumeTickets.mint();
   const a = el();
   intendPlay = false;
   switching = false;
   a.pause();
   a.removeAttribute('src');
   a.load();
-  a.__nurSeq = playSeq;
+  a.__nurSeq = playTickets.current();
   releaseObjectUrl();
   dropPrefetch();
   // (v5.2.67) an armed timer must not duck the NEXT track's entry volume —
