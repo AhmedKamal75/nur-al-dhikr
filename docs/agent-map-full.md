@@ -4,7 +4,7 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 This is the exhaustive dump. For the one-page version — chrome spine, where-to-change table, counted inventory — read `docs/AGENT-MAP.md` instead. This file is ~530 KB by design; it is meant to be searched for one named thing, not read end to end.
 
-- js modules: 252 — data files: 29 — tests: 301
+- js modules: 253 — data files: 29 — tests: 302
 
 Conventions: `js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;
 `js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;
@@ -53,6 +53,16 @@ job: Qibla compass lifecycle: sensor permission, smoothing, declination correcti
 - handles: —
 - i18n: —
 - routes: `VIEWS.QIBLA`
+
+### `js/app/counterReset.js`
+
+job: / Counter reset review. No counter reducer semantics are changed.
+
+- exports: `counterResetSnapshot` (function), `counterResetReviewHTML` (function), `requestCounterReset` (function), `confirmCounterReset` (function)
+- emits: `counter-reset-confirm`, `focus-reset`, `modal-close`, `tasbih-reset` (+ dynamic `data-action="${...}"`)
+- handles: —
+- i18n: `common.cancel`, `counterReset.confirm`, `counterReset.cycles`, `counterReset.only`, `counterReset.progress`, `counterReset.title`
+- routes: —
 
 ### `js/app/drawer.js`
 
@@ -404,7 +414,7 @@ job: (no header comment)
 
 - exports: `triggerRipple` (function), `shareAyahCard` (function), `clickHandlers` (object), `changeHandlers` (const)
 - emits: `collection-picker-toggle`, `counter-tap`, `hadith-note-delete`, `modal-close`, `mood-select-toggle`
-- handles: `ambient-mode`, `ayah-share`, `byheart-exit`, `byheart-reveal`, `byheart-review`, `byheart-start`, `clear-search-history`, `collection-add-favorites`, `collection-move`, `collection-session-beginning`, `collection-session-start`, `confirm-delete-collection`, `confirm-unfavorite-all`, `copy-ayah`, `copy-item`, `counter-tap`, `create-collection`, `create-collection-inline`, `create-collection-inline-move`, `create-collection-suggested`, `delete-collection`, `favorites-sort`, `focus-adjacent`, `focus-exit`, `focus-reset`, `focus-size-open`, `focus-size-step`, `focus-wake-toggle`, `hadith-bookmark`, `hadith-copy`, `hadith-daily-shuffle`, `hadith-grid-next`, `hadith-grid-prev`, `hadith-index-all`, `hadith-mem-reveal`, `hadith-mem-review`, `hadith-memorize`, `hadith-note-delete`, `hadith-note-open`, `hadith-page-next`, `hadith-page-prev`, `hadith-recovery-more`, `hadith-retry`, `hadith-retry-index`, `hadith-section`, `hadith-share`, `hadith-speak`, `kids-quiz-answer`, `kids-quiz-exit`, `kids-quiz-start`, `mood-select-all`, `mood-select-cancel`, `mood-select-start`, `mood-selection-add`, `mood-selection-create`, `mood-selection-destination`, `move-to-collection`, `open-card-menu`, `open-collection-picker`, `open-focus`, `open-move-picker`, `play-dhikr-audio`, `rename-collection`, `run-search`, `search-page`, `session-start`, `share-collection`, `share-item`, `toggle-favorite`, `toggle-speech`, `unfavorite-all`, `collection-picker-toggle` (change/input), `mood-select-toggle` (change/input)
+- handles: `ambient-mode`, `ayah-share`, `byheart-exit`, `byheart-reveal`, `byheart-review`, `byheart-start`, `clear-search-history`, `collection-add-favorites`, `collection-move`, `collection-session-beginning`, `collection-session-start`, `confirm-delete-collection`, `confirm-unfavorite-all`, `copy-ayah`, `copy-item`, `counter-reset-confirm`, `counter-tap`, `create-collection`, `create-collection-inline`, `create-collection-inline-move`, `create-collection-suggested`, `delete-collection`, `favorites-sort`, `focus-adjacent`, `focus-exit`, `focus-reset`, `focus-size-open`, `focus-size-step`, `focus-wake-toggle`, `hadith-bookmark`, `hadith-copy`, `hadith-daily-shuffle`, `hadith-grid-next`, `hadith-grid-prev`, `hadith-index-all`, `hadith-mem-reveal`, `hadith-mem-review`, `hadith-memorize`, `hadith-note-delete`, `hadith-note-open`, `hadith-page-next`, `hadith-page-prev`, `hadith-recovery-more`, `hadith-retry`, `hadith-retry-index`, `hadith-section`, `hadith-share`, `hadith-speak`, `kids-quiz-answer`, `kids-quiz-exit`, `kids-quiz-start`, `mood-select-all`, `mood-select-cancel`, `mood-select-start`, `mood-selection-add`, `mood-selection-create`, `mood-selection-destination`, `move-to-collection`, `open-card-menu`, `open-collection-picker`, `open-focus`, `open-move-picker`, `play-dhikr-audio`, `rename-collection`, `run-search`, `search-page`, `session-start`, `share-collection`, `share-item`, `toggle-favorite`, `toggle-speech`, `unfavorite-all`, `collection-picker-toggle` (change/input), `mood-select-toggle` (change/input)
 - i18n: `card.copied`, `card.copyFailed`, `card.imageSaved`, `collections.itemCount`, `collections.namePrompt`, `collections.shareEmpty`, `common.delete`, `common.error`, `common.retry`, `common.save`, `dhikrAudio.failed`, `editor.cancel`, `editor.deleteConfirm`, `favorites.clearConfirm`, `hadith.note`, `hadith.noteDeleted`, `hadith.notePh`, `hadith.noteTitle`, `hadith.speechUnsupported`, `kids.quizWin` (+2 more)
 - routes: `#/hadith`, `VIEWS.COLLECTION`, `VIEWS.COLLECTIONS`, `VIEWS.FAVORITES`, `VIEWS.FOCUS`, `VIEWS.HADITH`, `VIEWS.SEARCH`
 
@@ -2088,7 +2098,7 @@ job: Continuous surah recitation: play a surah verse-by-verse with automatic adv
 
 job: All counting / cycle-completion logic in one place, used both by the per-card counter (in Focus Mode / library cards) and the standalone Tasbih screen. No DOM access here — the renderer calls into th…
 
-- exports: `increment` (function), `wasJustCompleted` (function), `reset` (function), `setTarget` (function), `getCounter` (function), `playTick` (function)
+- exports: `counterResetReviewOpen` (function), `increment` (function), `wasJustCompleted` (function), `reset` (function), `setTarget` (function), `getCounter` (function), `playTick` (function)
 - emits: —
 - handles: —
 - i18n: `a11y.counterComplete`, `a11y.counterProgress`
@@ -2819,6 +2829,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `content-unhide-library`: emitted by `js/views/library.js`; handled in `js/app/handlers/content.js`
 - `copy-ayah`: emitted by `js/views/quran.js`; handled in `js/app/handlers/items.js`
 - `copy-item`: emitted by `js/ui/menus.js`; handled in `js/app/handlers/items.js`
+- `counter-reset-confirm`: emitted by `js/app/counterReset.js`; handled in `js/app/handlers/items.js`
 - `counter-tap`: emitted by `js/app/handlers/items.js`, `js/ui/card.js`, `js/views/focus.js`; handled in `js/app/events.js`, `js/app/handlers/items.js`
 - `create-collection`: emitted by `js/views/collections.js`; handled in `js/app/handlers/items.js`
 - `create-collection-inline`: emitted by `js/ui/menus.js`; handled in `js/app/handlers/items.js`
@@ -2845,7 +2856,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `favorites-sort`: emitted by `js/views/favorites.js`; handled in `js/app/handlers/items.js`
 - `focus-adjacent`: emitted by `js/views/focus.js`; handled in `js/app/handlers/items.js`
 - `focus-exit`: emitted by `js/views/focus.js`; handled in `js/app/handlers/items.js`
-- `focus-reset`: emitted by `js/views/focus.js`; handled in `js/app/handlers/items.js`
+- `focus-reset`: emitted by `js/app/counterReset.js`, `js/views/focus.js`; handled in `js/app/handlers/items.js`
 - `focus-size-open`: emitted by `js/views/focus.js`; handled in `js/app/handlers/items.js`
 - `focus-size-step`: emitted by `js/views/focus.js`; handled in `js/app/handlers/items.js`
 - `focus-wake-toggle`: emitted by `js/views/focus.js`; handled in `js/app/handlers/items.js`
@@ -2914,7 +2925,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `library-jump`: emitted by `js/views/library.js`; handled in `js/app/handlers/content.js`
 - `location-profile-apply`: emitted by `js/views/prayer.js`; handled in `js/app/handlers/worship.js`
 - `location-profile-save`: emitted by `js/views/prayer.js`; handled in `js/app/handlers/worship.js`
-- `modal-close`: emitted by `js/app/events.js`, `js/app/forms.js`, `js/app/handlers/items.js`, `js/app/handlers/quranAudio.js`, `js/ui/calendarModals.js`, `js/ui/menus.js`, `js/ui/modal.js`, `js/views/editor.js`, `js/views/focus.js`, `js/views/home.js`, `js/views/mood.js`, `js/views/mushafBookmarks.js`, `js/views/tafsirPanel.js`; handled in `js/app/handlers/editor.js`
+- `modal-close`: emitted by `js/app/counterReset.js`, `js/app/events.js`, `js/app/forms.js`, `js/app/handlers/items.js`, `js/app/handlers/quranAudio.js`, `js/ui/calendarModals.js`, `js/ui/menus.js`, `js/ui/modal.js`, `js/views/editor.js`, `js/views/focus.js`, `js/views/home.js`, `js/views/mood.js`, `js/views/mushafBookmarks.js`, `js/views/tafsirPanel.js`; handled in `js/app/handlers/editor.js`
 - `modal-close-overlay`: emitted by `js/ui/modal.js`; handled in `js/app/events.js`
 - `mood-select-all`: emitted by `js/views/mood.js`; handled in `js/app/handlers/items.js`
 - `mood-select-cancel`: emitted by `js/views/mood.js`; handled in `js/app/handlers/items.js`
@@ -3099,7 +3110,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `tasbih-custom-remove`: emitted by `js/views/tasbih.js`; handled in `js/app/handlers/tasbih.js`
 - `tasbih-custom-save`: emitted by `js/views/tasbih.js`; handled in `js/app/handlers/tasbih.js`
 - `tasbih-float`: emitted by `js/views/tasbih.js`; handled in `js/app/handlers/tasbih.js`
-- `tasbih-reset`: emitted by `js/views/tasbih.js`; handled in `js/app/handlers/tasbih.js`
+- `tasbih-reset`: emitted by `js/app/counterReset.js`, `js/views/tasbih.js`; handled in `js/app/handlers/tasbih.js`
 - `tasbih-select`: emitted by `js/views/tasbih.js`; handled in `js/app/handlers/tasbih.js`
 - `tasbih-tap`: emitted by `js/views/tasbih.js`; handled in `js/app/handlers/tasbih.js`
 - `tasbih-target-set`: emitted by `js/views/tasbih.js`; handled in `js/app/handlers/tasbih.js`
@@ -3637,6 +3648,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `computeWarmTriples`: `js/services/surahPlayback.js`
 - `computeZakat`: `js/domain/zakat.js`
 - `configureDriver`: `js/services/recitation.js`
+- `confirmCounterReset`: `js/app/counterReset.js`
 - `confirmHadithIndexAll`: `js/app/hadithData.js`
 - `confusablePairsFor`: `js/domain/mutashabihat.js`
 - `consoleSnapshot`: `js/ui/recitationConsole.js`
@@ -3652,6 +3664,9 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `contentTitleFor`: `js/domain/localeContent.js`
 - `countMemorized`: `js/domain/hifz.js`
 - `countdownLabel`: `js/domain/sleepTimer.js`
+- `counterResetReviewHTML`: `js/app/counterReset.js`
+- `counterResetReviewOpen`: `js/services/tasbih.js`
+- `counterResetSnapshot`: `js/app/counterReset.js`
 - `courseProgress`: `js/domain/tajweedCourse.js`
 - `courseRules`: `js/domain/tajweedCourse.js`
 - `createFocusWakeLock`: `js/app/focusWakeLock.js`
@@ -4368,6 +4383,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `renderTopBar`: `js/ui/shell.js`
 - `renderZakat`: `js/views/zakat.js`
 - `replaceGo`: `js/core/router.js`
+- `requestCounterReset`: `js/app/counterReset.js`
 - `requestMushafNativeFullscreen`: `js/app/fullscreen.js`
 - `requestPermission`: `js/domain/compass.js`, `js/services/notifications.js`
 - `reset`: `js/services/tasbih.js`
@@ -5100,6 +5116,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `certificatedata`: `js/domain/milestones.js`
 - `chains`: `js/services/notifications.js`
 - `change`: `js/app/handlers/content.js`, `js/app/renderer.js`, `js/app/stateSub.js`
+- `changed`: `js/app/counterReset.js`
 - `changehandlers`: `js/app/handlers/audio.js`, `js/app/handlers/content.js`, `js/app/handlers/items.js`, `js/app/handlers/location.js`, `js/app/handlers/offline.js`, `js/app/handlers/quran.js`, `js/app/handlers/quranAudio.js`, `js/app/handlers/system.js`, `js/app/handlers/worship.js`
 - `changeregistry`: `js/app/events.js`
 - `changes`: `js/domain/contentLens.js`
@@ -5220,6 +5237,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `configuredriver`: `js/services/recitation.js`
 - `confirm`: `js/app/fileImports.js`, `js/domain/onboarding.js`
 - `confirmation`: `js/ui/menus.js`, `js/ui/modal.js`
+- `confirmcounterreset`: `js/app/counterReset.js`
 - `confirmed`: `js/views/favorites.js`
 - `confirmhadithindexall`: `js/app/hadithData.js`
 - `confusablepairsfor`: `js/domain/mutashabihat.js`
@@ -5265,7 +5283,10 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `countdownlabel`: `js/domain/sleepTimer.js`
 - `countdowns`: `js/app/tickers.js`, `js/domain/milestones.js`
 - `counted`: `js/domain/garden.js`, `js/views/garden.js`
-- `counter`: `js/domain/completedCards.js`, `js/domain/lexicalProvenance.js`, `js/domain/reflections.js`, `js/services/floatingCounter.js`, `js/services/tasbih.js`
+- `counter`: `js/app/counterReset.js`, `js/domain/completedCards.js`, `js/domain/lexicalProvenance.js`, `js/domain/reflections.js`, `js/services/floatingCounter.js`, `js/services/tasbih.js`
+- `counterresetreviewhtml`: `js/app/counterReset.js`
+- `counterresetreviewopen`: `js/services/tasbih.js`
+- `counterresetsnapshot`: `js/app/counterReset.js`
 - `counters`: `js/core/state/slices/library.js`, `js/domain/completedCards.js`
 - `counting`: `js/services/floatingCounter.js`, `js/services/tasbih.js`, `js/views/focus.js`, `js/views/settings.js`
 - `countmemorized`: `js/domain/hifz.js`
@@ -6766,7 +6787,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `reducehadith`: `js/core/state/slices/hadith.js`
 - `reducelibrary`: `js/core/state/slices/library.js`
 - `reducequran`: `js/core/state/slices/quran.js`
-- `reducer`: `js/app/quizDeck.js`, `js/core/state/slices/audio.js`, `js/core/state/slices/hadith.js`, `js/core/state/slices/library.js`, `js/core/state/slices/quran.js`, `js/core/state/slices/shell.js`, `js/core/state/slices/worship.js`, `js/core/state/streak.js`
+- `reducer`: `js/app/counterReset.js`, `js/app/quizDeck.js`, `js/core/state/slices/audio.js`, `js/core/state/slices/hadith.js`, `js/core/state/slices/library.js`, `js/core/state/slices/quran.js`, `js/core/state/slices/shell.js`, `js/core/state/slices/worship.js`, `js/core/state/streak.js`
 - `reduceshell`: `js/core/state/slices/shell.js`
 - `reduceworship`: `js/core/state/slices/worship.js`
 - `reference`: `js/domain/garden.js`
@@ -6860,10 +6881,11 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `replacing`: `js/app/autoFit.js`
 - `report`: `js/domain/gestures.js`
 - `request`: `js/views/qibla.js`
+- `requestcounterreset`: `js/app/counterReset.js`
 - `requestmushafnativefullscreen`: `js/app/fullscreen.js`
 - `requestpermission`: `js/domain/compass.js`, `js/services/notifications.js`
 - `resemble`: `js/views/mutashabihat.js`
-- `reset`: `js/core/state/slices/shell.js`, `js/services/tasbih.js`, `js/views/category.js`
+- `reset`: `js/app/counterReset.js`, `js/core/state/slices/shell.js`, `js/services/tasbih.js`, `js/views/category.js`
 - `resetappbadgefortests`: `js/services/appBadge.js`
 - `resetaudiocontextfortests`: `js/services/audioContext.js`
 - `resetaudiostorefortests`: `js/services/audioStore.js`
@@ -6947,7 +6969,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `reused`: `js/views/installRow.js`
 - `reuses`: `js/domain/prayerLog.js`, `js/views/qibla.js`
 - `reusin`: `js/domain/hadithSearch.js`
-- `review`: `js/domain/hifz.js`, `js/domain/quiz.js`, `js/domain/review.js`
+- `review`: `js/app/counterReset.js`, `js/domain/hifz.js`, `js/domain/quiz.js`, `js/domain/review.js`
 - `reviewdigestcardhtml`: `js/views/home.js`
 - `reviewisempty`: `js/domain/review.js`
 - `rewayaar`: `js/services/audioCatalog.js`
@@ -7081,7 +7103,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `selector`: `js/domain/gestures.js`
 - `selectors`: `js/core/state/selectors.js`, `js/core/state.js`
 - `selects`: `js/views/quiz.js`
-- `semantics`: `js/domain/rootAwareSearch.js`
+- `semantics`: `js/app/counterReset.js`, `js/domain/rootAwareSearch.js`
 - `send`: `js/services/shareCard.js`
 - `sendtriggerplan`: `js/app/triggers.js`
 - `sensor`: `js/app/compassRuntime.js`, `js/domain/compass.js`
@@ -7714,6 +7736,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/contracts.test.js` — structural gates for release protocols that previously relied on reviewer memory (v4.3). Each test pins a contract whose violation shipped a real bug in this app's history: (pins: `../js/app/events.js`, `../js/app/forms.js`, `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `./helpers/data-manifest.mjs`, `./helpers/seedMode.mjs`, `./helpers/shell-hash.mjs`)
 - `tests/counter-feel.test.js` — the counter is a FEEL contract, and a feel cannot be asserted by a screenshot review that nobody re-runs. (v5.17.15) Measured against azkar.me's counter, ours was a 10px ring around (pins: —)
 - `tests/counter-flow.test.js` — v5.2.24 counter/accordion/focus wave, permanent. 1. Accordion memory (v5.2.48: persisted settings.settingsSection + #/settings/<slug> deep links): slug helpers round-trip, unknown (pins: `../js/domain/completedCards.js`, `../js/ui/card.js`, `../js/views/focus.js`, `../js/views/settings.js`)
+- `tests/counter-reset.test.js` — (no header comment) (pins: `../js/app/counterReset.js`, `../js/core/state/initial.js`)
 - `tests/counter-rules.test.js` — v5.2.25 counter-standards wave, permanent. Rule 1 (threshold): taps increment 1/3 → 2/3 → 3/3; nothing dismisses before count == target; completion stamps the day and completes. (pins: `../js/core/state.js`, `../js/core/state/restore.js`, `../js/core/utils.js`, `../js/domain/reflections.js`, `../js/services/tasbih.js`, `../js/ui/card.js`)
 - `tests/cssDesign.test.js` — Phase A (v3.11) design-system gates. These tests make the v3.11 token/contrast/focus/touch-target work permanent policy: (pins: `../js/core/config.js`, `../js/domain/tajweed.js`)
 - `tests/custom-card-reorder.test.js` — OPEN-ISSUES #10 verification: custom library card-level reorder under the shared lens. moveItem pool + visibleCategoryItems reader + category.js buttons (pins: `../js/core/config.js`, `../js/core/schema.js`, `../js/services/contentPrefs.js`, `../js/views/category.js`)

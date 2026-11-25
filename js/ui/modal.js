@@ -12,6 +12,7 @@ import { icon } from '../core/icons.js';
 import { showToast } from './toast.js';
 
 let lastFocused = null;
+let returnFocusSelector = null;
 let trapHandler = null;
 // (v5.2.75, UX-05) pending exit-teardown timer (animated close only).
 let closeTimer = null;
@@ -34,7 +35,11 @@ function reducedMotion() {
   return false;
 }
 
-export function openModal(innerHTML, { labelledBy = null, focusSelector = null } = {}) {
+export function openModal(
+  innerHTML,
+  { labelledBy = null, focusSelector = null, returnSelector = null } = {}
+) {
+  returnFocusSelector = returnSelector;
   generation += 1;
   const root = document.getElementById('modal-root');
   // A re-open during the animated exit's ghost window cancels its
@@ -122,6 +127,9 @@ export function closeModal() {
     trapHandler = null;
   }
   if (lastFocused && document.contains(lastFocused)) lastFocused.focus({ preventScroll: true });
+  else if (returnFocusSelector)
+    document.querySelector(returnFocusSelector)?.focus({ preventScroll: true });
+  returnFocusSelector = null;
   const overlay = root.querySelector('.modal-overlay');
   if (!overlay || reducedMotion()) {
     root.classList.remove('is-open');

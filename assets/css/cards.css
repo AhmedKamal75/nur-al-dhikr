@@ -5034,3 +5034,7 @@ button.toggle-row:focus-visible {
   height: 22px;
   flex-shrink: 0;
 }
+
+.counter-reset__phrase {
+  overflow-wrap: anywhere;
+}

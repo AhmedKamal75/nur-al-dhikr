@@ -17,7 +17,15 @@ import { getAudioContext } from './audioContext.js';
  * both the counter update and a statistics record.
  * Returns the new counter object.
  */
+export function counterResetReviewOpen() {
+  return (
+    typeof document !== 'undefined' &&
+    !!document.querySelector('#modal-root.is-open [data-counter-reset-review]')
+  );
+}
+
 export function increment(itemId, categoryId, target = 1, step = 1) {
+  if (counterResetReviewOpen()) return { ...getCounter(itemId, target), cycleCompleted: false };
   const state = store.getState();
   const existing = state.counters[itemId] || { count: 0, target, completedCycles: 0 };
   // The rendered pill shows the EFFECTIVE target (manage overrides) — the
@@ -128,6 +136,7 @@ export function reset(itemId, target = 1) {
 }
 
 export function setTarget(itemId, target) {
+  if (counterResetReviewOpen()) return;
   const state = store.getState();
   const existing = state.counters[itemId] || { count: 0, completedCycles: 0 };
   store.dispatch(
