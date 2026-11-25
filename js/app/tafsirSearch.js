@@ -1,3 +1,4 @@
+import { tafsirBulkResource } from './bulkResources.js';
 /**
  * app/tafsirSearch.js — full-text search corpus for one bundled tafsir
  * edition: lazy index build over all 114 surah files, once per edition.
@@ -32,81 +33,86 @@ export function resolveTafsirSearchEdition(editionId = null) {
 }
 
 export async function ensureTafsirSearchData(editionId = null) {
-  if (rt.tafsirSearchBuildStarted || isTafsirSearchReady()) return isTafsirSearchReady();
+  if (tafsirBulkResource.pending || rt.tafsirSearchBuildStarted || isTafsirSearchReady())
+    return isTafsirSearchReady();
+  const generation = rt.lazyDataGeneration;
+  const revision = tafsirBulkResource.revision;
   const state = store.getState();
   if (!state.tafsirEditions) {
     await ensureTafsirEditions(state);
   }
+  if (generation !== rt.lazyDataGeneration || revision !== tafsirBulkResource.revision)
+    return false;
   const edition = resolveTafsirSearchEdition(editionId);
   // No bundled edition (or an explicitly remote id): refuse silently —
   // bulk-fetching remote files would break the on-demand rule.
   if (!edition) return false;
   if (tafsirIndexEdition() === edition.id && isTafsirSearchReady()) return true;
-  rt.tafsirSearchBuildStarted = true;
-  // (v5.2.88) fresh abort scope per build (same contract as the Qur'an
-  // corpus build in quranSearch.js).
-  rt.tafsirBulkAbort?.abort();
-  rt.tafsirBulkAbort = new AbortController();
-  const signal = rt.tafsirBulkAbort.signal;
-  try {
-    const have = store.getState().tafsir?.[edition.id] || {};
-    const missing = [];
-    for (let n = 1; n <= 114; n++) {
-      if (!have[String(n)]) missing.push(n);
-    }
-    const CHUNK = 24;
-    const fetched = {};
-    for (let i = 0; i < missing.length; i += CHUNK) {
-      // (v5.2.82, BUG-09) same navigation-cancel contract as the Qur'an
-      // corpus build above: background chunks must never starve the view
-      // the person actually opened. Latch resets so Search resumes later.
-      // (v5.2.88) the exit hook aborts the signal too — in-flight fetches
-      // release immediately instead of draining the chunk first.
-      if (store.getState().activeView !== VIEWS.SEARCH || signal.aborted) {
-        rt.tafsirSearchBuildStarted = false;
-        if (rt.tafsirBulkAbort) {
-          rt.tafsirBulkAbort.abort();
-          rt.tafsirBulkAbort = null;
-        }
-        return false;
+  // Re-check after catalog preflight before publishing a single build owner.
+  if (tafsirBulkResource.pending) return isTafsirSearchReady();
+  return tafsirBulkResource.run(
+    async ({ current, signal }) => {
+      const have = store.getState().tafsir?.[edition.id] || {};
+      const missing = [];
+      for (let n = 1; n <= 114; n++) {
+        if (!have[String(n)]) missing.push(n);
       }
-      const chunk = missing.slice(i, i + CHUNK);
-      const docs = await Promise.all(
-        chunk.map(async (n) => {
-          try {
-            const raw = await fetchJSON(TAFSIR_TEXT_URL(edition.id, n), { signal });
-            return Array.isArray(raw) ? {} : raw;
-          } catch (err) {
-            // Intentional cancel: silent (see net.js isBulkAbortError).
-            if (isBulkAbortError(err)) return null;
-            // Warn, not error: one skipped surah doesn't fail the build
-            // (nulls drop out, the index covers what landed, next query
-            // retries) — error-level spam here defeats the console-error
-            // hygiene the e2e suite enforces for real defects.
-            console.warn('[tafsir-search] failed to load surah', edition.id, n, err);
-            return null;
-          }
-        })
-      );
-      chunk.forEach((n, j) => {
-        if (docs[j]) {
-          fetched[String(n)] = docs[j];
-          store.dispatch(actions.setTafsirText(edition.id, String(n), docs[j]));
+      const CHUNK = 24;
+      const fetched = {};
+      for (let i = 0; i < missing.length; i += CHUNK) {
+        // (v5.2.82, BUG-09) same navigation-cancel contract as the Qur'an
+        // corpus build above: background chunks must never starve the view
+        // the person actually opened. Latch resets so Search resumes later.
+        // (v5.2.88) the exit hook aborts the signal too — in-flight fetches
+        // release immediately instead of draining the chunk first.
+        if (!current()) return false;
+        if (store.getState().activeView !== VIEWS.SEARCH) {
+          tafsirBulkResource.invalidate();
+          return false;
         }
-      });
+        const chunk = missing.slice(i, i + CHUNK);
+        const docs = await Promise.all(
+          chunk.map(async (n) => {
+            try {
+              const raw = await fetchJSON(TAFSIR_TEXT_URL(edition.id, n), { signal });
+              return Array.isArray(raw) ? {} : raw;
+            } catch (err) {
+              // Intentional cancel: silent (see net.js isBulkAbortError).
+              if (!current() || isBulkAbortError(err)) return null;
+              // Warn, not error: one skipped surah doesn't fail the build
+              // (nulls drop out, the index covers what landed, next query
+              // retries) — error-level spam here defeats the console-error
+              // hygiene the e2e suite enforces for real defects.
+              console.warn('[tafsir-search] failed to load surah', edition.id, n, err);
+              return null;
+            }
+          })
+        );
+        if (!current()) return false;
+        chunk.forEach((n, j) => {
+          if (!current()) return;
+          if (docs[j]) {
+            fetched[String(n)] = docs[j];
+            store.dispatch(actions.setTafsirText(edition.id, String(n), docs[j]));
+          }
+        });
+      }
+      if (!current()) return false;
+      // Reader cache doubles as the index source: texts the reader already
+      // holds merge under just-fetched ones per-surah (freshest wins).
+      const merged = { ...fetched, ...store.getState().tafsir?.[edition.id] };
+      buildTafsirIndex(edition.id, merged);
+      return true;
+    },
+    {
+      failure: (err) => {
+        console.error('[tafsir-search] corpus load failed', err);
+        rt.tafsirSearchBuildStarted = false; // allow a retry on the next query
+        store.dispatch(actions.setLoadError('tafsir-search-corpus', true));
+        return false;
+      },
     }
-    rt.tafsirBulkAbort = null;
-    // Reader cache doubles as the index source: texts the reader already
-    // holds merge under just-fetched ones per-surah (freshest wins).
-    const merged = { ...fetched, ...store.getState().tafsir?.[edition.id] };
-    buildTafsirIndex(edition.id, merged);
-    return true;
-  } catch (err) {
-    console.error('[tafsir-search] corpus load failed', err);
-    rt.tafsirSearchBuildStarted = false; // allow a retry on the next query
-    store.dispatch(actions.setLoadError('tafsir-search-corpus', true));
-    return false;
-  }
+  );
 }
 
 /**

@@ -1,3 +1,4 @@
+import { cancelBulkResources } from './bulkResources.js';
 /**
  * app/stateSub.js — the store's single subscriber. Every state change
  * flows through here: theme application, lazy-data triggers, lifecycles
@@ -392,14 +393,9 @@ export function onStateChange(stateArg, action) {
     // rt.bulkViewWasSearch tracks "previous view owned the bulk build".
     const ownsBulkBuild = (v) => v === VIEWS.SEARCH || v === VIEWS.MUTASHABIHAT;
     if (rt.bulkViewWasSearch && !ownsBulkBuild(state.activeView)) {
-      if (rt.quranBulkAbort) {
-        rt.quranBulkAbort.abort();
-        rt.quranBulkAbort = null;
-      }
-      if (rt.tafsirBulkAbort) {
-        rt.tafsirBulkAbort.abort();
-        rt.tafsirBulkAbort = null;
-      }
+      // quranBulkAbort/tafsirBulkAbort compatibility mirrors are cleared
+      // by the shared owner before old callbacks can settle.
+      cancelBulkResources();
     }
     rt.bulkViewWasSearch = ownsBulkBuild(state.activeView);
     maybeStartQuranSearchBuild(state);

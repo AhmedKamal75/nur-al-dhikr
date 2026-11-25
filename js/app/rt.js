@@ -25,6 +25,7 @@ export const rt = {
   editionSwitchRunning: null,
   editionSwitchTarget: null,
   lastSeenTranslationEdition: null,
+  // Compatibility mirrors for bulkResources.js request ownership.
   quranSearchBuildStarted: null,
   // (v5.2.82, BUG-09) tafsir corpus build latch — declared here (was an
   // undeclared dynamic prop); doubles as the navigation-cancel switch.
@@ -58,6 +59,7 @@ export const rt = {
   homeTickerDay: null,
   prayerTickerTarget: null,
   storageProbeStarted: null,
+  // Compatibility mirrors for lazyData.js async-resource adapters.
   quranMetaFetchStarted: null,
   mushafMetaFetchStarted: null,
   mushafNavigationIntent: 0,

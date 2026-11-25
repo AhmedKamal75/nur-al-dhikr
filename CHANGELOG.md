@@ -1,3 +1,9 @@
+# v5.17.171 - Share lazy-resource request ownership
+
+- Eight singleton lazy tiers share request deduplication, generation/identity guards and configured cooldowns while retaining tier-specific validation, failure returns, logging and retry UI.
+- Search bulk owners share abort lifecycle. Exiting and returning before old work settles cannot publish stale chunks or clear a replacement controller. Quran supports Search and look-alike study; tafsir keeps Search-only scheduling and bundled-edition rules.
+- Deterministic tests cover synchronous reentry, stale success/failure ordering, empty data, cooldowns and bulk exit/return. English/Arabic browser tests cover meta and roots retry recovery and stale study-modal completion.
+
 # v5.17.170 - Keep player settings reachable in short landscape
 
 - Limit the file-player More panel height in short viewports and allow vertical scrolling, keeping the first controls on-screen and all later controls reachable. Portrait and desktop settings remain unchanged.

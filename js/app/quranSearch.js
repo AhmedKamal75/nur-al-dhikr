@@ -1,3 +1,4 @@
+import { quranBulkResource } from './bulkResources.js';
 /**
  * app/quranSearch.js — the full-text Qur'an search corpus: lazy index
  * build over all 6,236 ayahs, once per translation edition.
@@ -22,96 +23,98 @@ import { buildQuranIndex, isQuranSearchReady, setQuranIndexReady } from '../doma
 // its way through, so this whole flow works offline after the first use.
 
 export async function ensureQuranSearchData() {
-  if (rt.quranSearchBuildStarted || isQuranSearchReady()) return;
-  rt.quranSearchBuildStarted = true;
-  // (v5.2.88) fresh abort scope per build: a superseded build's signal is
-  // already dead, and the exit hook below aborts the live one.
-  rt.quranBulkAbort?.abort();
-  rt.quranBulkAbort = new AbortController();
-  const signal = rt.quranBulkAbort.signal;
-  try {
-    if (!store.getState().quran.meta) {
-      const meta = await fetchJSON(QURAN_META_URL);
-      store.dispatch(actions.setQuranMeta(meta));
-    }
-    const snapBefore = store.getState().quran.surahs;
-    const missing = [];
-    for (let n = 1; n <= 114; n++) {
-      if (!snapBefore[String(n)]) missing.push(n);
-    }
-    // Fetch in modest chunks so a flaky connection surfaces errors early
-    // instead of after 114 parallel requests.
-    const CHUNK = 24;
-    const fetched = {};
-    for (let i = 0; i < missing.length; i += CHUNK) {
-      // (v5.2.82, BUG-09) navigation cancels the bulk build: this is a
-      // fire-and-forget background job, and its 24-wide chunks otherwise
-      // keep saturating connections + the main thread after the person
-      // left Search — starving the view they actually opened (observed:
-      // #/roots index timing out behind 200+ in-flight corpus fetches).
-      // The latch resets so returning to Search resumes the build.
-      // (v5.2.88) the exit hook aborts the signal too, so THIS chunk's
-      // in-flight fetches release immediately instead of draining first.
-      // (v5.4.0) MUTASHABIHAT is the second legitimate owner of this
-      // build — the drill computes its pairs from corpus docs, so the
-      // build continues while either owner is active.
-      const view = store.getState().activeView;
-      if ((view !== VIEWS.SEARCH && view !== VIEWS.MUTASHABIHAT) || signal.aborted) {
-        rt.quranSearchBuildStarted = false;
-        if (rt.quranBulkAbort) {
-          rt.quranBulkAbort.abort();
-          rt.quranBulkAbort = null;
+  if (quranBulkResource.pending || rt.quranSearchBuildStarted || isQuranSearchReady()) return;
+  return quranBulkResource.run(
+    async ({ current, signal }) => {
+      if (!store.getState().quran.meta) {
+        const meta = await fetchJSON(QURAN_META_URL, { signal });
+        if (!current()) return;
+        store.dispatch(actions.setQuranMeta(meta));
+        if (!current()) return;
+      }
+      const snapBefore = store.getState().quran.surahs;
+      const missing = [];
+      for (let n = 1; n <= 114; n++) {
+        if (!snapBefore[String(n)]) missing.push(n);
+      }
+      // Fetch in modest chunks so a flaky connection surfaces errors early
+      // instead of after 114 parallel requests.
+      const CHUNK = 24;
+      const fetched = {};
+      for (let i = 0; i < missing.length; i += CHUNK) {
+        // (v5.2.82, BUG-09) navigation cancels the bulk build: this is a
+        // fire-and-forget background job, and its 24-wide chunks otherwise
+        // keep saturating connections + the main thread after the person
+        // left Search — starving the view they actually opened (observed:
+        // #/roots index timing out behind 200+ in-flight corpus fetches).
+        // The latch resets so returning to Search resumes the build.
+        // (v5.2.88) the exit hook aborts the signal too, so THIS chunk's
+        // in-flight fetches release immediately instead of draining first.
+        // (v5.4.0) MUTASHABIHAT is the second legitimate owner of this
+        // build — the drill computes its pairs from corpus docs, so the
+        // build continues while either owner is active.
+        const view = store.getState().activeView;
+        if (!current()) return;
+        if (view !== VIEWS.SEARCH && view !== VIEWS.MUTASHABIHAT) {
+          quranBulkResource.invalidate();
+          return;
         }
-        return;
-      }
-      const chunk = missing.slice(i, i + CHUNK);
-      const docs = await Promise.all(
-        chunk.map(async (n) => {
-          try {
-            let doc = await loadSurahDoc(n, signal);
-            const want = store.getState().settings.quranTranslation || 'en-sahih';
-            if ((doc.translationEdition || 'en-sahih') !== want) {
-              doc = await loadSurahDoc(n, signal);
+        const chunk = missing.slice(i, i + CHUNK);
+        const docs = await Promise.all(
+          chunk.map(async (n) => {
+            try {
+              let doc = await loadSurahDoc(n, signal);
+              if (!current()) return null;
+              const want = store.getState().settings.quranTranslation || 'en-sahih';
+              if ((doc.translationEdition || 'en-sahih') !== want) {
+                doc = await loadSurahDoc(n, signal);
+              }
+              return doc;
+            } catch (err) {
+              // Intentional cancel: silent (see net.js isBulkAbortError).
+              if (!current() || isBulkAbortError(err)) return null;
+              // Warn, not error: same tolerant-loop contract as the tafsir
+              // build (skip + continue + retry-next-query).
+              console.warn('[quran-search] failed to load surah', n, err);
+              return null;
             }
-            return doc;
-          } catch (err) {
-            // Intentional cancel: silent (see net.js isBulkAbortError).
-            if (isBulkAbortError(err)) return null;
-            // Warn, not error: same tolerant-loop contract as the tafsir
-            // build (skip + continue + retry-next-query).
-            console.warn('[quran-search] failed to load surah', n, err);
-            return null;
-          }
-        })
-      );
-      chunk.forEach((n, j) => {
-        if (docs[j]) fetched[n] = docs[j];
-      });
-      // (v5.6.0, B-3) persist each chunk into the reader cache as it
-      // lands: the store itself becomes the resume cursor — an aborted
-      // or interrupted build resumes from chunk N+1 instead of
-      // re-scanning 1..114 and re-fetching what already landed. One
-      // dispatch per 24-wide chunk keeps re-renders bounded.
-      if (Object.keys(fetched).length) {
-        store.dispatch(actions.setQuranSurahsBulk({ ...fetched }));
+          })
+        );
+        if (!current()) return false;
+        chunk.forEach((n, j) => {
+          if (!current()) return;
+          if (docs[j]) fetched[n] = docs[j];
+        });
+        // (v5.6.0, B-3) persist each chunk into the reader cache as it
+        // lands: the store itself becomes the resume cursor — an aborted
+        // or interrupted build resumes from chunk N+1 instead of
+        // re-scanning 1..114 and re-fetching what already landed. One
+        // dispatch per 24-wide chunk keeps re-renders bounded.
+        if (Object.keys(fetched).length) {
+          store.dispatch(actions.setQuranSurahsBulk({ ...fetched }));
+        }
       }
+      if (!current()) return false;
+      // Re-read AFTER the fetch loop: an edition switch (or any surah load)
+      // landing mid-build re-merges quran.surahs. Fresh state wins where it
+      // has a doc (newest edition); just-fetched docs fill only the gaps —
+      // the reverse order would bake the old language into the index.
+      buildQuranIndex({ ...fetched, ...store.getState().quran.surahs });
+      if (!current()) return;
+      setQuranIndexReady(true);
+      // Bulk-warm the reader cache too (one dispatch, one re-render): search
+      // results link into the per-surah reader, which should never have to
+      // re-fetch something already on screen.
+      store.dispatch(actions.setQuranSurahsBulk(fetched));
+    },
+    {
+      failure: (err) => {
+        console.error('[quran-search] corpus load failed', err);
+        rt.quranSearchBuildStarted = false; // allow a retry on the next query
+        store.dispatch(actions.setLoadError('quran-search-corpus', true));
+      },
     }
-    rt.quranBulkAbort = null;
-    // Re-read AFTER the fetch loop: an edition switch (or any surah load)
-    // landing mid-build re-merges quran.surahs. Fresh state wins where it
-    // has a doc (newest edition); just-fetched docs fill only the gaps —
-    // the reverse order would bake the old language into the index.
-    buildQuranIndex({ ...fetched, ...store.getState().quran.surahs });
-    setQuranIndexReady(true);
-    // Bulk-warm the reader cache too (one dispatch, one re-render): search
-    // results link into the per-surah reader, which should never have to
-    // re-fetch something already on screen.
-    store.dispatch(actions.setQuranSurahsBulk(fetched));
-  } catch (err) {
-    console.error('[quran-search] corpus load failed', err);
-    rt.quranSearchBuildStarted = false; // allow a retry on the next query
-    store.dispatch(actions.setLoadError('quran-search-corpus', true));
-  }
+  );
 }
 
 /* Deep-link scroll target: '#/quran/36?ay=12' focuses ayah 12 once its
