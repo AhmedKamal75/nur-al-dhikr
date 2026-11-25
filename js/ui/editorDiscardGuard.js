@@ -71,7 +71,15 @@ export function installEditorDiscardGuard(root, { close, text }) {
     body.scrollTop = 0;
   }
   function click(e) {
-    if (!e.target.closest('[data-action="modal-close"]') || !root.contains(e.target)) return;
+    const backdrop = e.target.matches('.modal-overlay');
+    if ((!backdrop && !e.target.closest('[data-action="modal-close"]')) || !root.contains(e.target))
+      return;
+    if (backdrop && prompt) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      keep();
+      return;
+    }
     if (editorFormSnapshot(form) === initial) return;
     e.preventDefault();
     e.stopImmediatePropagation();

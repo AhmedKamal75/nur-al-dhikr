@@ -67,6 +67,13 @@ for (const language of ['en', 'ar'])
       await expect(field).toBeFocused();
       expect(await field.evaluate((el) => [el.selectionStart, el.selectionEnd])).toEqual([2, 6]);
       expect(await page.locator('.modal__body').evaluate((el) => el.scrollTop)).toBe(scroll);
+      // Exact backdrop clicks must not bypass the editor guard.
+      await page.locator('.modal-overlay').dispatchEvent('click');
+      await expect(prompt).toBeVisible();
+      await page.locator('.modal-overlay').dispatchEvent('click');
+      await expect(prompt).toHaveCount(0);
+      await expect(field).toHaveValue('Changed text');
+      await expect(field).toBeFocused();
       // X asks, Escape from the choice keeps work.
       await page.locator('.modal__close').click();
       await expect(prompt).toBeVisible();

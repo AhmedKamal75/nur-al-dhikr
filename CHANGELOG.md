@@ -1,4 +1,4 @@
-# v5.17.175 - Keep unsaved custom-authoring edits before closing
+# v5.17.176 - Keep unsaved custom-authoring edits before closing
 
 - Dirty custom item, category and library forms ask whether to keep editing or discard when closed with X, Cancel or Escape. Keep editing is focused by default, and the live form retains values, text selection, field focus and scroll. Reverted and untouched forms close immediately.
 - Successful Save still closes directly, validation failure stays editable, and bundled-content overrides and other modals are outside this opt-in. No automatic saving, persistent drafts, browser history interception or before-unload prompt.
