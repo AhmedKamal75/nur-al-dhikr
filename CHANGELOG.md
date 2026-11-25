@@ -1,3 +1,8 @@
+# v5.17.174 - Keep prayer timetable context on screen and in print
+
+- Monthly prayer tables show the saved-coordinate context, resolved calculation and Asr labels, effective minute adjustments and an estimate/verify reminder. Unbound place names fall back to rounded coordinates. Valid saved zones are named without a misleading single DST offset.
+- Settings and language changes rebuild the selected month together. Closing or replacing the modal removes its subscription. Print retains context and all day rows while hiding controls. Prayer calculations and calendar exports are unchanged.
+
 # v5.17.173 - Share independent audio ownership tickets
 
 - File playback, file resume attempts, verse source lookup, verse echo waits and recitation mirror attempts now use independent opaque tickets. Element identity and source intent remain separate checks.

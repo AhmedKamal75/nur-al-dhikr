@@ -2397,6 +2397,13 @@ export const en = {
   'prayer.sheet.calc': 'Calculation settings',
   'prayer.sheet.calcHint': 'Method and Asr convention',
   'prayer.sheet.exportIcs': "Export today's times (.ics)",
+  'prayer.month.place': 'Saved place',
+  'prayer.month.coordinates': 'Coordinates',
+  'prayer.month.noLocation': 'Location not set',
+  'prayer.month.timezone': 'Time zone',
+  'prayer.month.deviceClock': 'Device-clock fallback',
+  'prayer.month.caveat':
+    'Calculated estimates. Verify these times with your local mosque or authority.',
   'prayer.sheet.monthTimetable': 'Monthly timetable',
   'prayer.sheet.exportIcsMonth': 'Download month (.ics)',
   'prayer.prevMonth': 'Previous month',
