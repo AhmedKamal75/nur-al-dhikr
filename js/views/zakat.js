@@ -79,23 +79,22 @@ function nisabPanel(state, lang) {
 
 function inputsPanel(state, lang) {
   const inputs = state.zakat.inputs;
-  const noteFor = (id) => {
-    const text = t(`zakat.note.${id}`, lang);
-    if (!text || text === `zakat.note.${id}`) return '';
-    // No aria-label: this is a role-generic <span>, and ARIA forbids labelling
-    // one. `title` already exposes the same text to a screen reader on hover
-    // and focus, and axe flagged the duplicate as aria-prohibited-attr.
-    return ` <span class="zakat-note" title="${escapeHTML(text)}">${icon('info', { size: 13 })}</span>`;
-  };
-  const rows = ASSET_FIELDS.map(
-    (f) => `
-    <label class="field ${f.isLiability ? 'zakat-field--liability' : ''}">
-      <span>${t(f.label, lang)}${noteFor(f.id)}</span>
-      <input class="input" type="number" min="0" step="any" inputmode="decimal" dir="ltr"
+  const rows = ASSET_FIELDS.map((f) => {
+    const noteKey = `zakat.note.${f.id}`;
+    const note = t(noteKey, lang);
+    const hasNote = Boolean(note && note !== noteKey);
+    const inputId = `zakat-input-${f.id}`;
+    const noteId = `zakat-note-${f.id}`;
+    return `
+    <div class="field ${f.isLiability ? 'zakat-field--liability' : ''}">
+      <label for="${inputId}">${t(f.label, lang)}</label>
+      <input id="${inputId}" class="input" type="number" min="0" step="any" inputmode="decimal" dir="ltr"
         data-bind="zakat-input" data-ref="in-${f.id}" data-field="${f.id}"
+        ${hasNote ? `aria-describedby="${noteId}"` : ''}
         value="${escapeHTML(String(inputs[f.id] || ''))}" placeholder="${f.unit === 'g' ? '0' : '0.00'}" />
-    </label>`
-  ).join('');
+      ${hasNote ? `<span id="${noteId}" class="zakat-note">${escapeHTML(note)}</span>` : ''}
+    </div>`;
+  }).join('');
 
   return `
   <section class="panel">
@@ -166,10 +165,11 @@ function fitrPanel(state, lang) {
   <section class="panel">
     <div class="panel__header"><h2>${t('zakat.fitrTitle', lang)}</h2></div>
     <div class="zakat-price-row">
-      <label class="field">${t('zakat.fitrPerPerson', lang)}
-        <input class="input" type="number" min="0" step="any" inputmode="decimal" dir="ltr" data-bind="zakat-fitr-per" data-ref="fitr-per" value="${escapeHTML(String(per))}" placeholder="0.00" />
-      </label>
-      <span class="panel__subtext">${t('zakat.note.fitrPer', lang)}</span>
+      <div class="field">
+        <label for="zakat-fitr-per">${t('zakat.fitrPerPerson', lang)}</label>
+        <input id="zakat-fitr-per" aria-describedby="zakat-note-fitrPer" class="input" type="number" min="0" step="any" inputmode="decimal" dir="ltr" data-bind="zakat-fitr-per" data-ref="fitr-per" value="${escapeHTML(String(per))}" placeholder="0.00" />
+        <span id="zakat-note-fitrPer" class="zakat-note">${t('zakat.note.fitrPer', lang)}</span>
+      </div>
       <label class="field">${t('zakat.fitrPeople', lang)}
         <input class="input" type="number" min="0" step="1" inputmode="numeric" dir="ltr" data-bind="zakat-fitr-people" data-ref="fitr-people" value="${escapeHTML(String(people))}" placeholder="0" />
       </label>
