@@ -440,6 +440,12 @@ export function initialState() {
     // reactive-render purpose as speakingItemId (the inline progress bar);
     // deliberately NOT in PERSISTED_KEYS — a reload has nothing playing.
     listenAll: null,
+    // (v5.17.182, C14) Ephemeral — the undoable last count tap: { itemId,
+    // categoryId, step, target, cycleCompleted, dayKey, appliedRecitations,
+    // appliedDayRecitations, appliedCycles, favCatApplied, surface, ts } or
+    // null. One level, ~60s window, same-view only. Deliberately NOT in
+    // PERSISTED_KEYS — a reload must never offer to rewind a stale tap.
+    lastCountTap: null,
     // First-run onboarding ("Getting started" panel on Home). Persisted, but
     // self-dismissing for returning users — see sanitizeRestoredPayload:
     // anyone upgrading from an earlier version with existing progress is

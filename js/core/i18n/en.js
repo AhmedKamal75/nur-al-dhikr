@@ -953,6 +953,7 @@ export const en = {
   'tasbih.targetPresets': 'Target presets',
   'tasbih.optionsTitle': 'Counter options',
   'tasbih.reset': 'Reset',
+  'tasbih.undoLastTap': 'Undo last tap',
   'tasbih.float': 'Floating counter',
   'tasbih.floatUnsupported': 'Floating windows are not supported by this browser',
   'tasbih.floatFailed': 'The floating window could not be opened',
@@ -1824,6 +1825,7 @@ export const en = {
   'a11y.languageToggle': 'Switch language',
   'a11y.counterProgress': '{count} of {target}',
   'a11y.counterComplete': 'Completed. Cycle {n}.',
+  'a11y.countUndone': 'Count undone.',
   'update.available': 'A new version is ready',
   'sw.precacheFailed':
     'Offline files could not be downloaded — the app works online for now. Retry when your connection allows.',

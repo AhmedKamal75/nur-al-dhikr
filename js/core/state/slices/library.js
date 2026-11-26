@@ -534,6 +534,12 @@ export function reduceLibrary(state, action) {
     case 'COUNTER_RESET':
       return {
         ...state,
+        // A reset retires a pending undo ticket for the same counter: the
+        // count it would restore no longer exists.
+        lastCountTap:
+          state.lastCountTap && state.lastCountTap.itemId === action.itemId
+            ? null
+            : state.lastCountTap,
         counters: {
           ...state.counters,
           [action.itemId]: {
@@ -544,6 +550,122 @@ export function reduceLibrary(state, action) {
           },
         },
       };
+
+    // (v5.17.182, C14) one-level "undo last tap" ticket. Recorded by
+    // services/tasbih.js increment() with the EXACT applied amounts, so a
+    // saturated tap rewinds only what it added. Reducer-level sanitize:
+    // anything hostile leaves state alone.
+    case 'COUNT_TAP_RECORD': {
+      const tap = action.tap;
+      if (!tap || typeof tap !== 'object' || Array.isArray(tap)) return state;
+      if (typeof tap.itemId !== 'string' || !isSafeKey(tap.itemId)) return state;
+      if (typeof tap.surface !== 'string' || !tap.surface) return state;
+      if (typeof tap.dayKey !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(tap.dayKey)) {
+        return state;
+      }
+      const ts = Number(tap.ts);
+      if (!Number.isFinite(ts) || ts <= 0) return state;
+      const clampInt = (v, max) => {
+        const n = Math.floor(Number(v));
+        return Number.isFinite(n) ? Math.min(max, Math.max(0, n)) : 0;
+      };
+      return {
+        ...state,
+        lastCountTap: {
+          itemId: tap.itemId,
+          categoryId: typeof tap.categoryId === 'string' ? tap.categoryId : null,
+          step: Math.max(1, clampInt(tap.step, MAX_TOTAL_RECITATIONS) || 1),
+          target: Math.max(1, clampInt(tap.target, MAX_TOTAL_RECITATIONS) || 1),
+          cycleCompleted: tap.cycleCompleted === true,
+          dayKey: tap.dayKey,
+          appliedRecitations: clampInt(tap.appliedRecitations, MAX_TOTAL_RECITATIONS),
+          appliedDayRecitations: clampInt(tap.appliedDayRecitations, MAX_TOTAL_RECITATIONS),
+          appliedCycles: clampInt(tap.appliedCycles, MAX_COMPLETED_CYCLES),
+          favCatApplied: clampInt(tap.favCatApplied, 1),
+          prevLastCompletedDay:
+            typeof tap.prevLastCompletedDay === 'string' &&
+            /^\d{4}-\d{2}-\d{2}$/.test(tap.prevLastCompletedDay)
+              ? tap.prevLastCompletedDay
+              : null,
+          surface: tap.surface,
+          ts,
+        },
+      };
+    }
+
+    case 'COUNT_TAP_CLEAR': {
+      if (!state.lastCountTap) return state;
+      // A stale timer clears only the ticket it armed for.
+      if (action.ts != null && state.lastCountTap.ts !== action.ts) return state;
+      return { ...state, lastCountTap: null };
+    }
+
+    case 'COUNT_TAP_UNDO': {
+      const tap = state.lastCountTap;
+      if (!tap) return state;
+      // Counter: a completed cycle restores count to target-1 (clamped to
+      // the counter's CURRENT target should it have changed since) and
+      // completedCycles-1; an ordinary tap rewinds its step. Saturation
+      // caps are honoured via the recorded applied amounts.
+      let counters = state.counters;
+      const existing = state.counters[tap.itemId];
+      if (existing) {
+        const curTarget = Math.max(1, Math.floor(Number(existing.target)) || tap.target);
+        const count = tap.cycleCompleted
+          ? Math.max(0, Math.min(tap.target, curTarget) - 1)
+          : Math.max(0, (existing.count || 0) - tap.step);
+        const completedCycles = Math.max(0, (existing.completedCycles || 0) - tap.appliedCycles);
+        counters = {
+          ...state.counters,
+          [tap.itemId]: {
+            ...existing,
+            count,
+            completedCycles,
+            // A completed cycle's day stamp rewinds to whatever it
+            // overwrote — else the item stays "done today" forever.
+            ...(tap.cycleCompleted ? { lastCompletedDay: tap.prevLastCompletedDay } : null),
+            lastUpdated: Date.now(),
+          },
+        };
+      }
+      // Statistics: rewind the tap's OWN day (cross-midnight safe — the
+      // ticket carries the dayKey the increment wrote to). itemIds and
+      // sessions stay; history and reading positions stay — see C14 notes.
+      const stats = state.statistics;
+      const day = stats.dailyHistory[tap.dayKey];
+      const nextHistory = { ...stats.dailyHistory };
+      if (day) {
+        nextHistory[tap.dayKey] = {
+          ...day,
+          recitations: Math.max(0, (day.recitations || 0) - tap.appliedDayRecitations),
+        };
+      }
+      const favCat = { ...stats.favoriteCategories };
+      if (tap.categoryId && tap.favCatApplied) {
+        favCat[tap.categoryId] = Math.max(0, (favCat[tap.categoryId] || 0) - tap.favCatApplied);
+      }
+      // Same post-write streak discipline as STATISTICS_RECORD, anchored on
+      // TODAY: rewinding yesterday's entry can correctly drop a streak that
+      // no longer meets the goal.
+      const { currentStreak, longestStreak } = computeStreak(
+        { ...stats, dailyHistory: nextHistory },
+        dateKey(new Date()),
+        state.settings.dailyGoal
+      );
+      return {
+        ...state,
+        counters,
+        lastCountTap: null,
+        statistics: {
+          ...stats,
+          dailyHistory: nextHistory,
+          totalRecitations: Math.max(0, stats.totalRecitations - tap.appliedRecitations),
+          favoriteCategories: favCat,
+          currentStreak,
+          longestStreak: Math.max(longestStreak, stats.longestStreak),
+        },
+      };
+    }
 
     case 'REMINDER_ADD':
       return { ...state, reminders: [...state.reminders, action.reminder] };

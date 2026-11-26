@@ -7,10 +7,11 @@
  */
 
 import { store, actions } from '../core/state.js';
-import { vibrate, dateKey, MAX_COMPLETED_CYCLES } from '../core/utils.js';
+import { vibrate, dateKey, MAX_COMPLETED_CYCLES, MAX_TOTAL_RECITATIONS } from '../core/utils.js';
 import { markCelebration, milestoneHit, wasCelebrated } from '../domain/celebrate.js';
 import { t } from '../core/i18n.js';
 import { getAudioContext } from './audioContext.js';
+import * as countUndo from './countUndo.js';
 
 /**
  * Increment the counter for an item. Handles cycle completion and dispatches
@@ -24,7 +25,7 @@ export function counterResetReviewOpen() {
   );
 }
 
-export function increment(itemId, categoryId, target = 1, step = 1) {
+export function increment(itemId, categoryId, target = 1, step = 1, surface = null) {
   if (counterResetReviewOpen()) return { ...getCounter(itemId, target), cycleCompleted: false };
   const state = store.getState();
   const existing = state.counters[itemId] || { count: 0, target, completedCycles: 0 };
@@ -46,6 +47,7 @@ export function increment(itemId, categoryId, target = 1, step = 1) {
   let completedCycles = Number.isFinite(Number(existing.completedCycles))
     ? Math.min(MAX_COMPLETED_CYCLES, Math.max(0, Math.floor(Number(existing.completedCycles))))
     : 0;
+  const cyclesBefore = completedCycles;
   let cycleCompleted = false;
 
   if (count >= effTarget) {
@@ -60,6 +62,40 @@ export function increment(itemId, categoryId, target = 1, step = 1) {
   // (v5.2.25) completions stamp the day: "completed today" (home feed
   // dedup, category % indicator) reads this field, never the lifetime
   // cycles. The COUNTER_SET merge preserves it on later taps.
+  // (v5.17.182, C14) one-level undo ticket, recorded in the same batch
+  // with the EXACT applied amounts — a tap that hit a saturation cap
+  // rewinds only what it added. The dayKey pins the day the statistic
+  // lands on, so a cross-midnight undo rewinds the right day's entry.
+  let undoTicket = null;
+  if (surface) {
+    const dayNow = dateKey(new Date());
+    const dayEntry = state.statistics.dailyHistory[dayNow];
+    undoTicket = {
+      itemId,
+      categoryId: categoryId || null,
+      step,
+      target: effTarget,
+      cycleCompleted,
+      dayKey: dayNow,
+      appliedRecitations: Math.min(
+        step,
+        Math.max(0, MAX_TOTAL_RECITATIONS - (state.statistics.totalRecitations || 0))
+      ),
+      appliedDayRecitations: Math.min(
+        step,
+        Math.max(0, MAX_TOTAL_RECITATIONS - (dayEntry?.recitations || 0))
+      ),
+      appliedCycles: cycleCompleted ? Math.min(1, MAX_COMPLETED_CYCLES - cyclesBefore) : 0,
+      favCatApplied: categoryId ? 1 : 0,
+      // (planner HOLD fix) a completing tap stamps lastCompletedDay; the
+      // undo must restore the stamp it overwrote (usually null), or the
+      // item stays "done today" in Reflections and done-today %.
+      prevLastCompletedDay: cycleCompleted ? (existing.lastCompletedDay ?? null) : null,
+      surface,
+      ts: Date.now(),
+    };
+  }
+
   store.batch(() => {
     store.dispatch(
       actions.setCounter(itemId, {
@@ -71,7 +107,9 @@ export function increment(itemId, categoryId, target = 1, step = 1) {
     );
     store.dispatch(actions.recordStatistic(itemId, categoryId, step, false));
     store.dispatch(actions.pushHistory(itemId, categoryId));
+    if (undoTicket) store.dispatch(actions.recordCountTap(undoTicket));
   });
+  if (undoTicket) countUndo.scheduleExpiry(undoTicket.ts);
 
   if (cycleCompleted) markJustCompleted(itemId);
   // (v5.2.0) Milestone ping: the tasbihMilestone setting (0 = off) buzzes

@@ -229,7 +229,15 @@ export const clickHandlers = {
     // .card--exiting and the animation plays instead of a snap.
     const before = selectors.getCounter(store.getState(), ds.itemId);
     if ((before?.count || 0) + 1 >= target) noteCompleted(ds.itemId);
-    const result = tasbih.increment(ds.itemId, ds.categoryId || null, target);
+    // C14: the tap's surface is the view it happened on — Focus renders
+    // the undo control; card taps elsewhere hold only an expiring ticket.
+    const result = tasbih.increment(
+      ds.itemId,
+      ds.categoryId || null,
+      target,
+      1,
+      beforeState.activeView
+    );
 
     // (v5.0.0) services/tasbih.js owns the single tick + haptic pair for
     // every counting surface. The handler only adds the tap ripple, which

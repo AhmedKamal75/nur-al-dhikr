@@ -4,7 +4,7 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 This is the exhaustive dump. For the one-page version — chrome spine, where-to-change table, counted inventory — read `docs/AGENT-MAP.md` instead. This file is ~530 KB by design; it is meant to be searched for one named thing, not read end to end.
 
-- js modules: 259 — data files: 29 — tests: 309
+- js modules: 260 — data files: 29 — tests: 310
 
 Conventions: `js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;
 `js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;
@@ -534,7 +534,7 @@ job: app/handlers — feature-scoped controller modules. Each exports a partial 
 
 - exports: `clickHandlers` (object)
 - emits: —
-- handles: `tasbih-custom-remove`, `tasbih-custom-save`, `tasbih-float`, `tasbih-reset`, `tasbih-select`, `tasbih-tap`, `tasbih-target-set`, `tasbih-target-step`
+- handles: `count-undo`, `tasbih-custom-remove`, `tasbih-custom-save`, `tasbih-float`, `tasbih-reset`, `tasbih-select`, `tasbih-tap`, `tasbih-target-set`, `tasbih-target-step`
 - i18n: `nav.tasbih`, `tasbih.customAdded`, `tasbih.customEmpty`
 - routes: —
 
@@ -1144,7 +1144,7 @@ job: Gregorian <-> Hijri conversion using the civil tabular Islamic calendar (a 
 
 job: A transient, in-memory "something good just happened" registry, shared by every celebration micro-interaction in the app (v3.12 — generalized from the tasbih cycle-completion flash).
 
-- exports: `milestoneHit` (function), `markCelebration` (function), `wasCelebrated` (function), `clearCelebrations` (function)
+- exports: `milestoneHit` (function), `markCelebration` (function), `wasCelebrated` (function), `clearCelebration` (function), `clearCelebrations` (function)
 - emits: —
 - handles: —
 - i18n: —
@@ -1944,6 +1944,16 @@ job: Pure helpers for the in-place content-manage layer — the user's own hide 
 - i18n: —
 - routes: —
 
+### `js/services/countUndo.js`
+
+job: "Undo last tap" (v5.17.182, C14): one-level undo of the most recent count tap, live for UNDO_WINDOW_MS on the view where the tap happened (Tasbih and Focus render the control; other surfaces only
+
+- exports: `UNDO_WINDOW_MS` (const), `getUndoableTap` (function), `scheduleExpiry` (function), `undoLastTap` (function)
+- emits: —
+- handles: —
+- i18n: `a11y.countUndone`
+- routes: —
+
 ### `js/services/dataHealth.js`
 
 job: the Settings "data health check" (v3.26.0). Pure, DOM-free helpers. The TODO's framing is the spec: "Backups people never test are hopes,
@@ -2427,9 +2437,9 @@ job: The flat favorites list, sortable (recent / alpha / most-read) with per-row
 job: Full-bleed, distraction-free reading/counting mode for one item at a time, with previous/next navigation through the rest of its category.
 
 - exports: `focusEnterClass` (function), `renderFocus` (function), `focusSizePercent` (function), `focusSizeStep` (function), `focusSizeSheetHTML` (function), `syncFocusSizeSheet` (function)
-- emits: `byheart-reveal`, `byheart-review`, `counter-tap`, `focus-adjacent`, `focus-exit`, `focus-reset`, `focus-size-open`, `focus-size-step`, `focus-wake-toggle`, `modal-close`, `navigate`, `open-card-menu`, `play-dhikr-audio`, `toggle-favorite`, `toggle-speech`
+- emits: `byheart-reveal`, `byheart-review`, `count-undo`, `counter-tap`, `focus-adjacent`, `focus-exit`, `focus-reset`, `focus-size-open`, `focus-size-step`, `focus-wake-toggle`, `modal-close`, `navigate`, `open-card-menu`, `play-dhikr-audio`, `toggle-favorite`, `toggle-speech`
 - handles: —
-- i18n: `card.completedTimes`, `card.favorite`, `card.more`, `card.narratedBy`, `category.progressToday`, `collections.itemCount`, `common.done`, `common.notFoundItem`, `content.reviewPending`, `focus.exit`, `focus.next`, `focus.pickerHint`, `focus.pickerTitle`, `focus.previous`, `focus.progress`, `focus.reset`, `focus.sessionComplete`, `focus.size.current`, `focus.size.larger`, `focus.size.shared` (+15 more)
+- i18n: `card.completedTimes`, `card.favorite`, `card.more`, `card.narratedBy`, `category.progressToday`, `collections.itemCount`, `common.done`, `common.notFoundItem`, `content.reviewPending`, `focus.exit`, `focus.next`, `focus.pickerHint`, `focus.pickerTitle`, `focus.previous`, `focus.progress`, `focus.reset`, `focus.sessionComplete`, `focus.size.current`, `focus.size.larger`, `focus.size.shared` (+16 more)
 - routes: `VIEWS.COLLECTION`, `VIEWS.FOCUS`, `VIEWS.LIBRARY`
 
 ### `js/views/garden.js`
@@ -2797,9 +2807,9 @@ job: The Tajweed rules & colors panel: every rule of the standard chart with an 
 job: (header names file only — no job line)
 
 - exports: `renderTasbih` (function), `PRESETS` (re-export)
-- emits: `tasbih-custom-remove`, `tasbih-custom-save`, `tasbih-float`, `tasbih-reset`, `tasbih-select`, `tasbih-tap`, `tasbih-target-set`, `tasbih-target-step`
+- emits: `count-undo`, `tasbih-custom-remove`, `tasbih-custom-save`, `tasbih-float`, `tasbih-reset`, `tasbih-select`, `tasbih-tap`, `tasbih-target-set`, `tasbih-target-step`
 - handles: —
-- i18n: `focus.progress`, `focus.tapToCount`, `nav.tasbih`, `tasbih.customAdd`, `tasbih.customPhrase`, `tasbih.customPlaceholder`, `tasbih.customRemove`, `tasbih.cyclesCompleted`, `tasbih.float`, `tasbih.lifetime`, `tasbih.optionsTitle`, `tasbih.reset`, `tasbih.target`, `tasbih.targetDown`, `tasbih.targetPresets`, `tasbih.targetUp`
+- i18n: `focus.progress`, `focus.tapToCount`, `nav.tasbih`, `tasbih.customAdd`, `tasbih.customPhrase`, `tasbih.customPlaceholder`, `tasbih.customRemove`, `tasbih.cyclesCompleted`, `tasbih.float`, `tasbih.lifetime`, `tasbih.optionsTitle`, `tasbih.reset`, `tasbih.target`, `tasbih.targetDown`, `tasbih.targetPresets`, `tasbih.targetUp`, `tasbih.undoLastTap`
 - routes: —
 
 ### `js/views/viewSheets.js`
@@ -2889,6 +2899,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `content-unhide-library`: emitted by `js/views/library.js`; handled in `js/app/handlers/content.js`
 - `copy-ayah`: emitted by `js/views/quran.js`; handled in `js/app/handlers/items.js`
 - `copy-item`: emitted by `js/ui/menus.js`; handled in `js/app/handlers/items.js`
+- `count-undo`: emitted by `js/views/focus.js`, `js/views/tasbih.js`; handled in `js/app/handlers/tasbih.js`
 - `counter-reset-confirm`: emitted by `js/app/counterReset.js`; handled in `js/app/handlers/items.js`
 - `counter-tap`: emitted by `js/app/handlers/items.js`, `js/ui/card.js`, `js/views/focus.js`; handled in `js/app/events.js`, `js/app/handlers/items.js`
 - `create-collection`: emitted by `js/views/collections.js`; handled in `js/app/handlers/items.js`
@@ -3471,6 +3482,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `TRANSLATION_URL`: `js/core/config/quran.js`
 - `TRIGGER_ARM_THROTTLE_MS`: `js/app/triggers.js`
 - `TRIGGER_TAG_PREFIX`: `js/services/alertTriggers.js`
+- `UNDO_WINDOW_MS`: `js/services/countUndo.js`
 - `VERSE_BITRATES`: `js/core/config/quran.js`
 - `VERSE_RATES`: `js/services/surahPlayback.js`
 - `VIEWS`: `js/core/config/views.js`
@@ -3671,6 +3683,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `clearAppBadge`: `js/services/appBadge.js`
 - `clearBackupHandle`: `js/services/backup.js`
 - `clearBatchQueue`: `js/services/audioStore.js`
+- `clearCelebration`: `js/domain/celebrate.js`
 - `clearCelebrations`: `js/domain/celebrate.js`
 - `clearClassifyMemo`: `js/domain/tajweed.js`
 - `clearDismissed`: `js/domain/completedCards.js`
@@ -3950,6 +3963,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `getCustomLibrary`: `js/services/editor.js`
 - `getItemEntry`: `js/app/shared.js`
 - `getModalGeneration`: `js/ui/modal.js`
+- `getUndoableTap`: `js/services/countUndo.js`
 - `getVerseAudio`: `js/services/audioStore.js`
 - `getWord`: `js/domain/wordStudy.js`
 - `globalAyahNumber`: `js/services/mushaf.js`
@@ -4578,6 +4592,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `saveState`: `js/core/storage.js`
 - `saveVerseAudio`: `js/services/audioStore.js`
 - `scheduleAutoAdvance`: `js/app/focusRuntime.js`
+- `scheduleExpiry`: `js/services/countUndo.js`
 - `scheduleTriggerArm`: `js/app/triggers.js`
 - `scoreRound`: `js/domain/tajweedPractice.js`
 - `scoreWordRound`: `js/domain/tajweedPractice.js`
@@ -4769,6 +4784,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `uncitedSessions`: `js/domain/tajweedCourse.js`
 - `uncitedTajweedRules`: `js/domain/tajweedSources.js`
 - `undo`: `js/services/editor.js`
+- `undoLastTap`: `js/services/countUndo.js`
 - `unifiedSearch`: `js/domain/rootAwareSearch.js`
 - `unwireAudioShortcutsForTests`: `js/app/audioEngine.js`
 - `upcomingFastingDays`: `js/domain/fasting.js`
@@ -5246,6 +5262,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `clearappbadge`: `js/services/appBadge.js`
 - `clearbackuphandle`: `js/services/backup.js`
 - `clearbatchqueue`: `js/services/audioStore.js`
+- `clearcelebration`: `js/domain/celebrate.js`
 - `clearcelebrations`: `js/domain/celebrate.js`
 - `clearclassifymemo`: `js/domain/tajweed.js`
 - `cleardismissed`: `js/domain/completedCards.js`
@@ -5354,7 +5371,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `contextual`: `js/ui/modal.js`
 - `continuous`: `js/domain/sleepTimer.js`
 - `contract`: `js/domain/localeContent.js`, `js/domain/nudge.js`, `js/domain/review.js`, `js/services/moodSelection.js`
-- `control`: `js/app/boot.js`, `js/views/studyTray.js`
+- `control`: `js/app/boot.js`, `js/services/countUndo.js`, `js/views/studyTray.js`
 - `controller`: `js/app/handlers/audio.js`, `js/app/handlers/editor.js`, `js/app/handlers/grammar.js`, `js/app/handlers/hifz.js`, `js/app/handlers/journal.js`, `js/app/handlers/location.js`, `js/app/handlers/navigation.js`, `js/app/handlers/quiz.js`, `js/app/handlers/quranAudio.js`, `js/app/handlers/system.js`, `js/app/handlers/tasbih.js`, `js/app/handlers/worship.js`, `js/app/handlers/zakat.js`
 - `controls`: `js/app/handlers/offline.js`, `js/services/mediaSession.js`, `js/ui/recitationConsole.js`, `js/views/collection.js`
 - `convention`: `js/domain/ramadanPlanner.js`, `js/views/tajweedConvention.js`
@@ -5369,7 +5386,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `corrupt`: `js/services/audioStore.js`
 - `cors`: `js/services/audioCatalog.js`
 - `costs`: `js/services/gapTelemetry.js`
-- `count`: `js/core/config/app.js`, `js/core/config/quran.js`, `js/domain/searchPagination.js`, `js/domain/tajweedLessons.js`, `js/services/appBadge.js`, `js/views/kids.js`, `js/views/mood.js`
+- `count`: `js/core/config/app.js`, `js/core/config/quran.js`, `js/domain/searchPagination.js`, `js/domain/tajweedLessons.js`, `js/services/appBadge.js`, `js/services/countUndo.js`, `js/views/kids.js`, `js/views/mood.js`
 - `countdown`: `js/domain/ambient.js`, `js/domain/homeInvitations.js`, `js/domain/ramadan.js`, `js/domain/ramadanPlanner.js`, `js/views/ambient.js`, `js/views/ramadan.js`
 - `countdownlabel`: `js/domain/sleepTimer.js`
 - `countdowns`: `js/app/tickers.js`, `js/domain/milestones.js`
@@ -5792,7 +5809,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `floatingcounterhtml`: `js/services/floatingCounter.js`
 - `flow`: `js/app/installPrompt.js`, `js/domain/completedCards.js`, `js/domain/install.js`, `js/views/qibla.js`
 - `flushreading`: `js/app/readingTimer.js`
-- `focus`: `js/app/drawer.js`, `js/app/focusRuntime.js`, `js/app/focusWakeLock.js`, `js/domain/gestures.js`, `js/services/focusQueue.js`, `js/services/tasbih.js`, `js/ui/card.js`
+- `focus`: `js/app/drawer.js`, `js/app/focusRuntime.js`, `js/app/focusWakeLock.js`, `js/domain/gestures.js`, `js/services/countUndo.js`, `js/services/focusQueue.js`, `js/services/tasbih.js`, `js/ui/card.js`
 - `focused`: `js/core/config.js`, `js/core/state/reducer.js`, `js/core/state.js`, `js/views/prayer.js`
 - `focusenterclass`: `js/views/focus.js`
 - `focusexitroute`: `js/services/focusQueue.js`
@@ -5867,6 +5884,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `getmodalgeneration`: `js/ui/modal.js`
 - `gets`: `js/ui/emptyState.js`, `js/views/mushafJump.js`
 - `gettimezoneoffset`: `js/domain/timezone.js`
+- `getundoabletap`: `js/services/countUndo.js`
 - `getverseaudio`: `js/services/audioStore.js`
 - `getword`: `js/domain/wordStudy.js`
 - `given`: `js/domain/worship.js`, `js/services/calendarNotes.js`, `js/ui/card.js`
@@ -5933,7 +5951,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `hands`: `js/views/journal.js`
 - `hang`: `js/core/fetch.js`
 - `happen`: `js/domain/statistics.js`
-- `happened`: `js/domain/celebrate.js`
+- `happened`: `js/domain/celebrate.js`, `js/services/countUndo.js`
 - `happens`: `js/views/editor.js`
 - `haram`: `js/domain/qibla.js`
 - `hard`: `js/domain/sleepTimer.js`
@@ -6177,7 +6195,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `languagelabel`: `js/core/i18n.js`
 - `languagetogglehtml`: `js/ui/shell.js`
 - `lapsedayahkeys`: `js/domain/mutashabihat.js`
-- `last`: `js/domain/lastPosition.js`, `js/domain/quiz.js`, `js/domain/ramadanPlanner.js`, `js/domain/readerWindow.js`, `js/domain/sleepTimer.js`
+- `last`: `js/domain/lastPosition.js`, `js/domain/quiz.js`, `js/domain/ramadanPlanner.js`, `js/domain/readerWindow.js`, `js/domain/sleepTimer.js`, `js/services/countUndo.js`
 - `lastactivity`: `js/domain/nudge.js`
 - `lastplayswapped`: `js/services/recitation.js`
 - `latch`: `js/domain/readerWindow.js`
@@ -6205,7 +6223,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `lenslibrary`: `js/domain/contentLens.js`
 - `lesson`: `js/domain/tajweedLessons.js`
 - `lessons`: `js/domain/tajweedLessons.js`
-- `level`: `js/app/handlers/content.js`, `js/core/config/nav.js`, `js/core/fetch.js`, `js/core/migration.js`, `js/domain/contentLens.js`
+- `level`: `js/app/handlers/content.js`, `js/core/config/nav.js`, `js/core/fetch.js`, `js/core/migration.js`, `js/domain/contentLens.js`, `js/services/countUndo.js`
 - `levels`: `js/domain/hifz.js`, `js/domain/kids.js`, `js/views/kids.js`
 - `lexical`: `js/domain/lexicalProvenance.js`
 - `lexicon`: `js/domain/lexicalProvenance.js`
@@ -6231,7 +6249,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `listening`: `js/domain/kids.js`
 - `lists`: `js/core/config/app.js`, `js/domain/offline.js`, `js/ui/card.js`
 - `listverseayahs`: `js/services/audioStore.js`
-- `live`: `js/app/handlers/offline.js`, `js/app/inputs.js`, `js/app/palette.js`, `js/app/rt.js`, `js/app/tickers.js`, `js/core/config.js`, `js/core/state/actions.js`, `js/core/state/initial.js`, `js/core/state/reducer.js`, `js/core/state/restore.js`, `js/core/state/selectors.js`, `js/core/state/store.js`, `js/domain/ambient.js`, `js/domain/compass.js`, `js/ui/readingTokens.js`, `js/ui/toast.js`, `js/views/ambient.js`, `js/views/ramadan.js`, `js/views/tajweedSettings.js`, `js/views/zakat.js`
+- `live`: `js/app/handlers/offline.js`, `js/app/inputs.js`, `js/app/palette.js`, `js/app/rt.js`, `js/app/tickers.js`, `js/core/config.js`, `js/core/state/actions.js`, `js/core/state/initial.js`, `js/core/state/reducer.js`, `js/core/state/restore.js`, `js/core/state/selectors.js`, `js/core/state/store.js`, `js/domain/ambient.js`, `js/domain/compass.js`, `js/services/countUndo.js`, `js/ui/readingTokens.js`, `js/ui/toast.js`, `js/views/ambient.js`, `js/views/ramadan.js`, `js/views/tajweedSettings.js`, `js/views/zakat.js`
 - `livecollectioncount`: `js/views/collections.js`
 - `lived`: `js/domain/locations.js`
 - `liveinstallplatform`: `js/views/installRow.js`
@@ -6861,7 +6879,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `real`: `js/domain/install.js`, `js/views/mushafReader.js`
 - `reason`: `js/domain/qada.js`
 - `recall`: `js/domain/mutashabihat.js`
-- `recent`: `js/views/favorites.js`
+- `recent`: `js/services/countUndo.js`, `js/views/favorites.js`
 - `recenthistory`: `js/services/checklist.js`
 - `recentvoluntaryfasts`: `js/domain/fasting.js`
 - `recitation`: `js/core/state/slices/audio.js`, `js/domain/garden.js`, `js/domain/statistics.js`, `js/services/audioStore.js`, `js/services/dhikrAudio.js`, `js/services/mediaSession.js`, `js/services/mushaf.js`, `js/ui/recitationConsole.js`, `js/views/garden.js`
@@ -7162,6 +7180,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `scanned`: `js/domain/rootAwareSearch.js`
 - `schedule`: `js/domain/planExport.js`
 - `scheduleautoadvance`: `js/app/focusRuntime.js`
+- `scheduleexpiry`: `js/services/countUndo.js`
 - `scheduler`: `js/domain/hifz.js`, `js/domain/reminderPresets.js`
 - `schedules`: `js/services/notifications.js`
 - `scheduletriggerarm`: `js/app/triggers.js`
@@ -7477,7 +7496,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `surahstartpage`: `js/services/mushaf.js`
 - `surahurl`: `js/services/audioCatalog.js`
 - `surface`: `js/core/config/nav.js`, `js/core/fetch.js`, `js/core/state/reducer.js`, `js/core/state.js`, `js/domain/gestures.js`, `js/ui/emptyState.js`, `js/views/mushafPageFind.js`, `js/views/studyContext.js`
-- `surfaces`: `js/ui/skeleton.js`, `js/views/mushafPlayer.js`
+- `surfaces`: `js/services/countUndo.js`, `js/ui/skeleton.js`, `js/views/mushafPlayer.js`
 - `surfacing`: `js/domain/adhkarTiming.js`
 - `swapped`: `js/domain/mutashabihat.js`
 - `swatch`: `js/views/tajweedSettings.js`
@@ -7524,7 +7543,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `taraweehcount`: `js/domain/ramadanPlanner.js`
 - `target`: `js/domain/completedCards.js`, `js/domain/launchIntents.js`, `js/services/contentPrefs.js`, `js/views/category.js`
 - `targets`: `js/domain/planExport.js`
-- `tasbih`: `js/core/config/app.js`, `js/core/state/slices/library.js`, `js/domain/celebrate.js`, `js/domain/planExport.js`, `js/services/audioContext.js`, `js/services/tasbih.js`
+- `tasbih`: `js/core/config/app.js`, `js/core/state/slices/library.js`, `js/domain/celebrate.js`, `js/domain/planExport.js`, `js/services/audioContext.js`, `js/services/countUndo.js`, `js/services/tasbih.js`
 - `telemetry`: `js/services/gapTelemetry.js`
 - `template`: `js/ui/card.js`
 - `templates`: `js/views/khatma.js`, `js/views/mushafBookmarks.js`, `js/views/tajweedCourseView.js`, `js/views/tajweedPracticeView.js`
@@ -7622,7 +7641,8 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `uncitedsessions`: `js/domain/tajweedCourse.js`
 - `uncitedtajweedrules`: `js/domain/tajweedSources.js`
 - `undefined`: `js/core/state/slices/hadith.js`
-- `undo`: `js/services/editor.js`
+- `undo`: `js/services/countUndo.js`, `js/services/editor.js`
+- `undolasttap`: `js/services/countUndo.js`
 - `unfavorite`: `js/views/favorites.js`
 - `unified`: `js/core/migration.js`, `js/core/schema.js`, `js/domain/lastPosition.js`, `js/views/backupSummary.js`
 - `unifiedsearch`: `js/domain/rootAwareSearch.js`
@@ -7729,7 +7749,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `white`: `js/domain/fasting.js`
 - `whole`: `js/domain/duaJournal.js`, `js/domain/zakat.js`, `js/views/hadithCard.js`, `js/views/roots.js`
 - `wide`: `js/domain/tafsirSearch.js`
-- `window`: `js/domain/adhkarTiming.js`, `js/domain/ramadan.js`, `js/domain/readerWindow.js`, `js/domain/searchPagination.js`, `js/services/alertTriggers.js`, `js/services/floatingCounter.js`, `js/services/speech.js`
+- `window`: `js/domain/adhkarTiming.js`, `js/domain/ramadan.js`, `js/domain/readerWindow.js`, `js/domain/searchPagination.js`, `js/services/alertTriggers.js`, `js/services/countUndo.js`, `js/services/floatingCounter.js`, `js/services/speech.js`
 - `windowing`: `js/domain/readerWindow.js`
 - `wipeappdataforreset`: `js/app/drawer.js`
 - `wire`: `js/app/boot.js`
@@ -7847,6 +7867,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/content-i18n-audit.test.js` — Content & i18n audit gates. Part 1 pins the strict language-separation contract at the unit level: AR UI → Arabic matn + Arabic virtue/source only. Transliteration and (pins: `../js/domain/contentLens.js`, `../js/domain/localeContent.js`, `../js/ui/card.js`)
 - `tests/contentManage.test.js` — v4.5.2, the in-place content manage layer. The prefs lens (ordering math, hide, targets), the reducer contract (manage mode is transient + dies on navigation), the sanitizer (hostile (pins: `../js/core/config.js`, `../js/core/schema.js`, `../js/core/state/reducer.js`, `../js/services/contentPrefs.js`, `../js/views/category.js`, `../js/views/focus.js`, `../js/views/library.js`)
 - `tests/contracts.test.js` — structural gates for release protocols that previously relied on reviewer memory (v4.3). Each test pins a contract whose violation shipped a real bug in this app's history: (pins: `../js/app/events.js`, `../js/app/forms.js`, `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `./helpers/data-manifest.mjs`, `./helpers/seedMode.mjs`, `./helpers/shell-hash.mjs`)
+- `tests/countUndo.test.js` — C14 "Undo the last count" (v5.17.182): 1. an ordinary tap's undo rewinds the counter and that tap's counting statistics (per-day, lifetime, favorite category, streak recomputed); (pins: `../js/core/state.js`, `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/core/utils.js`, `../js/domain/celebrate.js`, `../js/domain/reflections.js`, `../js/services/countUndo.js`, `../js/services/tasbih.js`)
 - `tests/counter-feel.test.js` — the counter is a FEEL contract, and a feel cannot be asserted by a screenshot review that nobody re-runs. (v5.17.15) Measured against azkar.me's counter, ours was a 10px ring around (pins: —)
 - `tests/counter-flow.test.js` — v5.2.24 counter/accordion/focus wave, permanent. 1. Accordion memory (v5.2.48: persisted settings.settingsSection + #/settings/<slug> deep links): slug helpers round-trip, unknown (pins: `../js/domain/completedCards.js`, `../js/ui/card.js`, `../js/views/focus.js`, `../js/views/settings.js`)
 - `tests/counter-reset.test.js` — (no header comment) (pins: `../js/app/counterReset.js`, `../js/core/state/initial.js`)

@@ -2333,6 +2333,12 @@ body.is-ambient #main {
   color: var(--color-text-muted);
   text-align: center;
 }
+/* (v5.17.182, C14) quiet one-level undo link under the hint. */
+.focus__undo {
+  margin: 0;
+  padding: 0 var(--space-4);
+  text-align: center;
+}
 .focus__hint.is-just-completed {
   color: var(--color-success-text);
   font-weight: 600;
