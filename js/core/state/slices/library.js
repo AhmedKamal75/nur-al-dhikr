@@ -582,6 +582,11 @@ export function reduceLibrary(state, action) {
           appliedDayRecitations: clampInt(tap.appliedDayRecitations, MAX_TOTAL_RECITATIONS),
           appliedCycles: clampInt(tap.appliedCycles, MAX_COMPLETED_CYCLES),
           favCatApplied: clampInt(tap.favCatApplied, 1),
+          prevLastCompletedDay:
+            typeof tap.prevLastCompletedDay === 'string' &&
+            /^\d{4}-\d{2}-\d{2}$/.test(tap.prevLastCompletedDay)
+              ? tap.prevLastCompletedDay
+              : null,
           surface: tap.surface,
           ts,
         },
@@ -612,7 +617,15 @@ export function reduceLibrary(state, action) {
         const completedCycles = Math.max(0, (existing.completedCycles || 0) - tap.appliedCycles);
         counters = {
           ...state.counters,
-          [tap.itemId]: { ...existing, count, completedCycles, lastUpdated: Date.now() },
+          [tap.itemId]: {
+            ...existing,
+            count,
+            completedCycles,
+            // A completed cycle's day stamp rewinds to whatever it
+            // overwrote — else the item stays "done today" forever.
+            ...(tap.cycleCompleted ? { lastCompletedDay: tap.prevLastCompletedDay } : null),
+            lastUpdated: Date.now(),
+          },
         };
       }
       // Statistics: rewind the tap's OWN day (cross-midnight safe — the

@@ -87,6 +87,10 @@ export function increment(itemId, categoryId, target = 1, step = 1, surface = nu
       ),
       appliedCycles: cycleCompleted ? Math.min(1, MAX_COMPLETED_CYCLES - cyclesBefore) : 0,
       favCatApplied: categoryId ? 1 : 0,
+      // (planner HOLD fix) a completing tap stamps lastCompletedDay; the
+      // undo must restore the stamp it overwrote (usually null), or the
+      // item stays "done today" in Reflections and done-today %.
+      prevLastCompletedDay: cycleCompleted ? (existing.lastCompletedDay ?? null) : null,
       surface,
       ts: Date.now(),
     };

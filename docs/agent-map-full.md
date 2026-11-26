@@ -1144,7 +1144,7 @@ job: Gregorian <-> Hijri conversion using the civil tabular Islamic calendar (a 
 
 job: A transient, in-memory "something good just happened" registry, shared by every celebration micro-interaction in the app (v3.12 — generalized from the tasbih cycle-completion flash).
 
-- exports: `milestoneHit` (function), `markCelebration` (function), `wasCelebrated` (function), `clearCelebrations` (function)
+- exports: `milestoneHit` (function), `markCelebration` (function), `wasCelebrated` (function), `clearCelebration` (function), `clearCelebrations` (function)
 - emits: —
 - handles: —
 - i18n: —
@@ -3683,6 +3683,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `clearAppBadge`: `js/services/appBadge.js`
 - `clearBackupHandle`: `js/services/backup.js`
 - `clearBatchQueue`: `js/services/audioStore.js`
+- `clearCelebration`: `js/domain/celebrate.js`
 - `clearCelebrations`: `js/domain/celebrate.js`
 - `clearClassifyMemo`: `js/domain/tajweed.js`
 - `clearDismissed`: `js/domain/completedCards.js`
@@ -5261,6 +5262,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `clearappbadge`: `js/services/appBadge.js`
 - `clearbackuphandle`: `js/services/backup.js`
 - `clearbatchqueue`: `js/services/audioStore.js`
+- `clearcelebration`: `js/domain/celebrate.js`
 - `clearcelebrations`: `js/domain/celebrate.js`
 - `clearclassifymemo`: `js/domain/tajweed.js`
 - `cleardismissed`: `js/domain/completedCards.js`
@@ -7865,7 +7867,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/content-i18n-audit.test.js` — Content & i18n audit gates. Part 1 pins the strict language-separation contract at the unit level: AR UI → Arabic matn + Arabic virtue/source only. Transliteration and (pins: `../js/domain/contentLens.js`, `../js/domain/localeContent.js`, `../js/ui/card.js`)
 - `tests/contentManage.test.js` — v4.5.2, the in-place content manage layer. The prefs lens (ordering math, hide, targets), the reducer contract (manage mode is transient + dies on navigation), the sanitizer (hostile (pins: `../js/core/config.js`, `../js/core/schema.js`, `../js/core/state/reducer.js`, `../js/services/contentPrefs.js`, `../js/views/category.js`, `../js/views/focus.js`, `../js/views/library.js`)
 - `tests/contracts.test.js` — structural gates for release protocols that previously relied on reviewer memory (v4.3). Each test pins a contract whose violation shipped a real bug in this app's history: (pins: `../js/app/events.js`, `../js/app/forms.js`, `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `./helpers/data-manifest.mjs`, `./helpers/seedMode.mjs`, `./helpers/shell-hash.mjs`)
-- `tests/countUndo.test.js` — C14 "Undo the last count" (v5.17.182): 1. an ordinary tap's undo rewinds the counter and that tap's counting statistics (per-day, lifetime, favorite category, streak recomputed); (pins: `../js/core/state.js`, `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/core/utils.js`, `../js/services/countUndo.js`, `../js/services/tasbih.js`)
+- `tests/countUndo.test.js` — C14 "Undo the last count" (v5.17.182): 1. an ordinary tap's undo rewinds the counter and that tap's counting statistics (per-day, lifetime, favorite category, streak recomputed); (pins: `../js/core/state.js`, `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/core/utils.js`, `../js/domain/celebrate.js`, `../js/domain/reflections.js`, `../js/services/countUndo.js`, `../js/services/tasbih.js`)
 - `tests/counter-feel.test.js` — the counter is a FEEL contract, and a feel cannot be asserted by a screenshot review that nobody re-runs. (v5.17.15) Measured against azkar.me's counter, ours was a 10px ring around (pins: —)
 - `tests/counter-flow.test.js` — v5.2.24 counter/accordion/focus wave, permanent. 1. Accordion memory (v5.2.48: persisted settings.settingsSection + #/settings/<slug> deep links): slug helpers round-trip, unknown (pins: `../js/domain/completedCards.js`, `../js/ui/card.js`, `../js/views/focus.js`, `../js/views/settings.js`)
 - `tests/counter-reset.test.js` — (no header comment) (pins: `../js/app/counterReset.js`, `../js/core/state/initial.js`)

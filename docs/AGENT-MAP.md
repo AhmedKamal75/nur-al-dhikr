@@ -83,7 +83,7 @@ Routes in VIEWS claimed by no section: `SEARCH`, `ZAKAT`, `SETTINGS`, `ABOUT`, `
 
 - `data-action` values emitted anywhere: **383** — every one resolves to a handler (see the Allowlist section of the dump).
 - files that handle at least one click/change/form action: **19** of 260.
-- exported symbols: **1636**.
+- exported symbols: **1637**.
 - i18n keys touched by js/: **1578** of the two dictionaries.
 
 ## 6. When you need the exhaustive dump

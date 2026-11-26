@@ -24,6 +24,8 @@ import { initialState } from '../js/core/state/initial.js';
 import { increment } from '../js/services/tasbih.js';
 import * as countUndo from '../js/services/countUndo.js';
 import { dateKey } from '../js/core/utils.js';
+import { isCompletedToday } from '../js/domain/reflections.js';
+import { wasCelebrated, clearCelebrations } from '../js/domain/celebrate.js';
 
 const MAX_CYCLES = 999999;
 const MAX_TOTAL = 1e9;
@@ -104,6 +106,77 @@ describe('cycle completion and saturation edges', () => {
     const c = store.getState().counters[id];
     assert.equal(c.count, 1, 'count back to target-1');
     assert.equal(c.completedCycles, 0, 'cycle rewound');
+  });
+
+  test("a completing tap's undo restores the prior lastCompletedDay (planner HOLD)", () => {
+    const id = 'undo-stamp';
+    increment(id, null, 2, 1, 'tasbih');
+    increment(id, null, 2, 1, 'tasbih');
+    assert.equal(
+      isCompletedToday(store.getState().counters[id], todayKey()),
+      true,
+      'the completing tap stamps the day'
+    );
+    store.dispatch(actions.undoCountTap());
+    assert.equal(
+      isCompletedToday(store.getState().counters[id], todayKey()),
+      false,
+      'the undo retracts the stamp — Reflections sees the item again'
+    );
+  });
+
+  test('a prior day stamp survives the completion undo (reducer level)', () => {
+    const y = yesterdayKey();
+    const base = {
+      ...initialState(),
+      counters: {
+        'undo-it': { count: 0, target: 2, completedCycles: 1, lastCompletedDay: y },
+      },
+      statistics: {
+        ...initialState().statistics,
+        dailyHistory: { [todayKey()]: { recitations: 1, sessions: 0, itemIds: ['undo-it'] } },
+        totalRecitations: 1,
+      },
+    };
+    const s1 = reduce(
+      base,
+      actions.recordCountTap(
+        ticket({ cycleCompleted: true, appliedCycles: 1, prevLastCompletedDay: y })
+      )
+    );
+    const s2 = reduce(s1, actions.undoCountTap());
+    assert.equal(s2.counters['undo-it'].lastCompletedDay, y, 'the older stamp is restored');
+    const s3 = reduce(
+      s1,
+      actions.undoCountTap() // consumed already — but drive the null-restore path separately
+    );
+    assert.equal(s3.counters['undo-it'].lastCompletedDay, y, 'idempotent without a ticket');
+    const s4 = reduce(
+      {
+        ...base,
+        counters: {
+          'undo-it': { count: 0, target: 2, completedCycles: 1, lastCompletedDay: todayKey() },
+        },
+      },
+      actions.recordCountTap(
+        ticket({ cycleCompleted: true, appliedCycles: 1, prevLastCompletedDay: null })
+      )
+    );
+    const s5 = reduce(s4, actions.undoCountTap());
+    assert.equal(s5.counters['undo-it'].lastCompletedDay, null, 'no prior stamp restores null');
+  });
+
+  test('a retracted completion keeps no celebration pulse (planner check)', () => {
+    const id = 'undo-celebrate';
+    clearCelebrations();
+    store.dispatch(actions.navigate('tasbih'));
+    increment(id, null, 2, 1, 'tasbih');
+    increment(id, null, 2, 1, 'tasbih');
+    assert.equal(wasCelebrated(`tasbih:${id}`, 700), true, 'completion stamped the pulse');
+    assert.equal(countUndo.undoLastTap(), true);
+    assert.equal(wasCelebrated(`tasbih:${id}`, 700), false, 'the undo retracts the pulse');
+    store.dispatch(actions.navigate('home'));
+    clearCelebrations();
   });
 
   test('a saturated cycle completion rewinds count but not the capped cycles', () => {

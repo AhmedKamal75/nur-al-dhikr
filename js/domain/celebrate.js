@@ -68,6 +68,15 @@ export function wasCelebrated(key, ms = DEFAULT_WINDOW_MS) {
   return typeof at === 'number' && Date.now() - at < ms;
 }
 
+/**
+ * Forget ONE stamp — the C14 count-undo retracts a completed cycle, and
+ * its celebration pulse must not play for a counter that is no longer
+ * complete. Other keys keep their moment.
+ */
+export function clearCelebration(key) {
+  stampedAt.delete(key);
+}
+
 /** Test/teardown hook — forget every stamp. Not used by the app. */
 export function clearCelebrations() {
   stampedAt.clear();

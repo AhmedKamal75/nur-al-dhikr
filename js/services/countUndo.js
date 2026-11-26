@@ -16,6 +16,7 @@
  */
 
 import { store, actions } from '../core/state.js';
+import { clearCelebration } from '../domain/celebrate.js';
 import { t } from '../core/i18n.js';
 
 export const UNDO_WINDOW_MS = 60000;
@@ -49,8 +50,11 @@ export function scheduleExpiry(ts) {
  */
 export function undoLastTap() {
   const state = store.getState();
-  if (!getUndoableTap(state.activeView)) return false;
+  const tap = getUndoableTap(state.activeView);
+  if (!tap) return false;
   store.dispatch(actions.undoCountTap());
+  // A retracted completion keeps no celebration pulse (planner HOLD fix).
+  if (tap.cycleCompleted) clearCelebration(`tasbih:${tap.itemId}`);
   // The undo is announced through the same live region as the counts
   // themselves (#counter-announcer survives re-renders; a second region
   // on the button would double-announce).
