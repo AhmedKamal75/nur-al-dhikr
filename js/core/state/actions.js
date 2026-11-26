@@ -70,6 +70,10 @@ export const actions = {
   // (v5.17.30) per-dhikr recitation highlight twin of setSpeakingItem —
   // ephemeral, never persisted (see initial.js).
   setDhikrAudioItem: (itemId) => ({ type: 'DHIKR_AUDIO_SET_ACTIVE', itemId }),
+  // (v5.17.179, C18) category "Listen to all" session — ephemeral, never
+  // persisted (see initial.js). `session` is
+  // { categoryId, itemIds, index, paused } or null.
+  setListenAll: (session) => ({ type: 'LISTEN_ALL_SET', session }),
   // (v5.2.77, BUG-01) notify-only re-render nudge for per-second tickers.
   // The old code abused setSpeakingItem(null) as a cheap pulse, which
   // nulled a genuinely-speaking TTS item on every prayer/day/phase

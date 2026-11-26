@@ -109,13 +109,29 @@ export function claimSpeaker(voice, { alsoKeep = [] } = {}) {
     displaced.push('adhkar');
   }
 
-  if (!keep.has('speech') && store.getState().speakingItemId !== null) {
+  if (
+    !keep.has('speech') &&
+    (store.getState().speakingItemId !== null || store.getState().listenAll !== null)
+  ) {
     // v5.17.43: this is the gap that made narration talk over an adhan, and
     // made a recitation talk over narration. `speech.isSpeaking()` is the
     // ground truth; the store field is only cleared if it was set.
+    // (v5.17.180, C18 review) a paused engine survives cancel() per the
+    // Web Speech spec — resume first or the next utterance queues into
+    // silence. The only pause path today is the "Listen to all" bar, but
+    // the flag is checked, not the session, so any future pauser is safe.
+    if (speech.isSupported() && window.speechSynthesis.paused === true) {
+      window.speechSynthesis.resume();
+    }
     speech.stop();
     if (store.getState().speakingItemId !== null) {
       store.dispatch(actions.setSpeakingItem(null));
+    }
+    // (v5.17.179, C18) a "Listen to all" chain dies with its voice: the
+    // speech token invalidates the in-flight onEnd, and the session state
+    // (the inline progress bar) clears here with it.
+    if (store.getState().listenAll !== null) {
+      store.dispatch(actions.setListenAll(null));
     }
     displaced.push('speech');
   }

@@ -740,6 +740,12 @@ export const en = {
   'collections.sessionBeginning': 'Start from beginning',
   'collections.sessionContinue': 'Continue collection',
   'category.sessionStart': 'Read through in Focus',
+  // (v5.17.179, C18) "Listen to all" on the category view: the per-item
+  // Listen engine reads the visible list aloud, once each.
+  'category.listenAll': 'Listen to all',
+  'category.listenAllProgress': 'Listening {n} of {total}',
+  'category.listenAllPause': 'Pause',
+  'category.listenAllResume': 'Resume',
   // v5.2.89 waqf & portion-marks legend in the Mushaf settings (P0-2).
   // Standard Uthmani print signs (same reference class as the tajweed
   // legend above): what each mark asks the reciter to do at the stop.

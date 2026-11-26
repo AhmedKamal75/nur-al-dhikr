@@ -134,6 +134,33 @@ export function renderCategory(state) {
       </button>`
     : '';
 
+  // (v5.17.179, C18) "Listen to all": chains the per-item Listen engine
+  // through the visible list, once each. While a session runs here, an
+  // inline bar reports progress and offers pause/stop; the current card
+  // keeps its usual playing highlight via speakingItemId. Manage mode
+  // hides the control — editing and narration never mix.
+  const listenAll =
+    state.listenAll && state.listenAll.categoryId === cat.id ? state.listenAll : null;
+  const listenAllControl = manage
+    ? ''
+    : listenAll
+      ? `
+      <div class="listen-all-bar" role="status">
+        <span class="listen-all-bar__progress">${icon('volume', { size: 14 })} ${t('category.listenAllProgress', lang, { n: listenAll.index + 1, total: listenAll.itemIds.length })}</span>
+        <button type="button" class="btn btn--secondary btn--sm" data-action="listen-all-toggle-pause" aria-pressed="${listenAll.paused}">
+          ${icon(listenAll.paused ? 'play' : 'pause', { size: 15 })} ${t(listenAll.paused ? 'category.listenAllResume' : 'category.listenAllPause', lang)}
+        </button>
+        <button type="button" class="btn btn--ghost btn--sm" data-action="listen-all-stop">
+          ${icon('stop', { size: 15 })} ${t('card.stop', lang)}
+        </button>
+      </div>`
+      : items.length
+        ? `
+      <button type="button" class="btn btn--secondary btn--sm" data-action="listen-all-start" data-category-id="${escapeHTML(cat.id)}">
+        ${icon('volume', { size: 16 })} ${t('category.listenAll', lang)}
+      </button>`
+        : '';
+
   // (v5.1.0) Declutter: the manage bar exists ONLY while manage mode is ON
   // (entered through the header's "⋯" menu → Manage). Reading mode shows
   // just the dhikr cards — no persistent Manage button, no hint line.
@@ -193,6 +220,7 @@ export function renderCategory(state) {
       <p class="view__meta">${t('collections.itemCount', lang, { n: visibleItems.length })} \u2022 ${escapeHTML(pickLocale(doc.metadata.name, lang))}</p>
       ${categoryProgressHTML(state, visibleItems, lang)}
       ${sessionButton}
+      ${listenAllControl}
       ${byHeartOn ? `<p class="panel__subtext">${t('byheart.hint', lang)}</p>` : ''}
     </header>
 

@@ -16,6 +16,7 @@ import {
 } from './audioEngine.js';
 import { refreshLibraryIndex } from './net.js';
 import { renderErrorScreen, closeNavDrawer } from './drawer.js';
+import { stopListenAll } from './listenAll.js';
 import {
   ensureHadithData,
   maybeScrollToFocusHadith,
@@ -200,6 +201,13 @@ export function onStateChange(stateArg, action) {
     // navigation paths that bypass handlers (history, deep links).
     if (action && action.type === 'NAVIGATE') rt.mushafNavigationIntent += 1;
     if (action && action.type === 'NAVIGATE' && isModalOpen()) closeModal();
+    // (v5.17.179, C18) a "Listen to all" session belongs to the category
+    // view that started it: any navigation ends it — engine, highlight
+    // and progress bar — the same ownership rule as the modal above.
+    if (action && action.type === 'NAVIGATE' && store.getState().listenAll) {
+      stopListenAll();
+      state = store.getState();
+    }
     // The mobile "More" drawer belongs to its view too: Back-button and
     // deep-link navigations bypass tap handlers, so close it here (idempotent).
     if (action && action.type === 'NAVIGATE') closeNavDrawer();

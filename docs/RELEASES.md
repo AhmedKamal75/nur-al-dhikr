@@ -1,3 +1,12 @@
+## v5.17.180 - Never strand a paused speech engine
+
+- Pausing Listen to all and then stopping, navigating or tapping another Listen left the speech engine paused, so the next utterance was silent. Per the Web Speech spec cancel() keeps the paused flag; every end path now resumes first. Both test stubs hid this by resetting the flag on cancel — they now match the spec, and regression tests cover pause then Stop, pause then navigate and pause then another Listen tap.
+
+## v5.17.179 - Listen to all on the adhkar category view
+
+- The category view offers Listen to all: the existing per-item Listen engine reads the visible items aloud in list order, once each, skipping hidden items exactly as the list does. An inline bar reports "Listening n of total" with pause and stop, and the current card keeps its usual playing highlight.
+- The session stops on route change, on any other Listen tap and on any other speaker claim. Counters, targets and stats are untouched. Text-to-speech only, not recorded recitation; collections and favorites are a later slice.
+
 ## v5.17.178 - Make existing Zakat field notes visible
 
 - Asset and debt notes appear under their inputs and are associated with aria-describedby. The existing Fitr per-person note has the same input association. Short help stays visible without tooltips or extra disclosure controls.
