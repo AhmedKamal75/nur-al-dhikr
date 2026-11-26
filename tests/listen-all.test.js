@@ -89,9 +89,10 @@ function stubSpeech() {
       synth.speaking = true;
       synth.paused = false;
     },
+    // Per the Web Speech spec, cancel() does NOT clear the paused flag —
+    // the first stub hid the pause→stop silence defect behind this reset.
     cancel() {
       synth.speaking = false;
-      synth.paused = false;
       synth._current = null;
     },
     pause() {
@@ -255,6 +256,45 @@ test('stop mid-session silences the engine and clears both state fields', async 
   }
 });
 
+test('pause then Stop leaves the engine unpaused — the next session speaks', async () => {
+  // Planner HOLD on PR #84: cancel() keeps the paused flag per the Web
+  // Speech spec, so pause → stop used to silence every later utterance.
+  const stub = stubSpeech();
+  try {
+    const { engine, store } = await importEngine();
+    await seedStore();
+    engine.startListenAll('cat-listen', ['li-a', 'li-b']);
+    engine.pauseListenAll();
+    assert.equal(stub.synth.paused, true);
+    engine.stopListenAll();
+    assert.equal(stub.synth.paused, false, 'stop resumes a paused engine first');
+    assert.equal(store.getState().listenAll, null);
+    engine.startListenAll('cat-listen', ['li-c']);
+    assert.equal(store.getState().speakingItemId, 'li-c');
+    assert.deepEqual(stub.log, ['Translit li-a', 'Translit li-c']);
+    engine.stopListenAll();
+  } finally {
+    stub.restore();
+  }
+});
+
+test('a speaker claim during a paused session resumes the engine it silences', async () => {
+  const stub = stubSpeech();
+  try {
+    const { engine, store } = await importEngine();
+    await seedStore();
+    engine.startListenAll('cat-listen', ['li-a', 'li-b']);
+    engine.pauseListenAll();
+    assert.equal(stub.synth.paused, true);
+    const { claimSpeaker } = await import('../js/app/audioEngine.js');
+    claimSpeaker('adhkar');
+    assert.equal(store.getState().listenAll, null);
+    assert.equal(stub.synth.paused, false, 'the arbiter never leaves a paused engine');
+  } finally {
+    stub.restore();
+  }
+});
+
 test('a session never touches counters, targets or stats', async () => {
   const stub = stubSpeech();
   try {
@@ -359,7 +399,7 @@ test('the arbiter clears the session when it displaces speech', () => {
 test('the session module never hand-rolls arbitration outside its own stop', () => {
   const src = readProject('js/app/listenAll.js');
   for (const m of src.matchAll(/speech\.stop\(\)/g)) {
-    const before = src.slice(Math.max(0, m.index - 400), m.index);
+    const before = src.slice(Math.max(0, m.index - 700), m.index);
     assert.match(
       before,
       /export function stopListenAll\(\)/,

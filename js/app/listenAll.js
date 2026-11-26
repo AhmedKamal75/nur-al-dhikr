@@ -132,8 +132,15 @@ export function endListenAllForListenTap(itemId) {
 }
 
 export function stopListenAll() {
-  if (!listenAllSession()) return;
+  const s = listenAllSession();
+  if (!s) return;
   sessionToken += 1;
+  // A paused engine survives cancel() per the Web Speech spec: without a
+  // resume first, the next Listen — session or solo — queues an utterance
+  // into a paused engine and stays silent (planner HOLD on PR #84).
+  if (s.paused || (speech.isSupported() && window.speechSynthesis.paused === true)) {
+    window.speechSynthesis.resume();
+  }
   speech.stop();
   if (store.getState().speakingItemId !== null) {
     store.dispatch(actions.setSpeakingItem(null));

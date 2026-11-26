@@ -37,9 +37,10 @@ async function stubSpeech(page) {
         synth.speaking = true;
         synth.paused = false;
       },
+      // Per the Web Speech spec, cancel() does NOT clear the paused flag
+      // — the first stub hid the pause→stop silence defect behind this.
       cancel() {
         synth.speaking = false;
-        synth.paused = false;
         synth._current = null;
       },
       pause() {
@@ -50,6 +51,7 @@ async function stubSpeech(page) {
       },
     };
     window.__ttsLog = log;
+    Object.defineProperty(window, '__ttsCurrent', { get: () => synth._current });
     window.__ttsEnd = () => {
       const u = synth._current;
       synth._current = null;
@@ -112,6 +114,10 @@ for (const language of ['en', 'ar']) {
   test(`Listen to all: order, skip, highlight, pause/stop (${language}, phone)`, async ({
     page,
   }, testInfo) => {
+    // Boots the full category and drives a ~30-item chain; under parallel
+    // workers the shared static server stretches boot past one default
+    // budget, so this test gets the slow allowance (3×).
+    test.slow();
     const dict = language === 'ar' ? ar : en;
     await page.setViewportSize(PHONE);
     await seed(page, language, { hide: true });
@@ -155,11 +161,13 @@ for (const language of ['en', 'ar']) {
     await expect(pauseBtn).toHaveAttribute('aria-pressed', 'false');
 
     // Run the remaining items: one read each, in order, hidden never read.
-    // The third item is still speaking, so end utterances until the chain
-    // finishes on its own (last onEnd closes the session).
-    for (let i = 0; i < total + 2 && (await bar(page).count()) > 0; i++) {
-      await page.evaluate(() => window.__ttsEnd());
-    }
+    // The chain is synchronous (each onEnd speaks the next item), so the
+    // whole remainder drives in one evaluate — per-item round trips made
+    // this the suite's slowest test under parallel load.
+    await page.evaluate(() => {
+      let guard = 0;
+      while (window.__ttsCurrent && guard++ < 100) window.__ttsEnd();
+    });
     await expect(bar(page)).toHaveCount(0);
     await expect(startButton(page)).toBeVisible();
     const log = await ttsLog(page);
@@ -235,6 +243,55 @@ test('another Listen tap ends the session (current item stops, another item goes
   await expect(bar(page)).toHaveCount(0);
   expect(await ttsLog(page)).toHaveLength(before);
   expect(await page.evaluate(() => window.speechSynthesis.speaking)).toBe(false);
+});
+
+test('pause then Stop / navigate / another Listen never strands a paused engine', async ({
+  page,
+}) => {
+  // Planner HOLD on PR #84: per the Web Speech spec cancel() keeps the
+  // paused flag, so ending a PAUSED session used to silence the next
+  // utterance. Every end path must resume the engine first.
+  test.slow(); // three session legs + a navigation: one budget is not honest
+  await page.setViewportSize(PHONE);
+  await seed(page, 'en');
+  await page.goto('./#/category/morning');
+  await startButton(page).click({ timeout: 20000 });
+  await expect(bar(page)).toBeVisible();
+  const queue = await expectedQueue(page);
+  const paused = () => page.evaluate(() => window.speechSynthesis.paused);
+
+  // 1. Pause → Stop → a new session speaks.
+  await bar(page).locator('[data-action="listen-all-toggle-pause"]').click();
+  expect(await paused()).toBe(true);
+  await bar(page).locator('[data-action="listen-all-stop"]').click();
+  expect(await paused()).toBe(false);
+  await startButton(page).click();
+  await expect(bar(page)).toBeVisible();
+  expect(await ttsLog(page)).toEqual([queue[0].text, queue[0].text]);
+
+  // 2. Pause → another card's Listen tap: session ends, solo speaks.
+  await bar(page).locator('[data-action="listen-all-toggle-pause"]').click();
+  expect(await paused()).toBe(true);
+  const otherCard = page.locator(`article.card[data-item-id="${queue[1].id}"]`);
+  await otherCard.locator('[data-action="toggle-speech"]').click();
+  expect(await paused()).toBe(false);
+  expect((await ttsLog(page)).at(-1)).toBe(queue[1].text);
+  // Stop the solo speech before the navigation leg.
+  await otherCard.locator('[data-action="toggle-speech"]').click();
+
+  // 3. Pause → navigate away: the engine is not left paused.
+  await startButton(page).click();
+  await expect(bar(page)).toBeVisible();
+  await bar(page).locator('[data-action="listen-all-toggle-pause"]').click();
+  expect(await paused()).toBe(true);
+  await page.locator('a.back-link', { hasText: en['nav.azkar'] }).click();
+  await expect(page.locator('.view--category')).toHaveCount(0);
+  expect(await paused()).toBe(false);
+  // And the next Listen on the new route still speaks.
+  await page.goBack();
+  await startButton(page).click({ timeout: 20000 });
+  await expect(bar(page)).toBeVisible();
+  expect((await ttsLog(page)).at(-1)).toBe(queue[0].text);
 });
 
 test('route change stops the session', async ({ page }) => {
