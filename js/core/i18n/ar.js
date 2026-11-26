@@ -1415,6 +1415,7 @@ export const ar = {
   'calendar.recurMonthly': 'كل شهر',
   'calendar.recurYearly': 'كل سنة',
   'calendar.recurHijriMonthly': 'كل شهر هجري',
+  'calendar.recurHijriYearly': 'كل سنة هجرية',
   'calendar.recurIntervalSummary': 'كل {n} أيام',
   'calendar.everyNDays': 'التكرار كل (أيام)',
   'calendar.untilDate': 'حتى',
