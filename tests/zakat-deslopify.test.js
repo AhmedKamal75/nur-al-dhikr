@@ -72,3 +72,30 @@ test('Zakat secondary disclosure copy exists in both languages', () => {
   assert.equal(typeof ar['zakat.fitrSummary'], 'string');
   assert.equal(typeof ar['zakat.savedSummary'], 'string');
 });
+
+for (const [language, dict] of [
+  ['en', en],
+  ['ar', ar],
+]) {
+  test(`Zakat notes use existing copy below inputs with explicit descriptions (${language})`, () => {
+    const view = renderZakat(state(language));
+    for (const id of [
+      'cash',
+      'goldGrams',
+      'silverGrams',
+      'investments',
+      'businessGoods',
+      'receivables',
+      'otherAssets',
+      'liabilities',
+      'fitrPer',
+    ]) {
+      assert.ok(view.includes(`aria-describedby="zakat-note-${id}"`));
+      assert.ok(
+        view.includes(`id="zakat-note-${id}" class="zakat-note">${dict[`zakat.note.${id}`]}</span>`)
+      );
+    }
+    assert.doesNotMatch(view, /class="zakat-note" title=/);
+    assert.ok(view.includes(dict['zakat.disclaimer']));
+  });
+}

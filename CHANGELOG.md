@@ -1,3 +1,8 @@
+# v5.17.177 - Make existing Zakat field notes visible
+
+- Asset and debt notes appear under their inputs and are associated with aria-describedby. The existing Fitr per-person note has the same input association. Short help stays visible without tooltips or extra disclosure controls.
+- Existing English/Arabic wording, calculations and disclaimer are unchanged. Narrow-phone, doubled-text and keyboard checks cover the notes and their input associations.
+
 # v5.17.176 - Keep unsaved custom-authoring edits before closing
 
 - Dirty custom item, category and library forms ask whether to keep editing or discard when closed with X, Cancel or Escape. Keep editing is focused by default, and the live form retains values, text selection, field focus and scroll. Reverted and untouched forms close immediately.
