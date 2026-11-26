@@ -1,3 +1,8 @@
+# v5.17.181 - Every Hijri year calendar-note recurrence
+
+- Calendar notes can repeat every Hijri year: the note fires on its start date's Hijri month and day in each following Hijri year, with the same optional end-date cap as the other repeating types. A note set on the 30th of a 29-day Hijri month fires on the month's last day.
+- Offered in the existing recurrence select in English and Arabic. Unit tests cover the month+day match, the end-date cap and the short-month case.
+
 # v5.17.180 - Never strand a paused speech engine
 
 - Pausing Listen to all and then stopping, navigating or tapping another Listen left the speech engine paused, so the next utterance was silent. Per the Web Speech spec cancel() keeps the paused flag; every end path now resumes first. Both test stubs hid this by resetting the flag on cancel — they now match the spec, and regression tests cover pause then Stop, pause then navigate and pause then another Listen tap.

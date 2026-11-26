@@ -2160,7 +2160,7 @@ _dumb chrome primitives: toasts, modals, cards, shells._
 
 ### `js/ui/calendarModals.js`
 
-job: Modal content builders for the calendar's day-detail view and the add/edit note form (recurrence: once / daily / every-N-days / range / weekly / monthly / yearly / Hijri-monthly / White Days).
+job: Modal content builders for the calendar's day-detail view and the add/edit note form (recurrence: once / daily / every-N-days / range / weekly / monthly / yearly / Hijri-monthly / Hijri-yearly / Whit…
 
 - exports: `BOUNDED_RECURRENCE` (const), `buildDayDetail` (function), `buildNoteForm` (function)
 - emits: `calendar-delete-note`, `calendar-edit-note`, `calendar-new-note`, `modal-close`
@@ -7725,7 +7725,8 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `were`: `js/app/rt.js`
 - `whatever`: `js/domain/grammarDrill.js`
 - `whether`: `js/services/calendarNotes.js`
-- `white`: `js/domain/fasting.js`, `js/ui/calendarModals.js`
+- `whit`: `js/ui/calendarModals.js`
+- `white`: `js/domain/fasting.js`
 - `whole`: `js/domain/duaJournal.js`, `js/domain/zakat.js`, `js/views/hadithCard.js`, `js/views/roots.js`
 - `wide`: `js/domain/tafsirSearch.js`
 - `window`: `js/domain/adhkarTiming.js`, `js/domain/ramadan.js`, `js/domain/readerWindow.js`, `js/domain/searchPagination.js`, `js/services/alertTriggers.js`, `js/services/floatingCounter.js`, `js/services/speech.js`

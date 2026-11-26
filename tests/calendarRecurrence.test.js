@@ -2,10 +2,12 @@
  * tests/calendarRecurrence.test.js — item 12 (calendar recurrence) gates:
  *  1. weekly/monthly/yearly match calendar fields (short months skip, Feb
  *     29 keeps leap years), floored at startDate and capped by endDate;
- *  2. hijri-monthly repeats the anchor Hijri day; whitedays fire on
- *     13/14/15 via isWhiteDay — both through the tabular converter;
+ *  2. hijri-monthly repeats the anchor Hijri day; hijri-yearly repeats
+ *     the anchor Hijri month+day (a 30th in a 29-day month fires on the
+ *     month's last day); whitedays fire on 13/14/15 via isWhiteDay — all
+ *     through the tabular converter;
  *  3. old types and hostile input are unchanged (safe defaults);
- *  4. the note form offers all nine types with the shared bounded
+ *  4. the note form offers all ten types with the shared bounded
  *     end-date input; the submit path reads it; strings ship EN + AR.
  */
 import { test, describe } from 'node:test';
@@ -13,7 +15,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { appliesToDate, RECURRENCE_TYPES } from '../js/services/calendarNotes.js';
-import { toHijri, isWhiteDay } from '../js/domain/calendar.js';
+import { toHijri, toGregorian, isWhiteDay, daysInHijriMonth } from '../js/domain/calendar.js';
 import { buildNoteForm } from '../js/ui/calendarModals.js';
 
 function keyOf(date) {
@@ -35,7 +37,7 @@ function findHijriDay(from, want, limit = 60) {
   throw new Error(`no Hijri day ${want} near ${from}`);
 }
 
-describe('RECURRENCE_TYPES: nine documented types', () => {
+describe('RECURRENCE_TYPES: ten documented types', () => {
   test('lists old + new in order', () => {
     assert.deepEqual(
       [...RECURRENCE_TYPES],
@@ -48,6 +50,7 @@ describe('RECURRENCE_TYPES: nine documented types', () => {
         'monthly',
         'yearly',
         'hijri-monthly',
+        'hijri-yearly',
         'whitedays',
       ]
     );
@@ -135,6 +138,73 @@ describe('hijri-monthly/whitedays: tabular Hijri matching', () => {
   });
 });
 
+describe('hijri-yearly: tabular Hijri month+day matching', () => {
+  function hijriKey(year, month, day) {
+    return keyOf(toGregorian(year, month, day));
+  }
+
+  test('repeats the anchor Hijri month+day every Hijri year', () => {
+    const anchor = hijriKey(1448, 3, 12);
+    const note = { startDate: anchor, recurrence: 'hijri-yearly' };
+    assert.equal(appliesToDate(note, hijriKey(1449, 3, 12)), true, 'same month+day next year');
+    assert.equal(appliesToDate(note, hijriKey(1451, 3, 12)), true, 'same month+day years later');
+    assert.equal(
+      appliesToDate(note, hijriKey(1449, 4, 12)),
+      false,
+      'other Hijri month stays quiet'
+    );
+    assert.equal(appliesToDate(note, hijriKey(1449, 3, 13)), false, 'other Hijri day stays quiet');
+    assert.equal(appliesToDate(note, hijriKey(1447, 3, 12)), false, 'floored at startDate');
+  });
+
+  test('endDate caps hijri-yearly matches', () => {
+    const anchor = hijriKey(1448, 3, 12);
+    assert.equal(
+      appliesToDate(
+        { startDate: anchor, recurrence: 'hijri-yearly', endDate: anchor },
+        hijriKey(1449, 3, 12)
+      ),
+      false
+    );
+    const later = hijriKey(1450, 1, 1);
+    assert.equal(
+      appliesToDate(
+        { startDate: anchor, recurrence: 'hijri-yearly', endDate: later },
+        hijriKey(1449, 3, 12)
+      ),
+      true,
+      'fires while inside the cap'
+    );
+  });
+
+  test("a 30th in a 29-day month fires on the month's last day", () => {
+    // Dhu al-Hijjah is the only tabular month whose length varies (leap).
+    let leapYear = 1440;
+    while (daysInHijriMonth(leapYear, 12) !== 30) leapYear += 1;
+    let commonYear = leapYear + 1;
+    while (daysInHijriMonth(commonYear, 12) !== 29) commonYear += 1;
+    const anchor = hijriKey(leapYear, 12, 30);
+    const note = { startDate: anchor, recurrence: 'hijri-yearly' };
+    assert.equal(
+      appliesToDate(note, hijriKey(commonYear, 12, 29)),
+      true,
+      '29-day month fires on its last day'
+    );
+    let nextLeap = commonYear + 1;
+    while (daysInHijriMonth(nextLeap, 12) !== 30) nextLeap += 1;
+    assert.equal(
+      appliesToDate(note, hijriKey(nextLeap, 12, 30)),
+      true,
+      '30-day month fires on the 30th'
+    );
+    assert.equal(
+      appliesToDate(note, hijriKey(nextLeap, 12, 29)),
+      false,
+      'the 29th stays quiet when a 30th exists'
+    );
+  });
+});
+
 describe('old types and hostile input are unchanged', () => {
   test('once/daily/interval/range keep their semantics', () => {
     assert.equal(
@@ -178,7 +248,7 @@ describe('old types and hostile input are unchanged', () => {
   });
 });
 
-describe('note form: nine options, one bounded end-date', () => {
+describe('note form: ten options, one bounded end-date', () => {
   test('every type is selectable with the shared cap input', () => {
     for (const lang of ['en', 'ar']) {
       const html = buildNoteForm('2026-09-10', null, lang);
@@ -214,6 +284,7 @@ describe('recurrence wiring: submit, toggle, strings', () => {
       'calendar.recurMonthly',
       'calendar.recurYearly',
       'calendar.recurHijriMonthly',
+      'calendar.recurHijriYearly',
     ]) {
       assert.ok(en.includes(`'${key}'`), `EN missing ${key}`);
       assert.ok(ar.includes(`'${key}'`), `AR missing ${key}`);

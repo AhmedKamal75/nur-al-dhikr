@@ -1490,6 +1490,7 @@ export const en = {
   'calendar.recurMonthly': 'Every month',
   'calendar.recurYearly': 'Every year',
   'calendar.recurHijriMonthly': 'Every Hijri month',
+  'calendar.recurHijriYearly': 'Every Hijri year',
   'calendar.recurIntervalSummary': 'Every {n} days',
   'calendar.everyNDays': 'Repeat every (days)',
   'calendar.untilDate': 'Until',

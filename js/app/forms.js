@@ -475,7 +475,14 @@ export const formHandlers = {
           ? fd.get('endDateRange') || null
           : recurrence === 'daily'
             ? fd.get('endDateDaily') || null
-            : ['weekly', 'monthly', 'yearly', 'hijri-monthly', 'whitedays'].includes(recurrence)
+            : [
+                  'weekly',
+                  'monthly',
+                  'yearly',
+                  'hijri-monthly',
+                  'hijri-yearly',
+                  'whitedays',
+                ].includes(recurrence)
               ? fd.get('endDateBounded') || null
               : null,
       reminder: fd.get('reminder') === 'on',

@@ -2,7 +2,7 @@
  * components/calendarModals.js
  * Modal content builders for the calendar's day-detail view and the
  * add/edit note form (recurrence: once / daily / every-N-days / range /
- * weekly / monthly / yearly / Hijri-monthly / White Days).
+ * weekly / monthly / yearly / Hijri-monthly / Hijri-yearly / White Days).
  *
  * (v4.3) layer-rule fix: this module used to import domain/calendar.js for
  * the day-detail's Hijri label — a ui → domain edge ARCHITECTURE.md §2
@@ -24,6 +24,7 @@ const RECURRENCE_TYPES = [
   'monthly',
   'yearly',
   'hijri-monthly',
+  'hijri-yearly',
   'whitedays',
 ];
 
@@ -36,19 +37,27 @@ const RECURRENCE_LABEL_KEY = {
   monthly: 'calendar.recurMonthly',
   yearly: 'calendar.recurYearly',
   'hijri-monthly': 'calendar.recurHijriMonthly',
+  'hijri-yearly': 'calendar.recurHijriYearly',
   whitedays: 'calendar.whiteDays',
 };
 
 /** Capped recurrence ids share one optional end-date input (see the
  *  `bounded` conditional group in buildNoteForm + forms.js). Exported for
  *  the app-layer visibility toggle (same group for five types). */
-export const BOUNDED_RECURRENCE = ['weekly', 'monthly', 'yearly', 'hijri-monthly', 'whitedays'];
+export const BOUNDED_RECURRENCE = [
+  'weekly',
+  'monthly',
+  'yearly',
+  'hijri-monthly',
+  'hijri-yearly',
+  'whitedays',
+];
 
 /** Local mirror of services/calendarNotes appliesToDate/notesForDate for
  *  the no-dayNotes fallback path (kept in sync; the app-layer caller
  *  passes pre-resolved notes so this rarely runs). Hijri-backed types
  *  cannot run here (ui must not import domain) — the mirror covers the
- *  Gregorian types; callers needing hijri-monthly/whitedays pass dayNotes.
+ *  Gregorian types; callers needing hijri-monthly/hijri-yearly/whitedays pass dayNotes.
  *  Documented limitation, not drift: the Gregorian arms match exactly. */
 function localNotesForDate(notes, dateKeyStr) {
   const applies = (note) => {

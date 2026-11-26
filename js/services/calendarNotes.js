@@ -17,11 +17,14 @@
  *                years only; optionally capped)
  *   'hijri-monthly' — the startDate's Hijri day-of-month, every Hijri
  *                month (optionally capped)
+ *   'hijri-yearly' — the startDate's Hijri month+day, every Hijri year
+ *                (a 30th in a 29-day month fires on the month's last
+ *                day; optionally capped)
  *   'whitedays' — Hijri 13/14/15 of every month (domain/calendar.js
  *                isWhiteDay), from startDate (optionally capped)
  */
 
-import { toHijri, isWhiteDay } from '../domain/calendar.js';
+import { toHijri, isWhiteDay, daysInHijriMonth } from '../domain/calendar.js';
 
 function daysBetween(aKey, bKey) {
   const a = new Date(aKey + 'T00:00:00');
@@ -84,6 +87,18 @@ export function appliesToDate(note, dateKeyStr) {
       return hijriDayOf(dateKeyStr) === hijriDayOf(note.startDate);
     }
 
+    case 'hijri-yearly': {
+      if (note.endDate && dateKeyStr > note.endDate) return false;
+      const d = dayDate(dateKeyStr);
+      const s = dayDate(note.startDate);
+      if (Number.isNaN(d.getTime()) || Number.isNaN(s.getTime())) return false;
+      const dh = toHijri(d);
+      const sh = toHijri(s);
+      if (dh.month !== sh.month) return false;
+      // Short-month rule: a 30th in a 29-day month fires on the last day.
+      return dh.day === Math.min(sh.day, daysInHijriMonth(dh.year, dh.month));
+    }
+
     case 'whitedays': {
       if (note.endDate && dateKeyStr > note.endDate) return false;
       return isWhiteDay(hijriDayOf(dateKeyStr));
@@ -119,5 +134,6 @@ export const RECURRENCE_TYPES = Object.freeze([
   'monthly',
   'yearly',
   'hijri-monthly',
+  'hijri-yearly',
   'whitedays',
 ]);
