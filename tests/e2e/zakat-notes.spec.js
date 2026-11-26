@@ -66,16 +66,42 @@ for (const language of ['en', 'ar'])
       await cash.focus();
       await page.keyboard.type('50000');
       await expect(cash).toHaveValue('50000');
+      // DOM values update before the 150ms commit. Wait for the store and
+      // its focus-restoration frame before moving to another control.
+      await expect
+        .poll(() =>
+          page.evaluate(async () => {
+            const { store } = await import('/js/core/state.js');
+            return String(store.getState().zakat.inputs.cash);
+          })
+        )
+        .toBe('50000');
+      await page.evaluate(
+        () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+      );
       await expect(cash).toBeFocused();
       await expect(cash).toHaveAccessibleDescription(dict['zakat.note.cash'], { exact: true });
       await page.keyboard.press('Tab');
       await expect(page.locator('[data-field="goldGrams"]')).toBeFocused();
       await page.keyboard.type('10');
       await expect(page.locator('[data-field="goldGrams"]')).toHaveValue('10');
+      await expect
+        .poll(() =>
+          page.evaluate(async () => {
+            const { store } = await import('/js/core/state.js');
+            return String(store.getState().zakat.inputs.goldGrams);
+          })
+        )
+        .toBe('10');
+      await page.evaluate(
+        () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+      );
       const sample = page.locator('[data-field="investments"]').locator('..');
       await sample.evaluate((el) => el.scrollIntoView({ block: 'center' }));
       await sample.screenshot({ path: testInfo.outputPath(`notes-${language}-${fontScale}.png`) });
-      await page.locator('.zakat-secondary-disclosure > summary').first().focus();
+      const summary = page.locator('.zakat-secondary-disclosure > summary').first();
+      await summary.focus();
+      await expect(summary).toBeFocused();
       await page.keyboard.press('Enter');
       const fitr = page.locator('[data-bind="zakat-fitr-per"]');
       await expect(fitr).toBeVisible();
