@@ -12,6 +12,7 @@ import { showToast } from '../../ui/toast.js';
 import { triggerRipple } from './items.js';
 import { PRESETS as TASBIH_PRESETS } from '../../views/tasbih.js';
 import * as floating from '../../services/floatingCounter.js';
+import * as countUndo from '../../services/countUndo.js';
 import { requestCounterReset } from '../counterReset.js';
 
 /**
@@ -36,7 +37,7 @@ export const clickHandlers = {
 
   'tasbih-tap': (ds, e) => {
     const target = parseInt(ds.target, 10) || 33;
-    tasbih.increment('tasbih:' + ds.phraseId, 'tasbih-dhikr', target);
+    tasbih.increment('tasbih:' + ds.phraseId, 'tasbih-dhikr', target, 1, 'tasbih');
     const state = store.getState();
     if (state.settings.tapRipple && e) {
       // (see items.js — the re-render detaches the tapped node; defer)
@@ -51,6 +52,13 @@ export const clickHandlers = {
   },
 
   'tasbih-reset': (ds) => requestCounterReset('tasbih', ds.phraseId),
+
+  // (v5.17.182, C14) one-level undo of the view's last count tap. The
+  // service validates the window and that the tap happened HERE (same
+  // view) — a Focus tap never shows up as undoable on Tasbih.
+  'count-undo': () => {
+    countUndo.undoLastTap();
+  },
 
   'tasbih-target-step': (ds) => {
     const key = 'tasbih:' + ds.phraseId;

@@ -1,3 +1,9 @@
+## v5.17.182 - Undo the last count
+
+- Tasbih and Focus offer a quiet "Undo last tap" for about a minute after a count tap made on that view. One level, no redo, no per-tap toast; the control simply disappears when the window passes.
+- The undo rewinds the counter and that tap's counting statistics — per-day and lifetime totals, the favorite-category tally, and the streak recomputed. A tap that completed a cycle restores the count to target-1 and completedCycles-1, and saturation caps are honoured: a tap that hit a cap rewinds only what it actually added.
+- Cross-midnight safe: the undo rewinds the day the tap landed on, never the day it runs on. Disclosed limits: the tap's history entry, the reading position and the day's itemIds stay — the undo rewinds counting, not the record that the reading happened.
+
 ## v5.17.181 - Every Hijri year calendar-note recurrence
 
 - Calendar notes can repeat every Hijri year: the note fires on its start date's Hijri month and day in each following Hijri year, with the same optional end-date cap as the other repeating types. A note set on the 30th of a 29-day Hijri month fires on the month's last day.

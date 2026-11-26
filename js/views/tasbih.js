@@ -7,6 +7,7 @@ import { escapeHTML } from '../core/utils.js';
 import { selectors } from '../core/state.js';
 import { viewMenuButton } from '../ui/viewSheet.js';
 import { isSupported as floatingCounterSupported } from '../services/floatingCounter.js';
+import * as countUndo from '../services/countUndo.js';
 
 const PRESETS = [
   {
@@ -125,6 +126,13 @@ export function renderTasbih(state) {
     </div>
 
     <div class="tasbih-controls">
+      ${
+        // (v5.17.182, C14) quiet one-level undo, live ~60s after a tap on
+        // THIS view — no toast, no redo, gone when the window passes.
+        countUndo.getUndoableTap('tasbih')
+          ? `<button type="button" class="btn btn--ghost" data-action="count-undo">${t('tasbih.undoLastTap', lang)}</button>`
+          : ''
+      }
       <button type="button" class="btn btn--ghost" data-action="tasbih-reset" data-phrase-id="${escapeHTML(active.id)}" data-target="${escapeHTML(String(counter.target))}">${t('tasbih.reset', lang)}</button>
     </div>
 

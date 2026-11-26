@@ -10,6 +10,7 @@ import { escapeHTML, dateKey, categoryDisplayName, pickLocale } from '../core/ut
 import { buildHash } from '../core/router.js';
 import { referenceLineFor, noteFor } from '../domain/localeContent.js';
 import { selectors } from '../core/state.js';
+import * as countUndo from '../services/countUndo.js';
 import { notFoundStateHTML } from '../ui/emptyState.js';
 import { skeletonLines } from '../ui/skeleton.js';
 import { VIEWS } from '../core/config.js';
@@ -291,6 +292,13 @@ export function renderFocus(state) {
          64px progress counter, and the card menu. The stage above keeps
          ALL the room, and it scrolls (see the overflow fix in cards.css). -->
     <p class="focus__hint${justCompleted ? ' is-just-completed' : ''}">${t('focus.tapToCount', lang)}</p>
+    ${
+      // (v5.17.182, C14) same one-level undo as Tasbih — quiet link, live
+      // ~60s after a tap made in Focus, no toast, no redo.
+      countUndo.getUndoableTap('focus')
+        ? `<p class="focus__undo"><button type="button" class="link-btn" data-action="count-undo">${t('tasbih.undoLastTap', lang)}</button></p>`
+        : ''
+    }
     ${lifetimeCycles > 0 ? `<p class="focus__lifetime" title="${escapeHTML(t('card.completedTimes', lang, { n: lifetimeCycles }))}">✓ ${escapeHTML(String(lifetimeCycles))}×</p>` : ''}
     <footer class="focus__bar">
       <button type="button" class="icon-btn" data-action="focus-reset" data-item-id="${escapeHTML(item.id)}" data-target="${escapeHTML(String(counter.target))}" aria-label="${t('focus.reset', lang)}" title="${t('focus.reset', lang)}">

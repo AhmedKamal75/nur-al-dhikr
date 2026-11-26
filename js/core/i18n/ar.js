@@ -896,6 +896,7 @@ export const ar = {
   'tasbih.targetPresets': 'أهداف جاهزة',
   'tasbih.optionsTitle': 'خيارات العداد',
   'tasbih.reset': 'إعادة تعيين',
+  'tasbih.undoLastTap': 'تراجع عن العدّة الأخيرة',
   'tasbih.float': 'عدّاد عائم',
   'tasbih.floatUnsupported': 'النوافذ العائمة غير مدعومة في هذا المتصفح',
   'tasbih.floatFailed': 'تعذّر فتح النافذة العائمة',
@@ -1737,6 +1738,7 @@ export const ar = {
   'a11y.languageToggle': 'تغيير اللغة',
   'a11y.counterProgress': '{count} من {target}',
   'a11y.counterComplete': 'اكتمل. الدورة {n}.',
+  'a11y.countUndone': 'تم التراجع عن العدّة.',
   'update.available': 'يتوفر إصدار جديد من التطبيق',
   'sw.precacheFailed':
     'تعذّر تنزيل ملفات العمل دون اتصال — سيعمل التطبيق متصلًا بالإنترنت في الوقت الحالي. أعد المحاولة عند تحسّن الاتصال.',
