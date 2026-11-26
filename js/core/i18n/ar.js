@@ -694,6 +694,11 @@ export const ar = {
   'collections.sessionBeginning': 'البدء من البداية',
   'collections.sessionContinue': 'متابعة المجموعة',
   'category.sessionStart': 'قراءة متتابعة في وضع التركيز',
+  // (v5.17.179، C18) «الاستماع إلى الكل» في عرض القسم — parity with en.
+  'category.listenAll': 'الاستماع إلى الكل',
+  'category.listenAllProgress': 'الاستماع {n} من {total}',
+  'category.listenAllPause': 'إيقاف مؤقت',
+  'category.listenAllResume': 'استئناف',
   // v5.2.89 waqf & portion-marks legend (P0-2) — parity with en.
   'mushaf.waqfLegend': 'علامات الوقف والأجزاء',
   'mushaf.waqfIntro': 'علامات الصفحة العثمانية — ما يُفعل عند كل وقف.',

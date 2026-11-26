@@ -18,9 +18,17 @@ import {
   confirmHadithIndexAll,
   scrollToHadithListTop,
 } from '../hadithData.js';
-import { getItemEntry, itemClipboardText } from '../shared.js';
+import { getItemEntry, itemClipboardText, findCategoryEntry } from '../shared.js';
 import { normalizeHifzGrade } from '../../domain/hifz.js';
 import { claimSpeaker } from '../audioEngine.js';
+import {
+  endListenAllForListenTap,
+  pauseListenAll,
+  resumeListenAll,
+  startListenAll,
+  stopListenAll,
+} from '../listenAll.js';
+import { visibleCategoryItems } from '../../services/contentPrefs.js';
 import { asTranslationEdition, TRANSLATION_EDITIONS, VIEWS } from '../../core/config.js';
 import { t } from '../../core/i18n.js';
 import { go, replaceGo } from '../../core/router.js';
@@ -699,9 +707,42 @@ export const clickHandlers = {
     }
   },
 
+  // (v5.17.179, C18) "Listen to all": the start handler resolves the
+  // queue from live state with the same visibleCategoryItems math the
+  // category view renders with, so hidden items are skipped exactly as
+  // the list skips them and a forged category id lands on nothing.
+  'listen-all-start': (ds) => {
+    const state = store.getState();
+    if (!speech.isSupported()) {
+      showToast(t('hadith.speechUnsupported', state.settings.language));
+      return;
+    }
+    const found = findCategoryEntry(state, ds.categoryId);
+    if (!found) return;
+    const ids = visibleCategoryItems(state, found.category).map((it) => it.id);
+    startListenAll(found.category.id, ids);
+  },
+
+  'listen-all-toggle-pause': () => {
+    const s = store.getState().listenAll;
+    if (!s) return;
+    if (s.paused) resumeListenAll();
+    else pauseListenAll();
+  },
+
+  'listen-all-stop': () => {
+    stopListenAll();
+  },
+
   'toggle-speech': (ds) => {
     const entry = getItemEntry(ds.itemId);
     if (!entry) return;
+    // (v5.17.179, C18) any Listen tap ends a "Listen to all" session; a
+    // tap on the item it was reading is a stop, not a solo restart.
+    if (endListenAllForListenTap(ds.itemId)) {
+      closeModal();
+      return;
+    }
     // (v5.17.30, generalised v5.17.43) one voice: a playing recitation clip
     // yields to synthesis — narration over recitation is unintelligible. This
     // handled clips and the full-surah track; a live verse session or an

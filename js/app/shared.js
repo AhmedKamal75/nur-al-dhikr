@@ -18,6 +18,20 @@ export function getItemEntry(itemId) {
   return store.getState().library.itemIndex[itemId] || null;
 }
 
+/** The { category, document } pair for a category id across bundled and
+ *  custom libraries — the same lookup the category view renders from. */
+export function findCategoryEntry(state, categoryId) {
+  const docs = [
+    ...Object.values(state.library?.documents || {}),
+    ...Object.values(state.customContent || {}),
+  ];
+  for (const doc of docs) {
+    const category = (doc.categories || []).find((c) => c.id === categoryId);
+    if (category) return { category, document: doc };
+  }
+  return null;
+}
+
 export function itemClipboardText(item, lang) {
   // Strict language separation: AR copies the Arabic matn only; EN copies
   // matn + transliteration + English translation.

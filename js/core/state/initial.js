@@ -435,6 +435,11 @@ export function initialState() {
     // PERSISTED_KEYS: a reload has no clip playing, so a persisted id
     // would render a stuck playing button.
     dhikrAudioItemId: null,
+    // (v5.17.179, C18) Ephemeral — the category "Listen to all" TTS
+    // session: { categoryId, itemIds, index, paused } or null. Same
+    // reactive-render purpose as speakingItemId (the inline progress bar);
+    // deliberately NOT in PERSISTED_KEYS — a reload has nothing playing.
+    listenAll: null,
     // First-run onboarding ("Getting started" panel on Home). Persisted, but
     // self-dismissing for returning users — see sanitizeRestoredPayload:
     // anyone upgrading from an earlier version with existing progress is

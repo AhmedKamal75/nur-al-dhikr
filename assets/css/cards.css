@@ -4427,6 +4427,29 @@ body.has-player .hadith-card {
   color: var(--color-text-muted);
   min-width: 0;
 }
+
+/* (v5.17.179, C18) inline "Listen to all" progress: same pill language
+   as the manage bar — one calm line, progress on the inline-start,
+   pause/stop controls after it, wrapping on narrow phones. */
+.listen-all-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  flex-wrap: wrap;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-primary) 7%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-primary) 25%, transparent);
+}
+.listen-all-bar__progress {
+  flex: 1 1 10rem;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  min-width: 0;
+}
 .manage-bar__spacer {
   flex: 0 1 auto;
 }

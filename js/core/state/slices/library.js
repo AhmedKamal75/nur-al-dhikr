@@ -722,6 +722,29 @@ export function reduceLibrary(state, action) {
     case 'DHIKR_AUDIO_SET_ACTIVE':
       return { ...state, dhikrAudioItemId: action.itemId };
 
+    // (v5.17.179, C18) category "Listen to all" session — ephemeral like
+    // speech. Reducer-level sanitize: the queue is plain string ids, the
+    // index is clamped into it, and anything hostile leaves state alone.
+    case 'LISTEN_ALL_SET': {
+      if (action.session === null) return { ...state, listenAll: null };
+      const s = action.session;
+      if (!s || typeof s !== 'object' || Array.isArray(s) || !Array.isArray(s.itemIds)) {
+        return state;
+      }
+      const itemIds = s.itemIds.filter((id) => typeof id === 'string' && isSafeKey(id));
+      if (!itemIds.length) return state;
+      const index = Math.min(Math.max(0, Math.floor(Number(s.index)) || 0), itemIds.length - 1);
+      return {
+        ...state,
+        listenAll: {
+          categoryId: typeof s.categoryId === 'string' ? s.categoryId : '',
+          itemIds,
+          index,
+          paused: s.paused === true,
+        },
+      };
+    }
+
     default:
       return undefined;
   }
