@@ -192,6 +192,10 @@ describe('C16 view wiring', () => {
     );
     assert.ok(month.includes('role="img"'), 'cells carry role=img with n/5 labels');
     assert.ok(month.includes('/5'), 'completeness read as n/5');
+    assert.ok(
+      month.includes('class="panel__subtext" dir="auto"'),
+      'month summary follows content direction (v5.17.185: no forced ltr)'
+    );
     assert.ok(month.includes('heatmap__cell--today'), 'today ringed');
     assert.ok(
       !month.includes('data-action="prayer-log-cycle"'),

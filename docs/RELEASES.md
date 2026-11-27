@@ -1,3 +1,7 @@
+## v5.17.185 - Prayer month summary direction fix
+
+- The "month · n prayers this month" line under the new prayer-log month grid now uses dir="auto" instead of a forced dir="ltr", so in Arabic it right-aligns with the panel instead of sticking to the left edge.
+
 ## v5.17.184 - Prayer log month view
 
 - The Prayer log panel gains a read-only month grid: every day of the focused month shows its logged-prayer count (0-5) in fixed neutral buckets — 0, 1-2, 3-4 and all five — so a cell means the same thing in every month.

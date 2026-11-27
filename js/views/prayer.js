@@ -408,7 +408,7 @@ export function renderPrayer(state) {
             ${plogGridCells}
           </div>
         </div>
-        ${plogFocusCount ? `<p class="panel__subtext" dir="ltr">${escapeHTML(plogMonthLabel)} · ${escapeHTML(t('plog.monthCount', lang, { n: plogFocusCount }))}</p>` : ''}
+        ${plogFocusCount ? `<p class="panel__subtext" dir="auto">${escapeHTML(plogMonthLabel)} · ${escapeHTML(t('plog.monthCount', lang, { n: plogFocusCount }))}</p>` : ''}
       </div>
       <p class="panel__subtext">${t('plog.hint', lang)}</p>
     </section>
