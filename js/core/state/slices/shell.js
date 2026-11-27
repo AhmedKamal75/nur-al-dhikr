@@ -328,6 +328,32 @@ export function reduceShell(state, action) {
       return { ...state, statsHeatmapRef: ref };
     }
 
+    case 'PRAYER_LOG_MONTH_SET': {
+      // (v5.17.184, C16) same window rule as the stats heatmap: the ref
+      // stays inside [current month - 11, current month]; null lands back
+      // on the current month (Today); a malformed ref or base changes
+      // nothing.
+      const base = typeof action.baseRef === 'string' ? action.baseRef : '';
+      if (!/^\d{4}-\d{2}$/.test(base)) return state;
+      const [by, bm] = base.split('-').map(Number);
+      if (!(by >= 2000 && by <= 2100 && bm >= 1 && bm <= 12)) return state;
+      if (action.ref === null) {
+        if (state.prayerLogMonthRef === null) return state;
+        return { ...state, prayerLogMonthRef: null };
+      }
+      const raw = typeof action.ref === 'string' ? action.ref : '';
+      if (!/^\d{4}-\d{2}$/.test(raw)) return state;
+      const [ry, rm] = raw.split('-').map(Number);
+      if (!(ry >= 2000 && ry <= 2100 && rm >= 1 && rm <= 12)) return state;
+      const target = ry * 12 + (rm - 1);
+      const minY = by * 12 + (bm - 1) - 11;
+      const maxY = by * 12 + (bm - 1);
+      const clamped = Math.min(maxY, Math.max(minY, target));
+      const ref = `${Math.floor(clamped / 12)}-${String((clamped % 12) + 1).padStart(2, '0')}`;
+      if (ref === state.prayerLogMonthRef) return state;
+      return { ...state, prayerLogMonthRef: ref };
+    }
+
     case 'RECITATION_SET_ACTIVE':
       // (v5.10.6) same-key writes are no-ops: the batched session mirror
       // re-sets an identical key every advance, and a redundant object

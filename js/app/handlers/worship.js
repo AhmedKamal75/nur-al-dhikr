@@ -256,6 +256,26 @@ export const clickHandlers = {
     store.dispatch(actions.shiftStatsHeatmapMonth(parseInt(ds.delta, 10) || 0, baseRef));
   },
 
+  // (v5.17.184, C16) Prayer log month grid nav: shift the focused month
+  // (the reducer clamps to the 12-month window) or return to the current
+  // month. Read-only browsing — nothing here writes to the log.
+  'plog-month-shift': (ds) => {
+    const now = new Date();
+    const baseRef = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    const delta = parseInt(ds.delta, 10) || 0;
+    const state = store.getState();
+    const [ry, rm] = (state.prayerLogMonthRef || baseRef).split('-').map(Number);
+    const total = ry * 12 + (rm - 1) + delta;
+    const ref = `${Math.floor(total / 12)}-${String((total % 12) + 1).padStart(2, '0')}`;
+    store.dispatch(actions.setPrayerLogMonth(ref, baseRef));
+  },
+
+  'plog-month-today': () => {
+    const now = new Date();
+    const baseRef = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    store.dispatch(actions.setPrayerLogMonth(null, baseRef));
+  },
+
   // (v5.11.0 C) gap-telemetry clear: drop local samples + counters (the
   // service owns persistence), then re-render into the empty state
   // (same clear-then-render shape as prayer-adhan-clear above).

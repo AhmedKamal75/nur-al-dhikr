@@ -469,6 +469,10 @@ export function initialState() {
     // the heatmap for browsing history. Never persisted: re-opening the app
     // should always land on "now".
     statsHeatmapRef: null,
+    // Ephemeral (v5.17.184, C16) — the month the Prayer log's read-only
+    // month grid is focused on, as 'YYYY-MM'. Same never-persisted rule
+    // as statsHeatmapRef: a fresh open always lands on the current month.
+    prayerLogMonthRef: null,
     // Ephemeral (v3.20) — prayer-alert reliability status for the honest
     // status row in the Prayer view: how the next adhan alerts will actually
     // fire in THIS session's browser. modes: 'unknown' (not measured yet,

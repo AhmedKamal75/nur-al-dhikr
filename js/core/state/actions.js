@@ -372,6 +372,9 @@ export const actions = {
     delta,
     baseRef,
   }),
+  // (v5.17.184, C16) focus the Prayer log month grid on a given month
+  // ('YYYY-MM'); ref null returns to the current month (the Today button).
+  setPrayerLogMonth: (ref, baseRef) => ({ type: 'PRAYER_LOG_MONTH_SET', ref, baseRef }),
   dismissOnboarding: () => ({ type: 'ONBOARDING_DISMISS' }),
   // (v5.2.52) wizard: record a setup confirm; move the ephemeral position.
   markOnboardingStepSeen: (stepId) => ({ type: 'ONBOARDING_STEP_SEEN', stepId }),

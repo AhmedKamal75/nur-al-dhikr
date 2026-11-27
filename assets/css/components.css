@@ -1620,6 +1620,31 @@ span.offline-row__status.missing-data {
   font-size: var(--fs-caption);
   color: var(--color-text-secondary);
 }
+/* (v5.17.184, C16) the Prayer log month grid: same cell geometry as the
+   stats heatmap, NEUTRAL completeness buckets (text-secondary mixes, no
+   celebratory hue): 0 logged / 1-2 / 3-4 / all five. */
+.plog-month {
+  margin-top: var(--space-3);
+}
+.plog-month .heatmap-month-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+.plog-month__cell--b0 {
+  background: var(--color-surface-alt);
+}
+.plog-month__cell--b1 {
+  background: color-mix(in srgb, var(--color-text-secondary) 22%, var(--color-surface));
+}
+.plog-month__cell--b2 {
+  background: color-mix(in srgb, var(--color-text-secondary) 42%, var(--color-surface));
+}
+.plog-month__cell--b3 {
+  background: color-mix(in srgb, var(--color-text-secondary) 66%, var(--color-surface));
+  color: var(--color-surface);
+}
 /* (v5.2.75, UP-05) juz reading strip: 30 numbered cells, document
  * direction governs flow (RTL interfaces run right-to-left). Finished
  * parts fill; partial parts tint by quartile like the heatmap. */

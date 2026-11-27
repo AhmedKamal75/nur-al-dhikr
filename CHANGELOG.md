@@ -1,3 +1,9 @@
+# v5.17.184 - Prayer log month view
+
+- The Prayer log panel gains a read-only month grid: every day of the focused month shows its logged-prayer count (0-5) in fixed neutral buckets — 0, 1-2, 3-4 and all five — so a cell means the same thing in every month.
+- Month navigation and a Today button browse back through the last twelve months (same window rule as the Statistics heatmap); the focus is ephemeral and a fresh open always lands on the current month.
+- Same accessibility contract as the heatmap: labelled grid, per-cell role and aria labels, hidden day-of-week row, today ring, forced-colors preservation. Read-only by design — no editing from the grid, no streak mechanics.
+
 # v5.17.183 - Meaning at the counter
 
 - The Tasbih counter offers a quiet "Meaning" button for the active phrase. It sits outside the tap-to-count stage, so reading never increments, and the dismissible card opens inline below the controls — never over the dial.
