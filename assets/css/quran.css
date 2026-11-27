@@ -367,24 +367,32 @@ body.has-player .ayah-card {
   text-shadow: none !important;
 }
 .qword--hifz-hidden {
-  /* (v5.17.187) uniform blank: the word keeps its exact width (glyphs
-     transparent, still laid out) but the painted box takes the classic
-     cloze blank's geometry — inline-block at a fixed 1.1em, vertically
-     centered — so adjacent blanks tile evenly instead of stacking their
-     washes into darker bands where per-word inline boxes differ in
-     height. intra-word shaping is untouched (the whole word sits inside
-     the one box); justification is word-based, so line layout holds. */
-  display: inline-block;
-  height: 1.1em;
-  vertical-align: middle;
-  border-radius: var(--radius-xs);
-  background: color-mix(in srgb, var(--cat-violet) 7%, transparent);
-  outline: 1.5px dashed color-mix(in srgb, var(--cat-violet) 55%, transparent);
+  /* (v5.17.187) the word span stays display:inline — layout is
+     byte-identical to the unhidden line, so line breaks never move when
+     memorize turns on (planner-measured regression with inline-block).
+     The uniform blank paints on an absolutely positioned ::after
+     instead: classic cloze geometry (1.1em, vertically centered), so
+     adjacent blanks tile evenly instead of stacking their washes into
+     darker bands where per-word inline boxes differ in height. The
+     pseudo-element is out of flow and takes no taps. */
+  position: relative;
   /* the study-affordance underline sets an explicit decoration color, so
      it would survive the transparent glyphs — drop it while hidden. */
   text-decoration: none !important;
 }
-.qword--hifz-hidden:hover {
+.qword--hifz-hidden::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: 50%;
+  height: 1.1em;
+  transform: translateY(-50%);
+  border-radius: var(--radius-xs);
+  background: color-mix(in srgb, var(--cat-violet) 7%, transparent);
+  outline: 1.5px dashed color-mix(in srgb, var(--cat-violet) 55%, transparent);
+  pointer-events: none;
+}
+.qword--hifz-hidden:hover::after {
   background: color-mix(in srgb, var(--cat-violet) 16%, transparent);
 }
 .qword--underline {
