@@ -402,7 +402,7 @@ export function renderPrayer(state) {
             .join('')}</div>
           <div
             class="heatmap__grid"
-            role="img"
+            role="group"
             aria-label="${escapeHTML(plogMonthLabel)} · ${escapeHTML(t('plog.monthCount', lang, { n: plogFocusCount }))}"
           >
             ${plogGridCells}

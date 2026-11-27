@@ -65,6 +65,16 @@ describe('C16 month cells', () => {
     assert.equal(dec.filter(Boolean).length, 31);
   });
 
+  test('February edge cases: leap 2028 (29 days) and common 2027 (28)', () => {
+    const leap = prayerMonthCells({}, new Date(2028, 1, 1));
+    assert.equal(leap.filter(Boolean).length, 29, 'Feb 2028 has 29 day cells');
+    assert.equal(leap.filter((c) => !c).length, new Date(2028, 1, 1).getDay());
+    assert.equal(leap.filter(Boolean).at(-1).key, '2028-02-29');
+    const common = prayerMonthCells({}, new Date(2027, 1, 1));
+    assert.equal(common.filter(Boolean).length, 28, 'Feb 2027 has 28 day cells');
+    assert.equal(common.filter(Boolean).at(-1).key, '2027-02-28');
+  });
+
   test('hostile maps and junk entries degrade to zeros', () => {
     for (const bad of [null, undefined, 42, 'x', []]) {
       const cells = prayerMonthCells(bad, new Date(2026, 10, 1));
@@ -169,7 +179,18 @@ describe('C16 view wiring', () => {
     const month = html.slice(html.indexOf('class="plog-month"'));
     assert.ok(month.includes('plog-month__cell--b2'), '3/5 day lands in bucket b2');
     assert.ok(month.includes('plog-month__cell--b3'), '5/5 day lands in bucket b3');
-    assert.ok(month.includes('role="img"'), 'cells and grid carry role=img');
+    // a11y: the container is a labelled group, never role=img — children
+    // of role=img are presentational, which would make the per-day n/5
+    // labels unreachable. Cells keep their own role=img + label.
+    assert.ok(
+      /class="heatmap__grid"\s+role="group"/.test(month),
+      'grid container is a labelled group'
+    );
+    assert.ok(
+      !/class="heatmap__grid"\s+role="img"/.test(month),
+      'container is not role=img (would hide cell labels)'
+    );
+    assert.ok(month.includes('role="img"'), 'cells carry role=img with n/5 labels');
     assert.ok(month.includes('/5'), 'completeness read as n/5');
     assert.ok(month.includes('heatmap__cell--today'), 'today ringed');
     assert.ok(
