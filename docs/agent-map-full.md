@@ -4,7 +4,7 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 This is the exhaustive dump. For the one-page version — chrome spine, where-to-change table, counted inventory — read `docs/AGENT-MAP.md` instead. This file is ~530 KB by design; it is meant to be searched for one named thing, not read end to end.
 
-- js modules: 261 — data files: 29 — tests: 311
+- js modules: 261 — data files: 29 — tests: 312
 
 Conventions: `js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;
 `js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;
@@ -554,7 +554,7 @@ job: app/handlers — feature-scoped controller modules. Each exports a partial 
 
 - exports: `clickHandlers` (object), `changeHandlers` (const), `inputHandlers` (const)
 - emits: `checklist-toggle`, `sunnah-toggle`, `toggle-prayer-quiet`, `toggle-prayer-quiet-cancel`
-- handles: `calendar-delete-note`, `calendar-edit-note`, `calendar-goto-fasting`, `calendar-new-note`, `calendar-open-day`, `fasting-cycle-remind-time`, `fasting-toggle-category`, `fasting-toggle-remind`, `gap-telemetry-clear`, `home-invite-dismiss`, `install-later`, `install-reoffer`, `khatma-ramadan-preset`, `location-profile-apply`, `location-profile-remove`, `location-profile-save`, `notifications-enable`, `nudge-dismiss`, `onboarding-comfort`, `onboarding-confirm`, `onboarding-dismiss`, `onboarding-install`, `onboarding-language`, `onboarding-reshow`, `onboarding-step`, `prayer-adhan-clear`, `prayer-adhan-import`, `prayer-enable-notifications`, `prayer-log-cycle`, `prayer-set-alert-mode`, `prayer-test-sound`, `qada-add`, `qada-clear-prayer`, `qada-complete`, `ramadan-enable-notifications`, `ramadan-planner-toggle`, `ramadan-toggle-fast`, `sadaqah-history-more`, `sadaqah-log`, `sadaqah-open-editor`, `sadaqah-remove`, `stats-heatmap-export`, `stats-heatmap-shift`, `toggle-prayer-alert`, `toggle-ramadan-alert`, `checklist-toggle` (change/input), `sunnah-toggle` (change/input), `toggle-prayer-quiet` (change/input), `toggle-prayer-quiet-cancel` (change/input)
+- handles: `calendar-delete-note`, `calendar-edit-note`, `calendar-goto-fasting`, `calendar-new-note`, `calendar-open-day`, `fasting-cycle-remind-time`, `fasting-toggle-category`, `fasting-toggle-remind`, `gap-telemetry-clear`, `home-invite-dismiss`, `install-later`, `install-reoffer`, `khatma-ramadan-preset`, `location-profile-apply`, `location-profile-remove`, `location-profile-save`, `notifications-enable`, `nudge-dismiss`, `onboarding-comfort`, `onboarding-confirm`, `onboarding-dismiss`, `onboarding-install`, `onboarding-language`, `onboarding-reshow`, `onboarding-step`, `plog-month-shift`, `plog-month-today`, `prayer-adhan-clear`, `prayer-adhan-import`, `prayer-enable-notifications`, `prayer-log-cycle`, `prayer-set-alert-mode`, `prayer-test-sound`, `qada-add`, `qada-clear-prayer`, `qada-complete`, `ramadan-enable-notifications`, `ramadan-planner-toggle`, `ramadan-toggle-fast`, `sadaqah-history-more`, `sadaqah-log`, `sadaqah-open-editor`, `sadaqah-remove`, `stats-heatmap-export`, `stats-heatmap-shift`, `toggle-prayer-alert`, `toggle-ramadan-alert`, `checklist-toggle` (change/input), `sunnah-toggle` (change/input), `toggle-prayer-quiet` (change/input), `toggle-prayer-quiet-cancel` (change/input)
 - i18n: `common.error`, `common.retry`, `khatma.presetFilled`, `onboarding.installAccepted`, `onboarding.installDeferred`, `plog.allLoggedToast`, `prayer.adhanCleared`, `prayer.notifGranted`, `profiles.applied`, `profiles.namePlaceholder`, `profiles.namePrompt`, `profiles.saved`, `qada.added`, `qada.cleared`, `qada.doneOne`, `qada.offerAdd`, `qada.offerMissed`, `ramadan.alertsDenied`, `stats.gapCleared`, `stats.heatmapSaved` (+1 more)
 - routes: `VIEWS.SETTINGS`
 
@@ -1484,7 +1484,7 @@ job: Export prayer times to the phone's system calendar as an .ics file (Google/
 
 job: Pure helpers for the five-daily-prayers log shown in the Prayer view. Storage deliberately REUSES state.dailyChecklist (the daily-habit map) with a tri-state value for each prayer key:
 
-- exports: `PRAYER_KEYS` (const), `cycleState` (function), `prayerState` (function), `loggedCount` (function), `dayComplete` (function), `prayerStreak` (function), `prayerWeek` (function), `prayerMonthCount` (function), `prayerBestStreak` (function), `prayerInsights` (function)
+- exports: `PRAYER_KEYS` (const), `cycleState` (function), `prayerState` (function), `loggedCount` (function), `dayComplete` (function), `prayerStreak` (function), `prayerWeek` (function), `prayerMonthCount` (function), `prayerBestStreak` (function), `prayerInsights` (function), `prayerMonthCells` (function), `completenessBucket` (function)
 - emits: —
 - handles: —
 - i18n: —
@@ -2657,9 +2657,9 @@ job: The persistent full-surah player bar, rendered once a moshaf+surah is selec
 job: (v4.6.0) The Prayer page is FOCUSED: the next-prayer hero, the day's times, and the log strip. Everything that used to stack below — sunnah tracker, qada' backlog, traveler mode, adhan & alerts, calc…
 
 - exports: `PRAYER_ICONS` (object), `prayerPlaceName` (function), `alertStatusHTML` (function), `renderPrayer` (function), `sunnahPanelHTML` (function), `qadaPanelHTML` (function), `adhanPanelHTML` (function), `monthTimetableContext` (function), `buildMonthModal` (function), `calcPanelHTML` (function), `profilesPanelHTML` (function)
-- emits: `location-profile-apply`, `location-profile-save`, `prayer-adhan-clear`, `prayer-adhan-import`, `prayer-enable-notifications`, `prayer-log-cycle`, `prayer-manual-location`, `prayer-month-ics`, `prayer-month-nav`, `prayer-month-print`, `prayer-request-location`, `prayer-set-alert-mode`, `prayer-test-sound`, `prayer-use-city`, `qada-add`, `qada-clear-prayer`, `qada-complete`, `sunnah-toggle`, `toggle-prayer-alert`, `toggle-prayer-quiet`, `toggle-prayer-quiet-cancel`
+- emits: `location-profile-apply`, `location-profile-save`, `plog-month-shift`, `plog-month-today`, `prayer-adhan-clear`, `prayer-adhan-import`, `prayer-enable-notifications`, `prayer-log-cycle`, `prayer-manual-location`, `prayer-month-ics`, `prayer-month-nav`, `prayer-month-print`, `prayer-request-location`, `prayer-set-alert-mode`, `prayer-test-sound`, `prayer-use-city`, `qada-add`, `qada-clear-prayer`, `qada-complete`, `sunnah-toggle`, `toggle-prayer-alert`, `toggle-prayer-quiet`, `toggle-prayer-quiet-cancel`
 - handles: —
-- i18n: `checklist.today`, `common.am`, `common.pm`, `common.print`, `missingData.location-missing`, `nav.prayer`, `plog.bestStreak`, `plog.hint`, `plog.jamaahRate`, `plog.monthCount`, `plog.mostMissed`, `plog.rate30`, `plog.streak`, `plog.title`, `prayer.`, `prayer.addToCalendar`, `prayer.adhanBundled`, `prayer.adhanClear`, `prayer.adhanCustomSet`, `prayer.adhanImport` (+81 more)
+- i18n: `calendar.today`, `checklist.today`, `common.am`, `common.pm`, `common.print`, `missingData.location-missing`, `nav.prayer`, `plog.bestStreak`, `plog.hint`, `plog.jamaahRate`, `plog.monthCount`, `plog.mostMissed`, `plog.rate30`, `plog.streak`, `plog.title`, `prayer.`, `prayer.addToCalendar`, `prayer.adhanBundled`, `prayer.adhanClear`, `prayer.adhanCustomSet` (+84 more)
 - routes: —
 
 ### `js/views/qibla.js`
@@ -3084,6 +3084,8 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `playlist-remove-item`: emitted by `js/views/audioManager.js`; handled in `js/app/handlers/audio.js`
 - `playlist-rename`: emitted by `js/views/audioManager.js`; handled in `js/app/handlers/audio.js`
 - `playlist-save-range`: emitted by `js/app/handlers/quranAudio.js`; handled in `js/app/handlers/audio.js`
+- `plog-month-shift`: emitted by `js/views/prayer.js`; handled in `js/app/handlers/worship.js`
+- `plog-month-today`: emitted by `js/views/prayer.js`; handled in `js/app/handlers/worship.js`
 - `practice-check`: emitted by `js/views/tajweedPracticeView.js`; handled in `js/app/handlers/quran.js`
 - `practice-classify`: emitted by `js/views/tajweedPracticeView.js`; handled in `js/app/handlers/quran.js`
 - `practice-classify-next`: emitted by `js/views/tajweedPracticeView.js`; handled in `js/app/handlers/quran.js`
@@ -3733,6 +3735,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `compareVisible`: `js/domain/translationCompare.js`
 - `completeOldest`: `js/domain/qada.js`
 - `completedCount`: `js/services/checklist.js`
+- `completenessBucket`: `js/domain/prayerLog.js`
 - `computeFitScale`: `js/app/autoFit.js`
 - `computeFitr`: `js/domain/zakat.js`
 - `computeNisab`: `js/domain/zakat.js`
@@ -4360,6 +4363,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `prayerICSFilename`: `js/domain/prayerExport.js`
 - `prayerInsights`: `js/domain/prayerLog.js`
 - `prayerMethodLine`: `js/domain/prayer.js`
+- `prayerMonthCells`: `js/domain/prayerLog.js`
 - `prayerMonthCount`: `js/domain/prayerLog.js`
 - `prayerMonthICSFilename`: `js/domain/prayerExport.js`
 - `prayerPlaceName`: `js/views/prayer.js`
@@ -5339,6 +5343,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `complete`: `js/views/quran.js`
 - `completed`: `js/core/utils.js`, `js/views/tajweedConvention.js`
 - `completedcount`: `js/services/checklist.js`
+- `completenessbucket`: `js/domain/prayerLog.js`
 - `completeoldest`: `js/domain/qada.js`
 - `completion`: `js/app/handlers/offline.js`, `js/domain/celebrate.js`, `js/domain/reflections.js`, `js/domain/sunnah.js`, `js/services/tasbih.js`, `js/views/khatma.js`, `js/views/onboardingPanel.js`
 - `component`: `js/views/library.js`
@@ -6755,6 +6760,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `prayerinsights`: `js/domain/prayerLog.js`
 - `prayerlog`: `js/domain/sunnah.js`
 - `prayermethodline`: `js/domain/prayer.js`
+- `prayermonthcells`: `js/domain/prayerLog.js`
 - `prayermonthcount`: `js/domain/prayerLog.js`
 - `prayermonthicsfilename`: `js/domain/prayerExport.js`
 - `prayerplacename`: `js/views/prayer.js`
@@ -8024,6 +8030,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/prayerExport.test.js` — .ics prayer-times export (v5.2.0). Pure domain: event counts, midnight-wrap dates, escaping, filenames. (pins: `../js/domain/prayerExport.js`)
 - `tests/prayerInsights.test.js` — (v5.10.1) prayer-log analytics (best streak, 30-day insights) plus the iqama-wait sanitizer allowlist. (pins: `../js/core/config.js`, `../js/core/state/initial.js`, `../js/domain/prayerLog.js`)
 - `tests/prayerLog.test.js` — tri-state five-prayer log (pure module) (pins: `../js/domain/prayerLog.js`)
+- `tests/prayerLogMonth.test.js` — C16 "Prayer log month view" (v5.17.184): 1. prayerMonthCells lays out a Sunday-first month off the dailyChecklist map, with loggedCount/dayComplete semantics; (pins: `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/core/state.js`, `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/domain/prayerLog.js`, `../js/views/prayer.js`)
 - `tests/prayerTimeline.test.js` — full-day timeline strip math (v5.2.0). (pins: `../js/domain/prayerTimeline.js`)
 - `tests/product-cycle-85.test.js` — (no header comment) (pins: —)
 - `tests/product-cycle-86.test.js` — (no header comment) (pins: —)

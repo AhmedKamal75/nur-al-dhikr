@@ -185,3 +185,41 @@ export function prayerInsights(dailyChecklist, days = 30, today = new Date()) {
     bestStreak: prayerBestStreak(map),
   };
 }
+
+/**
+ * (v5.17.184, C16) Cells for the read-only month grid in the Prayer log
+ * panel: Sunday-first leading nulls, then one cell per day with its
+ * logged count (0..5) — mirrors domain/statistics.js monthWindow but
+ * reads the dailyChecklist map, never statistics. Pure lookup: the grid
+ * EDIT nothing, and there are deliberately no streak fields here.
+ */
+export function prayerMonthCells(dailyChecklist, refDate = new Date()) {
+  const map = dailyChecklist && typeof dailyChecklist === 'object' ? dailyChecklist : {};
+  const year = refDate.getFullYear();
+  const month = refDate.getMonth();
+  const startOffset = new Date(year, month, 1).getDay(); // 0 = Sunday
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const cells = [];
+  for (let i = 0; i < startOffset; i += 1) cells.push(null);
+  for (let day = 1; day <= daysInMonth; day += 1) {
+    const d = new Date(year, month, day);
+    const entry = map[dateKey(d)];
+    const count = loggedCount(entry);
+    cells.push({ key: dateKey(d), date: d, count, complete: dayComplete(entry) });
+  }
+  return cells;
+}
+
+/**
+ * (v5.17.184, C16) The month grid's neutral completeness buckets:
+ * 0 logged → 'b0', 1–2 → 'b1', 3–4 → 'b2', all five → 'b3'. Fixed
+ * edges (never relative to a max) so a cell means the same thing in
+ * every month. Hostile counts clamp to the empty bucket.
+ */
+export function completenessBucket(count) {
+  const n = Math.floor(Number(count));
+  if (!Number.isFinite(n) || n <= 0) return 'b0';
+  if (n <= 2) return 'b1';
+  if (n <= 4) return 'b2';
+  return 'b3';
+}

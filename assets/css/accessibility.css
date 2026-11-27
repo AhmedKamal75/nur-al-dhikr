@@ -641,6 +641,9 @@ html[data-dyslexia='true'][dir='rtl'] body {
   .heatmap__cell--2,
   .heatmap__cell--3,
   .heatmap__cell--4,
+  .plog-month__cell--b1,
+  .plog-month__cell--b2,
+  .plog-month__cell--b3,
   .cal-legend__swatch,
   .pu-dot,
   .cal-cell__dot {

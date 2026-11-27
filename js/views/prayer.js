@@ -39,6 +39,8 @@ import {
   prayerInsights,
   prayerWeek,
   prayerMonthCount,
+  prayerMonthCells,
+  completenessBucket,
 } from '../domain/prayerLog.js';
 import { SUNNAH_ITEMS, sunnahToday, sunnahWeek, witrStreak } from '../domain/sunnah.js';
 import { qadaSummary, pendingByPrayer } from '../domain/qada.js';
@@ -255,6 +257,42 @@ export function renderPrayer(state) {
     )
     .join('');
 
+  // (v5.17.184, C16) read-only month grid: 0-5 completeness per day in
+  // fixed neutral buckets, month nav + Today inside the same 12-month
+  // window the stats heatmap uses. Pure lookup — no editing affordance,
+  // no streak mechanics; the cells carry the count only in aria/title.
+  const plogCurrentRef = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  const plogFocusRef = state.prayerLogMonthRef || plogCurrentRef;
+  const [plogY, plogM] = plogFocusRef.split('-').map(Number);
+  const plogFocusDate = new Date(plogY, plogM - 1, 1);
+  const plogCells = prayerMonthCells(state.dailyChecklist, plogFocusDate);
+  const plogFocusCount = prayerMonthCount(state.dailyChecklist, plogFocusDate);
+  const plogMonthLabel = plogFocusDate.toLocaleDateString(lang === 'ar' ? 'ar' : 'en-US', {
+    month: 'long',
+    year: 'numeric',
+  });
+  const plogMinRef = (() => {
+    const d = new Date(now.getFullYear(), now.getMonth() - 11, 1);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  })();
+  const plogCanPrev = plogFocusRef !== plogMinRef;
+  const plogCanNext = plogFocusRef !== plogCurrentRef;
+  const plogTodayKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const plogGridCells = plogCells
+    .map((c) => {
+      if (!c) return `<span class="heatmap__cell heatmap__cell--empty"></span>`;
+      const dayLabel = c.date.toLocaleDateString(lang === 'ar' ? 'ar' : 'en-US', {
+        weekday: 'long',
+        day: 'numeric',
+      });
+      const bucket = completenessBucket(c.count);
+      const countLabel = `${c.count}/${PRAYER_KEYS.length}`;
+      return `<span class="heatmap__cell plog-month__cell plog-month__cell--${bucket} ${
+        c.key === plogTodayKey ? 'heatmap__cell--today' : ''
+      }" role="img" aria-label="${escapeHTML(dayLabel)}: ${countLabel}" title="${escapeHTML(c.key)}: ${countLabel}">${c.date.getDate()}</span>`;
+    })
+    .join('');
+
   // (v5.17.144) a preset-chosen city renders in the ACTIVE language, not
   // the language it was picked in: the settings carry the preset id and the
   // name resolves live. Free-text / GPS locations keep their stored name.
@@ -348,6 +386,30 @@ export function renderPrayer(state) {
       <p class="panel__subtext" dir="ltr">${loggedToday} / ${PRAYER_KEYS.length} ${t('checklist.today', lang)}${monthCount ? ` · ${t('plog.monthCount', lang, { n: monthCount })}` : ''}</p>
       <div class="plog-week">${weekCells}</div>
       ${insightsHTML}
+      <div class="plog-month">
+        <span class="heatmap-month-nav">
+          <button type="button" class="icon-btn icon-btn--sm" data-action="plog-month-shift" data-delta="-1" aria-label="${t('stats.monthPrev', lang)}" title="${t('stats.monthPrev', lang)}" ${plogCanPrev ? '' : 'disabled'}>${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 16 })}</button>
+          <span class="heatmap-month-nav__label">${plogMonthLabel}</span>
+          <button type="button" class="icon-btn icon-btn--sm" data-action="plog-month-shift" data-delta="1" aria-label="${t('stats.monthNext', lang)}" title="${t('stats.monthNext', lang)}" ${plogCanNext ? '' : 'disabled'}>${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 16 })}</button>
+          <button type="button" class="link-btn" data-action="plog-month-today" ${plogFocusRef === plogCurrentRef ? 'hidden' : ''}>${t('calendar.today', lang)}</button>
+        </span>
+        <div class="heatmap">
+          <div class="heatmap__dow" aria-hidden="true">${(lang === 'ar'
+            ? ['أحد', 'إثن', 'ثلا', 'أرب', 'خمي', 'جمع', 'سبت']
+            : ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+          )
+            .map((d) => `<span>${d}</span>`)
+            .join('')}</div>
+          <div
+            class="heatmap__grid"
+            role="group"
+            aria-label="${escapeHTML(plogMonthLabel)} · ${escapeHTML(t('plog.monthCount', lang, { n: plogFocusCount }))}"
+          >
+            ${plogGridCells}
+          </div>
+        </div>
+        ${plogFocusCount ? `<p class="panel__subtext" dir="ltr">${escapeHTML(plogMonthLabel)} · ${escapeHTML(t('plog.monthCount', lang, { n: plogFocusCount }))}</p>` : ''}
+      </div>
       <p class="panel__subtext">${t('plog.hint', lang)}</p>
     </section>
 
