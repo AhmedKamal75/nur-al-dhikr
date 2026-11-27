@@ -51,6 +51,13 @@ export const clickHandlers = {
     }
   },
 
+  // (v5.17.183, C15) toggle the Meaning card. Pure open/close — the card
+  // sits outside the tap-to-count stage, so this never touches the count.
+  'tasbih-meaning-toggle': () => {
+    const state = store.getState();
+    store.dispatch(actions.tasbihMeaningSet(!(state.ui?.tasbihMeaningOpen === true)));
+  },
+
   'tasbih-reset': (ds) => requestCounterReset('tasbih', ds.phraseId),
 
   // (v5.17.182, C14) one-level undo of the view's last count tap. The

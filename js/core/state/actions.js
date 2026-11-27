@@ -99,6 +99,7 @@ export const actions = {
   // the rest of state.ui: a reload has no floating window open, so a
   // persisted "on" would render a dead control.
   tasbihFloatSet: (on) => ({ type: 'TASBIH_FLOAT_SET', on: on === true }),
+  tasbihMeaningSet: (on) => ({ type: 'TASBIH_MEANING_SET', on: on === true }),
   restoreState: (payload) => ({ type: 'RESTORE_STATE', payload }),
   resetAll: () => ({ type: 'RESET_ALL' }),
   setQuranMeta: (meta) => ({ type: 'QURAN_META_LOADED', meta }),
