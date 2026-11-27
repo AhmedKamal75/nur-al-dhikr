@@ -382,6 +382,7 @@ export const ar = {
   'hifz.mcqNew': 'سؤال تالٍ',
   'hifz.mcqDealing': 'جارٍ تجهيز سؤالك…',
   'hifz.rehide': 'إخفاء من جديد',
+  'hifz.endSession': 'إنهاء',
   'hifz.markMemorized': 'أتمم الحفظ',
   'hifz.memorizedBadge': 'محفوظة · متاحة {date}',
   'hifz.recalled': 'أتقنتها',

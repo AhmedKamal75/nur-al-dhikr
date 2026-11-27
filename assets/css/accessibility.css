@@ -649,6 +649,12 @@ html[data-dyslexia='true'][dir='rtl'] body {
   .cal-cell__dot {
     forced-color-adjust: none;
   }
+  /* (v5.17.186, C17) memorize blanks: the glyph mask IS the feature —
+     forced colors must not restore the hidden text. */
+  .qword--hifz-hidden,
+  .qword--hifz-hidden * {
+    forced-color-adjust: none;
+  }
   .heatmap__cell {
     border: 1px solid CanvasText;
   }

@@ -4,7 +4,7 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 This is the exhaustive dump. For the one-page version — chrome spine, where-to-change table, counted inventory — read `docs/AGENT-MAP.md` instead. This file is ~530 KB by design; it is meant to be searched for one named thing, not read end to end.
 
-- js modules: 261 — data files: 29 — tests: 312
+- js modules: 261 — data files: 29 — tests: 313
 
 Conventions: `js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;
 `js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;
@@ -434,7 +434,7 @@ job: app/handlers — feature-scoped controller modules. Each exports a partial 
 
 - exports: `clickHandlers` (object)
 - emits: —
-- handles: `hifz-ayah-mark`, `hifz-level`, `hifz-mark`, `hifz-mcq-new`, `hifz-mcq-pick`, `hifz-rehide`, `hifz-reveal`, `hifz-review`, `hifz-test`, `hifz-toggle`
+- handles: `hifz-ayah-mark`, `hifz-level`, `hifz-mark`, `hifz-mcq-new`, `hifz-mcq-pick`, `hifz-rehide`, `hifz-reveal`, `hifz-review`, `hifz-test`, `hifz-toggle`, `mushaf-hifz-toggle`
 - i18n: —
 - routes: —
 
@@ -2766,10 +2766,10 @@ job: (v5.17.54, merged-plan item 7) the inline Qur'an study tray. Tapping an aya
 
 job: (no header comment)
 
-- exports: `renderAyahWords` (function), `BISMILLAH_AYAH_REF` (const), `buildBismillahHTML` (function), `buildSavedWordsPanel` (function), `buildWordStudyLoadingPanel` (function), `wordSourcesHTML` (function), `buildWordStudyPanel` (function), `formatArabicCommentary` (function), `formatEnglishCommentary` (function), `isEnglishEdition` (function), `editionBodyHTML` (function), `buildTafsirPanel` (function), `buildAyahStudyExtras` (function), `buildMushafSettingsPanel` (function)
-- emits: `ayah-share`, `modal-close`, `mushaf-set-bismillah`, `mushaf-set-font`, `mushaf-set-paper`, `navigate`, `practice-open`, `root-jump`, `roots-open`, `tafsir-compare`, `tafsir-compare-download`, `tafsir-download`, `tafsir-open`, `tafsir-tab`, `tajweed-open-settings`, `toggle-mushaf-pref`, `word-bookmark`, `word-bookmark-open`, `word-bookmark-remove`, `word-bookmarks-open`, `word-copy`, `word-share`, `word-speak`, `word-tap`
+- exports: `buildMushafHifzRow` (function), `buildMushafHifzBar` (function), `renderAyahWords` (function), `BISMILLAH_AYAH_REF` (const), `buildBismillahHTML` (function), `buildSavedWordsPanel` (function), `buildWordStudyLoadingPanel` (function), `wordSourcesHTML` (function), `buildWordStudyPanel` (function), `formatArabicCommentary` (function), `formatEnglishCommentary` (function), `isEnglishEdition` (function), `editionBodyHTML` (function), `buildTafsirPanel` (function), `buildAyahStudyExtras` (function), `buildMushafSettingsPanel` (function)
+- emits: `ayah-share`, `hifz-rehide`, `modal-close`, `mushaf-hifz-toggle`, `mushaf-set-bismillah`, `mushaf-set-font`, `mushaf-set-paper`, `navigate`, `practice-open`, `root-jump`, `roots-open`, `tafsir-compare`, `tafsir-compare-download`, `tafsir-download`, `tafsir-open`, `tafsir-tab`, `tajweed-open-settings`, `toggle-mushaf-pref`, `word-bookmark`, `word-bookmark-open`, `word-bookmark-remove`, `word-bookmarks-open`, `word-copy`, `word-share`, `word-speak`, `word-tap`
 - handles: —
-- i18n: `common.close`, `common.delete`, `mushaf.behavior`, `mushaf.bismillahStyle`, `mushaf.font`, `mushaf.lineSpacing`, `mushaf.marksHizb`, `mushaf.marksLegend`, `mushaf.marksSajda`, `mushaf.marksWaqf`, `mushaf.paper`, `mushaf.settingsTitle`, `mushaf.studyAids`, `mushaf.tajweedCoverage`, `mushaf.tajweedLegend`, `mushaf.tajweedSettings`, `mushaf.tajweedSource`, `mushaf.tajweedUncited`, `mushaf.tajweedUncolored`, `mushaf.textSize` (+54 more)
+- i18n: `common.close`, `common.delete`, `hifz.endSession`, `hifz.memorizeMode`, `hifz.rehide`, `hifz.reveal`, `mushaf.behavior`, `mushaf.bismillahStyle`, `mushaf.font`, `mushaf.lineSpacing`, `mushaf.marksHizb`, `mushaf.marksLegend`, `mushaf.marksSajda`, `mushaf.marksWaqf`, `mushaf.paper`, `mushaf.settingsTitle`, `mushaf.studyAids`, `mushaf.tajweedCoverage`, `mushaf.tajweedLegend`, `mushaf.tajweedSettings` (+58 more)
 - routes: `VIEWS.TAJWEED_COURSE`
 
 ### `js/views/tajweedConvention.js`
@@ -2977,7 +2977,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `hifz-mark`: emitted by `js/views/ayahStudy.js`, `js/views/quran.js`; handled in `js/app/handlers/hifz.js`
 - `hifz-mcq-new`: emitted by `js/views/quran.js`; handled in `js/app/handlers/hifz.js`
 - `hifz-mcq-pick`: emitted by `js/views/quran.js`; handled in `js/app/handlers/hifz.js`
-- `hifz-rehide`: emitted by `js/views/quran.js`; handled in `js/app/handlers/hifz.js`
+- `hifz-rehide`: emitted by `js/views/quran.js`, `js/views/tafsirPanel.js`; handled in `js/app/handlers/hifz.js`
 - `hifz-reveal`: emitted by `js/domain/hifz.js`; handled in `js/app/handlers/hifz.js`
 - `hifz-review`: emitted by `js/views/ayahStudy.js`, `js/views/quran.js`; handled in `js/app/handlers/hifz.js`
 - `hifz-test`: emitted by `js/views/quran.js`; handled in `js/app/handlers/hifz.js`
@@ -3022,6 +3022,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `mushaf-ayah-tap`: emitted by `js/views/mushafReader.js`; handled in `js/app/handlers/quran.js`
 - `mushaf-copy-ayah`: emitted by `js/views/ayahStudy.js`; handled in `js/app/handlers/quran.js`
 - `mushaf-find-page-result`: emitted by `js/views/mushafPageFind.js`; handled in `js/app/handlers/quran.js`
+- `mushaf-hifz-toggle`: emitted by `js/views/tafsirPanel.js`; handled in `js/app/handlers/hifz.js`
 - `mushaf-jump-page`: emitted by `js/views/mushafBookmarks.js`, `js/views/mushafJump.js`; handled in `js/app/handlers/quran.js`
 - `mushaf-more`: emitted by `js/views/mushafReader.js`; handled in `js/app/handlers/quran.js`
 - `mushaf-next`: emitted by `js/views/mushafReader.js`; handled in `js/app/handlers/quran.js`
@@ -3628,6 +3629,8 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `buildMovePicker`: `js/ui/menus.js`
 - `buildMushafAyahDetail`: `js/views/ayahStudy.js`, `js/views/mushafReader.js`
 - `buildMushafBookmarks`: `js/views/mushafBookmarks.js`, `js/views/mushafReader.js`
+- `buildMushafHifzBar`: `js/views/tafsirPanel.js`
+- `buildMushafHifzRow`: `js/views/tafsirPanel.js`
 - `buildMushafJump`: `js/views/mushafJump.js`, `js/views/mushafReader.js`
 - `buildMushafPageFind`: `js/views/mushafPageFind.js`
 - `buildMushafPlayPick`: `js/views/mushafPlayer.js`, `js/views/mushafReader.js`
@@ -5148,6 +5151,8 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `buildmovepicker`: `js/ui/menus.js`
 - `buildmushafayahdetail`: `js/views/ayahStudy.js`, `js/views/mushafReader.js`
 - `buildmushafbookmarks`: `js/views/mushafBookmarks.js`, `js/views/mushafReader.js`
+- `buildmushafhifzbar`: `js/views/tafsirPanel.js`
+- `buildmushafhifzrow`: `js/views/tafsirPanel.js`
 - `buildmushafjump`: `js/views/mushafJump.js`, `js/views/mushafReader.js`
 - `buildmushafpagefind`: `js/views/mushafPageFind.js`
 - `buildmushafplaypick`: `js/views/mushafPlayer.js`, `js/views/mushafReader.js`
@@ -7990,6 +7995,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/mushaf.test.js` — (no header comment) (pins: `../js/services/mushaf.js`)
 - `tests/mushafBismillah.test.js` — the Bismillah is a header for every surah that opens with one, and that is not every surah. The guard that decides this used to exclude only At-Tawbah, so Al-Fatiha (pins: `../js/domain/tajweed.js`)
 - `tests/mushafHizb.test.js` — item 15 (Mushaf parity) gates: 1. hizbStartPage maps 1..60 onto juz halves monotonically, never overtaking the next juz, degrading to null on hostile input; (pins: `../js/domain/quranSearch.js`, `../js/services/mushaf.js`, `../js/views/mushafReader.js`, `../js/views/search.js`)
+- `tests/mushafMemorize.test.js` — v5.17.186 (C17) memorize mode ON the Mushaf page, first slice: word-level hide in place. 1. hidden words keep the .qword span, data-action="word-tap" and (pins: `../js/app/events.js`, `../js/core/config.js`, `../js/core/state.js`, `../js/views/mushafReader.js`)
 - `tests/mutashabihat-cache.test.js` — (no header comment) (pins: `../js/domain/mutashabihat.js`)
 - `tests/nav-chrome.test.js` — (no header comment) (pins: `../js/core/config.js`, `../js/core/config/nav.js`, `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/core/state/initial.js`, `../js/ui/shell.js`)
 - `tests/nav-reachability.test.js` — REORGANISATION-PLAN.md Phase 0 + IA-7. INSTRUMENT BEFORE MOVING. This file is TEST-ONLY: it imports the real route→section map (DOORS from js/core/config/nav.js — the single source (pins: `../js/core/config.js`, `../js/core/config/nav.js`, `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`)

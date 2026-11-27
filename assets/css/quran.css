@@ -355,6 +355,27 @@ body.has-player .ayah-card {
 .qword:hover {
   background: color-mix(in srgb, var(--color-primary) 12%, transparent);
 }
+/* (v5.17.186, C17) memorize hide on the Mushaf: the word stays IN PLACE
+   — glyphs transparent so the printed line keeps its exact width and
+   justification, with the classic cloze blank's violet wash as the
+   affordance. Descendant rule suppresses tajweed colors only while
+   hidden (they return intact on reveal); text-decoration tracks
+   currentColor, so underline cues fade with the glyphs. */
+.qword--hifz-hidden,
+.qword--hifz-hidden * {
+  color: transparent !important;
+  text-shadow: none !important;
+}
+.qword--hifz-hidden {
+  background: color-mix(in srgb, var(--cat-violet) 7%, transparent);
+  outline: 1.5px dashed color-mix(in srgb, var(--cat-violet) 55%, transparent);
+  /* the study-affordance underline sets an explicit decoration color, so
+     it would survive the transparent glyphs — drop it while hidden. */
+  text-decoration: none !important;
+}
+.qword--hifz-hidden:hover {
+  background: color-mix(in srgb, var(--cat-violet) 16%, transparent);
+}
 .qword--underline {
   text-decoration: underline;
   text-decoration-style: dotted;
@@ -724,6 +745,28 @@ body.tajweed-underlines-off .tajweed {
   align-items: center;
   gap: var(--space-1);
   flex-wrap: wrap;
+}
+/* (v5.17.186, C17) memorize chrome under the topbar: one slim bar,
+   wraps on narrow widths, same violet family as the cloze blanks. */
+.mushaf-hifz-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-1_5) var(--space-2);
+  border-radius: var(--radius-md);
+  border: 1.5px dashed color-mix(in srgb, var(--cat-violet) 45%, transparent);
+  background: color-mix(in srgb, var(--cat-violet) 6%, transparent);
+}
+.mushaf-hifz-bar__label {
+  flex: 1;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1_5);
+  font-size: var(--fs-sm);
+  font-weight: 650;
+  color: var(--cat-violet-text);
 }
 .mushaf-topbar__title {
   flex: 1;

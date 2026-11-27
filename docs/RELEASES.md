@@ -1,3 +1,9 @@
+## v5.17.186 - Memorize mode on the Mushaf (first slice)
+
+- Word-level memorize hide now works right on the Mushaf page: start it from the action sheet (or end it from the slim bar that appears under the top bar), and the session surah's words blank out in place on the page you are reading.
+- The hide is display-only: every word keeps its exact span, tap target, keyboard order and tajweed markup, masked by a violet blank, so the printed line never reflows. Tap a blank to reveal the word (same reveal/Hide-again semantics as the classic reader), tap a revealed word for word study as usual.
+- Ayah-end markers stay visible, hidden words stay labelled for screen readers, and the mask holds under forced colors. Ayah-level hide stays in the classic reader for now.
+
 ## v5.17.185 - Prayer month summary direction fix
 
 - The "month · n prayers this month" line under the new prayer-log month grid now uses dir="auto" instead of a forced dir="ltr", so in Arabic it right-aligns with the panel instead of sticking to the left edge.

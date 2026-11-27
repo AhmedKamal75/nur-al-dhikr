@@ -64,6 +64,7 @@ import {
 // mushafRoutePage() there.
 import { mushafRoutePage } from './mushafJump.js';
 import { renderAyahWords, buildBismillahHTML } from './tafsirPanel.js';
+import * as tafsirPanel from './tafsirPanel.js';
 // (v5.17.54, merged-plan item 7) the inline study tray lives in its own
 // module — this file stays under its 800-line cap (see
 // tests/mushaf-structure.test.js).
@@ -150,6 +151,9 @@ export function renderMushaf(state, { preview = false } = {}) {
   const mushafLineScale = clamp(Number(prefs.lineSpacing) || 1, 0.85, 1.3);
   // Bookmark lookup set — built once per render, O(1) per ayah.
   const bookmarkedKeys = new Set(state.ayahBookmarks.map((b) => b.key));
+  // (v5.17.186, C17) memorize ON the page: word-level hide in place.
+  const hifzSess = state.hifzSession;
+  const hifzWordMode = !!hifzSess?.mode && hifzSess?.level === 'word';
   const dir = preview ? null : consumeFlipDirection(); // single-use: consumed by this render
   const fsAnim = preview ? null : consumeFullscreenAnim();
 
@@ -229,6 +233,7 @@ export function renderMushaf(state, { preview = false } = {}) {
             const isReciting = state.surahPlayback?.active && state.recitingAyahKey === bmKey;
             const isSajda = isSajdaAyah(chapter.number, v.number);
             const words = state.quranWords[String(chapter.number)]?.[String(v.number)];
+            const hifzOn = hifzWordMode && Number(hifzSess.surah) === Number(chapter.number);
             const wordsHtml = renderAyahWords(v.text, words, chapter.number, v.number, {
               // (v4.6.0) words are ALWAYS tappable — a tap answers the
               // tajweed question even when word-study data hasn't loaded.
@@ -236,6 +241,7 @@ export function renderMushaf(state, { preview = false } = {}) {
               // strategy, not whether a tap does anything.
               tappable: true,
               underline: prefs.wordByWordStudy && prefs.wordUnderline,
+              hifz: hifzOn ? { revealed: hifzSess.revealed?.[v.number] } : null,
               tajweed: prefs.tajweedColoring,
               prefs: tajweedPrefsOf(state),
               lang,
@@ -406,10 +412,15 @@ export function renderMushaf(state, { preview = false } = {}) {
   </section>`;
   }
 
+  // (v5.17.186, C17) memorize chrome while a session covers a page surah.
+  const hifzChapter = pageSurahs.find((c) => Number(c.number) === Number(hifzSess?.surah));
+  const hifzBar = tafsirPanel.buildMushafHifzBar(state, hifzChapter);
+
   return `
   <section class="view view--mushaf">
     <h1 class="sr-only">${t('mushaf.title', lang)}</h1>
     ${topbar}
+    ${hifzBar}
     <div class="mushaf-page-wrap" data-mushaf-paper="${paper.id}" style="--mushaf-paper-bg:${paper.bg};--mushaf-paper-ink:${paper.ink};--mushaf-paper-border:${paper.border};">
       ${bookHTML}
     </div>
@@ -728,6 +739,7 @@ export function buildMushafSheet(state) {
     </div>
     <div class="mushaf-sheet__group">
       <h3 class="mushaf-jump__heading">${t('mushaf.sectionStudy', lang)}</h3>
+      ${tafsirPanel.buildMushafHifzRow(state, surah)}
       ${
         surah ? linkRow('mushaf.memorizeSurah', 'target', VIEWS.QURAN, { id: surah, mem: '1' }) : ''
       }

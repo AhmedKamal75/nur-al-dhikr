@@ -405,6 +405,7 @@ export const en = {
   'hifz.mcqNew': 'Next question',
   'hifz.mcqDealing': 'Preparing your question…',
   'hifz.rehide': 'Hide again',
+  'hifz.endSession': 'End',
   'hifz.markMemorized': 'Mark memorized',
   'hifz.memorizedBadge': 'Memorized · available {date}',
   'hifz.recalled': 'Recalled',
