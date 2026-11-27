@@ -60,6 +60,32 @@ import {
  * escaped text — with zero risk to text fidelity — when word study is
  * off or data hasn't loaded yet.
  */
+/**
+ * (v5.17.186, C17) memorize chrome under the mushaf topbar while a
+ * word-level session covers a surah on the page: surah name +
+ * Hide-again + End. Pure template, same builders' home as the mushaf
+ * settings/word-study panels.
+ */
+/**
+ * (v5.17.186, C17) the action sheet's on-page memorize row: toggles the
+ * word-level hide for the page's first surah and flips to End live.
+ */
+export function buildMushafHifzRow(state, surah) {
+  if (!surah) return '';
+  const lang = state.settings.language;
+  const sess = state.hifzSession;
+  const on = !!sess?.mode && sess?.level === 'word' && Number(sess.surah) === Number(surah);
+  return `<button type="button" class="mushaf-sheet__row" data-action="mushaf-hifz-toggle" data-surah="${surah}">${icon(on ? 'eyeOff' : 'eye', { size: 17 })}<span class="mushaf-sheet__label">${t(on ? 'hifz.endSession' : 'hifz.memorizeMode', lang)}</span></button>`;
+}
+
+export function buildMushafHifzBar(state, chapter) {
+  const lang = state.settings.language;
+  const sess = state.hifzSession;
+  if (!sess?.mode || sess.level !== 'word' || !chapter) return '';
+  const name = pickLocale({ en: chapter.titleEn, ar: chapter.titleAr }, lang);
+  return `<div class="mushaf-hifz-bar"><span class="mushaf-hifz-bar__label">${icon('eye', { size: 14 })} ${escapeHTML(t('hifz.memorizeMode', lang))} · ${escapeHTML(name)}</span> <button type="button" class="chip" data-action="hifz-rehide">${icon('eyeOff', { size: 13 })} ${t('hifz.rehide', lang)}</button> <button type="button" class="chip" data-action="mushaf-hifz-toggle" data-surah="${Number(sess.surah)}">${t('hifz.endSession', lang)}</button></div>`;
+}
+
 export function renderAyahWords(
   officialText,
   wordRecords,
@@ -72,6 +98,13 @@ export function renderAyahWords(
     prefs = null,
     lang = 'en',
     accentWord = null,
+    // (v5.17.186, C17) memorize hide on the Mushaf: { revealed } for THIS
+    // ayah from hifzSession.revealed (word-level sessions only). Hidden
+    // words keep the .qword span, the data-action and data-i (tapping and
+    // arrow navigation untouched — the word-tap handler turns the tap
+    // into the classic reader's reveal) and gain a display-only hide
+    // class; bytes and structure are identical, tajweed markup included.
+    hifz = null,
   } = {}
 ) {
   const rawTokens = String(officialText || '')
@@ -139,7 +172,16 @@ export function renderAyahWords(
       // movement lives in the events.js keydown handler.
       const tab = firstTappable === null ? '0' : '-1';
       if (firstTappable === null) firstTappable = rawIdx;
-      return `<span class="qword ${underline ? 'qword--underline' : ''} ${isAccent ? 'mushaf-ayah__sajda-word' : ''}" data-action="word-tap" data-surah="${surah}" data-ayah="${ayah}" data-i="${i}" tabindex="${tab}" role="button" lang="ar" aria-label="${escapeHTML(tok)} — ${escapeHTML(t('wordStudy.open', lang))}">${inner}</span>`;
+      // (v5.17.186, C17) hidden words stay in the accessibility tree as
+      // a labelled reveal affordance (same intent semantics as the
+      // classic reader's cloze blanks) — never display:none, never
+      // dropped from the tab/arrow order.
+      const hidden = !!hifz && !(hifz.revealed?.all || hifz.revealed?.words?.[canonIdx]);
+      const hifzClass = hidden ? ' qword--hifz-hidden' : '';
+      const aria = hidden
+        ? escapeHTML(t('hifz.reveal', lang))
+        : `${escapeHTML(tok)} — ${escapeHTML(t('wordStudy.open', lang))}`;
+      return `<span class="qword ${underline ? 'qword--underline' : ''} ${isAccent ? 'mushaf-ayah__sajda-word' : ''}${hifzClass}" data-action="word-tap" data-surah="${surah}" data-ayah="${ayah}" data-i="${i}" tabindex="${tab}" role="button" lang="ar" aria-label="${aria}">${inner}</span>`;
     })
     .join(' ');
 }

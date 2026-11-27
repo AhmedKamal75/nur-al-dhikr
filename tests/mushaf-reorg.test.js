@@ -345,6 +345,8 @@ describe('mushaf regroup: zero feature loss', () => {
   // Intentional additions only: the new TRACK panel entry point.
   const ALLOWED_ADDITIONS = new Set([
     'tajweed-set-convention', // Phase B preference only, detector/palette unchanged.
+    // v5.17.186 (C17): memorize toggle on the Mushaf (word-level hide slice).
+    'mushaf-hifz-toggle',
     // v5.17.19: the tajweed course. A new data-action needs a handler AND an
     // entry here, which is why these are listed rather than discovered.
     'tajweed-course-drill',

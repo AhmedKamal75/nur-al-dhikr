@@ -18,6 +18,19 @@ export const clickHandlers = {
     }
   },
 
+  // (v5.17.186, C17) memorize ON the Mushaf page: same session slice and
+  // semantics as the classic reader's toggle, but always word-level —
+  // ayah-level hide stays a classic-reader feature of this slice's scope.
+  'mushaf-hifz-toggle': (ds) => {
+    const st = store.getState();
+    const s = Number(ds.surah);
+    if (st.hifzSession.mode && Number(st.hifzSession.surah) === s) {
+      store.dispatch(actions.hifzSessionEnd());
+    } else {
+      store.dispatch(actions.hifzSessionStart({ surah: s, level: 'word' }));
+    }
+  },
+
   'hifz-level': (ds) => {
     store.dispatch(actions.hifzLevel(ds.level));
   },

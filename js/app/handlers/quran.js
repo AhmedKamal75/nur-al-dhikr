@@ -501,6 +501,28 @@ export const clickHandlers = {
     const surah = ds.surah,
       ayah = ds.ayah,
       i = Number(ds.i);
+    // (v5.17.186, C17) memorize hide on the Mushaf: a hidden word's tap
+    // is the classic reader's reveal, never the study popup. The span
+    // keeps data-action="word-tap" so roving tabindex and arrow
+    // navigation are untouched; revealed words fall through to study as
+    // usual. Mushaf-only: the classic reader renders its cloze blanks
+    // with their own hifz-reveal action, and study-tray word runs of the
+    // same surah must keep opening the study panel.
+    const hifzSt = store.getState();
+    const sess = hifzSt.hifzSession;
+    if (
+      hifzSt.activeView === 'mushaf' &&
+      sess?.mode &&
+      sess.level === 'word' &&
+      Number(sess.surah) === Number(surah)
+    ) {
+      const wIdx = i - 1; // data-i is 1-based canonical; revealed.words is 0-based
+      const rev = sess.revealed?.[Number(ayah)];
+      if (!(rev?.all || rev?.words?.[wIdx])) {
+        store.dispatch(actions.hifzReveal({ ayah: Number(ayah), word: wIdx }));
+        return;
+      }
+    }
     // (v5.17.54, merged-plan item 7) a word tap on the ayah row that
     // carries the open inline tray selects the word INSIDE the tray —
     // lemma/root/grammar chips under the row, never a modal. Every other
