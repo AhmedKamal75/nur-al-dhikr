@@ -1,3 +1,9 @@
+## v5.17.183 - Meaning at the counter
+
+- The Tasbih counter offers a quiet "Meaning" button for the active phrase. It sits outside the tap-to-count stage, so reading never increments, and the dismissible card opens inline below the controls — never over the dial.
+- Every byte shown comes from the library as the user sees it (the content-visibility lens): translation and transliteration for each preset; virtue and source only for the exact matches astaghfirullah, la hawla and salawat; the three glorifications close with an honest link to General Remembrance; a custom phrase gets an honest "your own words" state. Nothing is authored or invented.
+- English and Arabic chrome, aria-expanded/region wiring, and unit tests covering resolution, lens deletes and overrides, the open flag, view wiring and the no-authored-text rule.
+
 ## v5.17.182 - Undo the last count
 
 - Tasbih and Focus offer a quiet "Undo last tap" for about a minute after a count tap made on that view. One level, no redo, no per-tap toast; the control simply disappears when the window passes.

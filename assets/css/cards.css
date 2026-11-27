@@ -2683,6 +2683,62 @@ body.is-ambient #main {
   background: var(--color-surface);
   box-shadow: var(--shadow-sm);
 }
+/* (v5.17.183, C15) the Meaning card: inline in the flow under the
+   controls row — it pushes content down and never overlays the dial. */
+.tasbih-meaning {
+  margin-top: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  /* The open-scroll must clear the fixed bottom nav (and playerbar) —
+     same scroll-margin pattern as the ayah/hadith cards. */
+  scroll-margin-top: calc(var(--topbar-height) + var(--space-4));
+  scroll-margin-bottom: calc(var(--bottomnav-height) + var(--space-4));
+}
+body.has-player .tasbih-meaning {
+  scroll-margin-bottom: calc(var(--bottomnav-height) + var(--playerbar-height) + var(--space-4));
+}
+.tasbih-meaning__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+.tasbih-meaning__phrase {
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  font-size: var(--fs-sm);
+}
+.tasbih-meaning__translit {
+  font-style: italic;
+  color: var(--color-text-secondary);
+  margin: var(--space-1) 0;
+}
+.tasbih-meaning__translation {
+  margin: var(--space-1) 0;
+}
+.tasbih-meaning__virtue,
+.tasbih-meaning__source {
+  margin: var(--space-2) 0 0;
+  font-size: var(--fs-sm);
+  color: var(--color-text-secondary);
+}
+.tasbih-meaning__label {
+  font-weight: 600;
+  color: var(--color-text);
+}
+.tasbih-meaning__note {
+  margin: var(--space-1) 0 var(--space-2);
+  color: var(--color-text-secondary);
+}
+.tasbih-meaning__more {
+  display: inline-block;
+  margin-top: var(--space-2);
+  font-size: var(--fs-sm);
+}
 .target-stepper {
   display: flex;
   align-items: center;

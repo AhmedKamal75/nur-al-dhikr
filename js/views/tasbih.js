@@ -4,10 +4,12 @@
 import { t } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { escapeHTML } from '../core/utils.js';
+import { buildHash } from '../core/router.js';
 import { selectors } from '../core/state.js';
 import { viewMenuButton } from '../ui/viewSheet.js';
 import { isSupported as floatingCounterSupported } from '../services/floatingCounter.js';
 import * as countUndo from '../services/countUndo.js';
+import { resolveMeaning, MORE_CATEGORY_ID } from '../domain/tasbihMeaning.js';
 
 const PRESETS = [
   {
@@ -127,6 +129,13 @@ export function renderTasbih(state) {
 
     <div class="tasbih-controls">
       ${
+        // (v5.17.183, C15) quiet Meaning affordance for the active phrase.
+        // It lives in the controls row — OUTSIDE the tap-to-count stage —
+        // so reading it never increments, and the card opens inline below,
+        // never over the dial.
+        `<button type="button" class="btn btn--ghost" data-action="tasbih-meaning-toggle" aria-expanded="${state.ui?.tasbihMeaningOpen === true}" aria-controls="tasbih-meaning-card">${icon('book-open', { size: 14 })} ${t('tasbih.meaning', lang)}</button>`
+      }
+      ${
         // (v5.17.182, C14) quiet one-level undo, live ~60s after a tap on
         // THIS view — no toast, no redo, gone when the window passes.
         countUndo.getUndoableTap('tasbih')
@@ -135,6 +144,8 @@ export function renderTasbih(state) {
       }
       <button type="button" class="btn btn--ghost" data-action="tasbih-reset" data-phrase-id="${escapeHTML(active.id)}" data-target="${escapeHTML(String(counter.target))}">${t('tasbih.reset', lang)}</button>
     </div>
+
+    ${state.ui?.tasbihMeaningOpen === true ? meaningCardHTML(state, active, isCustom, lang) : ''}
 
     <details class="panel tasbih-options">
       <summary>${t('tasbih.optionsTitle', lang)}</summary>
@@ -176,3 +187,71 @@ export function renderTasbih(state) {
 }
 
 export { PRESETS };
+
+/**
+ * (v5.17.183, C15) the dismissible Meaning card. Everything shown is
+ * resolved by domain/tasbihMeaning.js from the user's effective library
+ * — no authored text here. Virtue and source lines render ONLY for a
+ * granted exact match; the glorifications and fallbacks close with the
+ * honest link to the General Remembrance section; a custom phrase gets
+ * the "your own words" state.
+ */
+function meaningCardHTML(state, active, isCustom, lang) {
+  const meaning = resolveMeaning(state, active.id, isCustom);
+  const moreLink = `<a class="tasbih-meaning__more" href="${buildHash('category', { id: MORE_CATEGORY_ID })}" data-action="navigate" data-view="category" data-id="${MORE_CATEGORY_ID}">${t('tasbih.meaningMore', lang)}</a>`;
+
+  let body = '';
+  if (meaning.kind === 'custom') {
+    body = `<p class="tasbih-meaning__note">${t('tasbih.meaningOwnWords', lang)}</p>`;
+  } else if (meaning.kind === 'link') {
+    body = `<p class="tasbih-meaning__note">${t('tasbih.meaningUnavailable', lang)}</p>${moreLink}`;
+  } else {
+    const item = meaning.item;
+    const transliteration = String(item.transliteration || '').trim();
+    const translation = String(item.translation?.[lang] || item.translation?.en || '').trim();
+    const translationLang = item.translation?.[lang] ? lang : 'en';
+    const rows = [];
+    if (transliteration) {
+      rows.push(
+        `<p class="tasbih-meaning__translit" lang="en" dir="ltr">${escapeHTML(transliteration)}</p>`
+      );
+    }
+    if (translation) {
+      rows.push(
+        `<p class="tasbih-meaning__translation" lang="${translationLang}">${escapeHTML(translation)}</p>`
+      );
+    }
+    if (meaning.kind === 'match') {
+      const virtue = String(item.virtues?.[lang] || item.virtues?.en || '').trim();
+      const virtueLang = item.virtues?.[lang] ? lang : 'en';
+      if (virtue) {
+        rows.push(
+          `<p class="tasbih-meaning__virtue" lang="${virtueLang}"><span class="tasbih-meaning__label">${t('tasbih.meaningVirtue', lang)}</span> ${escapeHTML(virtue)}</p>`
+        );
+      }
+      const ref = item.reference || {};
+      const refText = [ref.collection, ref.hadith]
+        .map((s) => String(s || '').trim())
+        .filter(Boolean)
+        .join(' ');
+      const grade = String(item.grade || ref.grading || '').trim();
+      if (refText || grade) {
+        rows.push(
+          `<p class="tasbih-meaning__source"><span class="tasbih-meaning__label">${t('tasbih.meaningSource', lang)}</span> ${escapeHTML([refText, grade].filter(Boolean).join(' · '))}</p>`
+        );
+      }
+    }
+    rows.push(moreLink);
+    body = rows.join('');
+  }
+
+  const phraseLabel = isCustom ? active.text : lang === 'ar' ? active.ar : active.en;
+  return `
+    <div class="tasbih-meaning" id="tasbih-meaning-card" role="region" aria-label="${t('tasbih.meaning', lang)}">
+      <div class="tasbih-meaning__head">
+        <span class="tasbih-meaning__phrase" dir="auto">${escapeHTML(String(phraseLabel || ''))}</span>
+        <button type="button" class="icon-btn" data-action="tasbih-meaning-toggle" aria-label="${t('tasbih.meaningClose', lang)}" title="${t('tasbih.meaningClose', lang)}">${icon('close', { size: 15 })}</button>
+      </div>
+      ${body}
+    </div>`;
+}

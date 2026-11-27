@@ -6,7 +6,7 @@
 
 import { actions, selectors, store } from '../../core/state.js';
 import { t } from '../../core/i18n.js';
-import { vibrate } from '../../core/utils.js';
+import { vibrate, scrollBehavior } from '../../core/utils.js';
 import * as tasbih from '../../services/tasbih.js';
 import { showToast } from '../../ui/toast.js';
 import { triggerRipple } from './items.js';
@@ -47,6 +47,25 @@ export const clickHandlers = {
           `.tasbih-stage[data-phrase-id="${CSS.escape(phraseId)}"]`
         );
         if (fresh) triggerRipple(fresh, e);
+      });
+    }
+  },
+
+  // (v5.17.183, C15) toggle the Meaning card. Pure open/close — the card
+  // sits outside the tap-to-count stage, so this never touches the count.
+  // On open, bring the card into view (it can open below the fold on
+  // phones); 'nearest' moves the page as little as possible and the
+  // shared scrollBehavior() honours reduced motion. The re-render
+  // detaches the node, so the scroll waits a frame (see triggerRipple).
+  'tasbih-meaning-toggle': () => {
+    const state = store.getState();
+    const opening = !(state.ui?.tasbihMeaningOpen === true);
+    store.dispatch(actions.tasbihMeaningSet(opening));
+    if (opening) {
+      requestAnimationFrame(() => {
+        document
+          .getElementById('tasbih-meaning-card')
+          ?.scrollIntoView({ block: 'nearest', behavior: scrollBehavior() });
       });
     }
   },

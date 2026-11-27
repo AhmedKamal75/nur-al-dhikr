@@ -219,6 +219,12 @@ export function reduceShell(state, action) {
       if ((state.ui?.tasbihFloat ?? false) === (action.on === true)) return state;
       return { ...state, ui: { ...state.ui, tasbihFloat: action.on === true } };
 
+    // (v5.17.183, C15) the Meaning card's open flag (ephemeral ui, like
+    // the float window) — the card is dismissible, never persisted.
+    case 'TASBIH_MEANING_SET':
+      if ((state.ui?.tasbihMeaningOpen ?? false) === (action.on === true)) return state;
+      return { ...state, ui: { ...state.ui, tasbihMeaningOpen: action.on === true } };
+
     // (v5.12.0) mute mirror for the player chips (ephemeral, like minimize).
     case 'AUDIO_MUTED_SET':
       if ((state.ui?.audioMuted ?? false) === (action.on === true)) return state;
