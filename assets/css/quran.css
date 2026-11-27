@@ -367,6 +367,17 @@ body.has-player .ayah-card {
   text-shadow: none !important;
 }
 .qword--hifz-hidden {
+  /* (v5.17.187) uniform blank: the word keeps its exact width (glyphs
+     transparent, still laid out) but the painted box takes the classic
+     cloze blank's geometry — inline-block at a fixed 1.1em, vertically
+     centered — so adjacent blanks tile evenly instead of stacking their
+     washes into darker bands where per-word inline boxes differ in
+     height. intra-word shaping is untouched (the whole word sits inside
+     the one box); justification is word-based, so line layout holds. */
+  display: inline-block;
+  height: 1.1em;
+  vertical-align: middle;
+  border-radius: var(--radius-xs);
   background: color-mix(in srgb, var(--cat-violet) 7%, transparent);
   outline: 1.5px dashed color-mix(in srgb, var(--cat-violet) 55%, transparent);
   /* the study-affordance underline sets an explicit decoration color, so
@@ -759,7 +770,11 @@ body.tajweed-underlines-off .tajweed {
   background: color-mix(in srgb, var(--cat-violet) 6%, transparent);
 }
 .mushaf-hifz-bar__label {
-  flex: 1;
+  /* (v5.17.187) basis instead of bare grow: the label claims a full row
+     once the row can't hold it next to the chips, so at ~195 CSS px
+     (200% zoom on a 390 phone) the chips wrap BELOW it side by side
+     instead of squeezing it into a tall multi-line column. */
+  flex: 1 1 11em;
   min-width: 0;
   display: inline-flex;
   align-items: center;
@@ -767,6 +782,13 @@ body.tajweed-underlines-off .tajweed {
   font-size: var(--fs-sm);
   font-weight: 650;
   color: var(--cat-violet-text);
+}
+.mushaf-hifz-bar .chip {
+  /* (v5.17.187) wrapped chips share their row evenly and never squeeze
+     under their content or wrap their own text. */
+  flex: 1 1 auto;
+  justify-content: center;
+  white-space: nowrap;
 }
 .mushaf-topbar__title {
   flex: 1;

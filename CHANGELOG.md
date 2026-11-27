@@ -1,3 +1,9 @@
+# v5.17.187 - Memorize mode polish
+
+- Memorize bar on the Mushaf wraps cleanly at very narrow widths and 200% zoom: the label takes its own row and the Hide-again/End chips share the row below instead of squeezing or overlapping.
+- Hidden-word blanks now paint as even rectangles (same geometry as the classic reader's cloze blanks) instead of uneven stacked tints; the word's exact width and the line's justification are unchanged.
+- Internal: the renderAyahWords documentation block sits back on its function.
+
 # v5.17.186 - Memorize mode on the Mushaf (first slice)
 
 - Word-level memorize hide now works right on the Mushaf page: start it from the action sheet (or end it from the slim bar that appears under the top bar), and the session surah's words blank out in place on the page you are reading.
