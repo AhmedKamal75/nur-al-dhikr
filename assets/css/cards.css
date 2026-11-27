@@ -2692,6 +2692,13 @@ body.is-ambient #main {
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   box-shadow: var(--shadow-sm);
+  /* The open-scroll must clear the fixed bottom nav (and playerbar) —
+     same scroll-margin pattern as the ayah/hadith cards. */
+  scroll-margin-top: calc(var(--topbar-height) + var(--space-4));
+  scroll-margin-bottom: calc(var(--bottomnav-height) + var(--space-4));
+}
+body.has-player .tasbih-meaning {
+  scroll-margin-bottom: calc(var(--bottomnav-height) + var(--playerbar-height) + var(--space-4));
 }
 .tasbih-meaning__head {
   display: flex;

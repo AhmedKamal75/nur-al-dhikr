@@ -232,6 +232,22 @@ describe('C15 view wiring', () => {
     const closed = renderTasbih(meaningState({ meaningOpen: false }));
     assert.ok(closed.includes('aria-expanded="false"'));
   });
+
+  test('opening scrolls the card into view (nearest, reduced-motion aware)', () => {
+    // Planner gate on 947b062: at 390x800 the card opened behind the
+    // bottom nav. The handler brings it into view on open only, with the
+    // shared scrollBehavior() so reduced motion gets 'auto'.
+    const src = readFileSync(join(ROOT, 'js/app/handlers/tasbih.js'), 'utf8');
+    const toggleBody = src.slice(
+      src.indexOf("'tasbih-meaning-toggle'"),
+      src.indexOf("'tasbih-reset'")
+    );
+    assert.ok(toggleBody.includes('if (opening)'), 'scrolls on open only, never on dismiss');
+    assert.ok(toggleBody.includes("block: 'nearest'"), 'minimal page movement');
+    assert.ok(toggleBody.includes('behavior: scrollBehavior()'), 'reduced-motion aware');
+    assert.ok(toggleBody.includes('requestAnimationFrame'), 'waits for the re-render');
+    assert.ok(!toggleBody.includes('tasbih-tap'), 'never counts');
+  });
 });
 
 describe('C15 strings and honesty', () => {
