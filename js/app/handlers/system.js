@@ -218,6 +218,27 @@ export const clickHandlers = {
     store.dispatch(actions.updateSettings({ zakatFitrReminder: !cur }));
   },
 
+  // (v5.17.188, C18) Adhkar window reminders — one toggle per window;
+  // the lead select below is shared. The scheduler block lives in
+  // services/notifications.js next to the other first-class settings.
+  'toggle-adhkar-morning-reminder': () => {
+    const cur = store.getState().settings.adhkarReminders || {
+      morning: false,
+      evening: false,
+      lead: 30,
+    };
+    store.dispatch(actions.updateSettings({ adhkarReminders: { ...cur, morning: !cur.morning } }));
+  },
+
+  'toggle-adhkar-evening-reminder': () => {
+    const cur = store.getState().settings.adhkarReminders || {
+      morning: false,
+      evening: false,
+      lead: 30,
+    };
+    store.dispatch(actions.updateSettings({ adhkarReminders: { ...cur, evening: !cur.evening } }));
+  },
+
   // (v5.2.0) One-tap notification presets on the existing scheduler —
   // Jumu'ah (recurring Friday calendar note) and daily verse (morning
   // reminder deep-linking home). Idempotent: re-tapping reports "already".
@@ -466,6 +487,21 @@ export const changeHandlers = [
       if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(el.value)) return;
       const cur = store.getState().settings.jumuahReminder || { enabled: false, time: '09:00' };
       store.dispatch(actions.updateSettings({ jumuahReminder: { ...cur, time: el.value } }));
+    },
+  },
+  {
+    // (v5.17.188, C18) shared lead time for the adhkar window reminders —
+    // the select only offers the four domain choices.
+    sel: '[data-bind="adhkar-lead"]',
+    run: (ds, el) => {
+      const lead = Number(el.value);
+      if (![0, 15, 30, 60].includes(lead)) return;
+      const cur = store.getState().settings.adhkarReminders || {
+        morning: false,
+        evening: false,
+        lead: 30,
+      };
+      store.dispatch(actions.updateSettings({ adhkarReminders: { ...cur, lead } }));
     },
   },
   {

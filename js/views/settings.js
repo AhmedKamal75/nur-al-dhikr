@@ -701,6 +701,28 @@ export function renderSettings(state, flags = {}) {
       ${clickToggleRow('toggle-zakatfitr-reminder', {}, t('settings.zakatFitrReminder', lang), s.zakatFitrReminder === true)}
       <p class="panel__subtext">${escapeHTML(t('settings.zakatFitrHint', lang))}</p>`;
       })()}
+      ${(() => {
+        // (v5.17.188, C18) adhkar window reminders: one toggle per window
+        // plus the shared lead select; the scheduler stays silent rather
+        // than late when a window has closed.
+        const arw =
+          s.adhkarReminders && typeof s.adhkarReminders === 'object'
+            ? s.adhkarReminders
+            : { morning: false, evening: false, lead: 30 };
+        const lead = [0, 15, 30, 60].includes(Number(arw.lead)) ? Number(arw.lead) : 30;
+        return `
+      ${clickToggleRow('toggle-adhkar-morning-reminder', {}, t('settings.adhkarMorningReminder', lang), arw.morning === true)}
+      ${clickToggleRow('toggle-adhkar-evening-reminder', {}, t('settings.adhkarEveningReminder', lang), arw.evening === true)}
+      <label class="field">${escapeHTML(t('settings.adhkarReminderLead', lang))}<select class="input" data-bind="adhkar-lead">
+        ${[0, 15, 30, 60]
+          .map(
+            (v) =>
+              `<option value="${v}" ${lead === v ? 'selected' : ''}>${escapeHTML(t(`settings.adhkarLead.${v}`, lang))}</option>`
+          )
+          .join('')}
+      </select></label>
+      <p class="panel__subtext">${escapeHTML(t('settings.adhkarReminderHint', lang))}</p>`;
+      })()}
       ${reminders || `<p class="empty-hint">${t('editor.emptyState', lang)}</p>`}
     </details>
     ${groupClose()}
