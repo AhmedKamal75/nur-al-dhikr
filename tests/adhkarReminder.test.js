@@ -24,6 +24,13 @@ import { calculateTimes } from '../js/domain/prayer.js';
 import { sanitizeSettings } from '../js/core/config/sanitize.js';
 import { dateKey } from '../js/core/utils.js';
 
+// The scheduler derives its UTC offset from the tick dates, so computed
+// sun times (and which side of midnight a wrapped window lands on)
+// follow the process timezone — CI runs UTC, dev machines don't. Pin it
+// (repo pattern: ramadan-dedup.test.js): two tests below assert
+// Cairo-local clock behavior and a wrapped window at 56N.
+process.env.TZ = 'Africa/Cairo';
+
 const shown = [];
 
 class FakeNotification {
