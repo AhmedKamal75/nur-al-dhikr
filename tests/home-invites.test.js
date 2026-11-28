@@ -75,6 +75,16 @@ function browserState({ lang = 'en', dismissedInvites = {} } = {}) {
 /** Minimal state for the invites renderer (settings only). */
 const inviteState = ({ lang = 'en', dismissedInvites = {} } = {}) => ({
   settings: { ...DEFAULT_SETTINGS, language: lang, dismissedInvites },
+  // (v5.17.189, C19) a returning reader on an uninstalled device, so the
+  // install invitation joins the seasonal three by default.
+  statistics: {
+    dailyHistory: {
+      '2026-09-20': { recitations: 3 },
+      '2026-09-21': { readingSec: 60 },
+      '2026-09-22': { recitations: 1 },
+    },
+  },
+  install: { installed: false, promptReady: false },
 });
 
 const FRIDAY = new Date(2026, 9, 2); // a Friday (2026-10-01 is Thursday)
@@ -142,8 +152,9 @@ describe('item 9: invitation triggers', () => {
     assert.equal(shouldShowInvite(null, FRIDAY, {}), false);
   });
 
-  test('INVITE_IDS is exactly the three invitations, in render order', () => {
-    assert.deepEqual([...INVITE_IDS], ['hijri', 'friday', 'ramadan']);
+  test('INVITE_IDS is exactly the four invitations, in render order', () => {
+    // v5.17.189 (C19): + 'install' (returning-reader install invitation).
+    assert.deepEqual([...INVITE_IDS], ['hijri', 'friday', 'ramadan', 'install']);
   });
 
   test('hijri invitation is seasonless (orientation, not occasion)', () => {
@@ -264,13 +275,15 @@ describe('item 9: invitation cards render per trigger', () => {
     assert.ok(arHtml.includes(ar['home.invite.ramadanCta']), 'AR Ramadan CTA renders');
   });
 
-  test('cards are calm asides: native dismiss with a named label, navigate-only doors', () => {
+  test('cards are calm asides: native dismiss with a named label, doors and the install actions', () => {
     const html = homeInvitesHTML(inviteState(), FRIDAY);
     const actions = new Set([...html.matchAll(/data-action="([^"]+)"/g)].map((m) => m[1]));
     assert.deepEqual(
       [...actions].sort(),
-      ['home-invite-dismiss', 'navigate'],
-      'dismiss + doors, nothing else (no push arming, no interstitial)'
+      // v5.17.189 (C19): + the install card's act / Not now — still no
+      // push arming and no interstitial; the CTA routes per platform.
+      ['home-invite-dismiss', 'home-invite-install', 'home-invite-install-later', 'navigate'],
+      'dismiss + doors + the install actions, nothing else'
     );
     assert.ok(html.includes('aria-label="Dismiss"'), 'dismiss button is named');
     assert.ok(

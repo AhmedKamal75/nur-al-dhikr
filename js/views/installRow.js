@@ -94,3 +94,26 @@ export function installRowHTML(state, lang, flags = {}) {
     ${action ? `<span class="install-row__actions">${action}</span>` : ''}
   </div>`;
 }
+
+/**
+ * (v5.17.189, C19) The install steps sheet: the per-platform manual steps
+ * (installStepsKey owns the copy) in a modal, opened from the Home
+ * invitation card on platforms with no browser dialog. iOS shows the real
+ * Share glyph beside the steps and says out loud that only Safari can
+ * install — anything else on an iPhone is a promise the platform cannot
+ * keep. Pure (platform, lang → HTML).
+ */
+export function installStepsSheetHTML(platform, lang) {
+  const p = ['ios', 'android', 'desktop'].includes(platform) ? platform : 'desktop';
+  const glyph = p === 'ios' ? `${icon('ios-share', { size: 16 })} ` : '';
+  const note =
+    p === 'ios'
+      ? `<p class="install-sheet__note">${escapeHTML(t('onboarding.installIosSafariNote', lang))}</p>`
+      : '';
+  return `
+  <div class="install-sheet">
+    <h2 class="modal__title" id="modal-title-install">${escapeHTML(t('onboarding.install', lang))}</h2>
+    <p class="install-sheet__steps">${glyph}${escapeHTML(t(installStepsKey(p), lang))}</p>
+    ${note}
+  </div>`;
+}

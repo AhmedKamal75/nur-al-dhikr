@@ -1926,6 +1926,8 @@ export const ar = {
     'من قائمة المتصفح اضغط «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية».',
   'onboarding.installDesktopSteps': 'من شريط العنوان أو قائمة المتصفح اختر «تثبيت».',
   'onboarding.installLater': 'ليس الآن',
+  'onboarding.installIosSafariNote':
+    'لا يمكن تثبيت التطبيقات على آيفون وآيباد إلا من سفاري — إذا كنت تقرأ هذا في متصفح آخر، افتح هذه الصفحة في سفاري أولًا.',
   'onboarding.installReoffer': 'إظهار التثبيت مجددًا',
   'onboarding.installAccepted': 'تم قبول التثبيت — أكمله من رسالة المتصفح.',
   'onboarding.installDeferred': 'حسنًا — سيُعرض التثبيت عليك مجددًا لاحقًا.',
@@ -2033,6 +2035,11 @@ export const ar = {
   'home.invite.ramadanBodyNear':
     '{n} من الأيام حتى أول رمضان (تقديرًا) — لا استعداد مطلوب، الباب مفتوح.',
   'home.invite.ramadanCta': 'افتح رفيق رمضان',
+  'home.invite.installTitle': 'على بُعد نقرة من شاشتك الرئيسية',
+  'home.invite.installBody':
+    'ثبّت نور الذكر على جهازك — يفتح كتطبيق ويعمل دون اتصال بالكامل. مجانًا ودون حساب.',
+  'home.invite.installCtaPrompt': 'تثبيت',
+  'home.invite.installCtaSteps': 'كيف أثبّته؟',
   'quran.recitersLink': 'القراء',
   'quran.immersiveEnter': 'قراءة بلا تشويش',
   'quran.immersiveExit': 'إنهاء القراءة بلا تشويش',

@@ -23,6 +23,11 @@
 /** Cooldown between a deferral and the next offer (days). */
 export const INSTALL_REOFFER_DAYS = 7;
 
+/** (v5.17.189, C19) a "returning reader" for the Home install invitation:
+ *  this many distinct active days (domain/statistics owns what "active"
+ *  means). A first-run reader can never reach it. */
+export const INSTALL_INVITE_MIN_ACTIVE_DAYS = 3;
+
 /** Lifetime cap on the deferral counter — a crafted backup cannot bloat it. */
 export const INSTALL_MAX_DEFERRALS = 1000;
 

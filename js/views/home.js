@@ -34,9 +34,12 @@ import { MOODS, itemsForMood } from '../domain/moods.js';
 import {
   INVITE_IDS,
   shouldShowInvite,
+  shouldShowInstallInvite,
   hijriInviteState,
   ramadanInviteState,
 } from '../domain/homeInvitations.js';
+import { detectInstallPlatform } from '../domain/install.js';
+import { activeDays } from '../domain/statistics.js';
 import { EVENT_LABELS, toHijri } from '../domain/calendar.js';
 import {
   contentPrefsOf,
@@ -951,6 +954,43 @@ export function homeInvitesHTML(state, today = new Date()) {
           : t('home.invite.ramadanBodyNear', lang, { n: st.daysUntil }),
         extra: '',
         cta: ctaLink(VIEWS.RAMADAN, {}, escapeHTML(t('home.invite.ramadanCta', lang))),
+      });
+    },
+    // (v5.17.189, C19) the install invitation: returning readers only
+    // (shouldShowInstallInvite owns the trigger). The CTA and "Not now"
+    // are buttons, not doors — the handler acts per platform (browser
+    // dialog where one exists, the steps sheet otherwise) and stamps the
+    // existing deferral memory. The store flags are enough here: the
+    // installed/prompt distinction decides the label, and the UA probe
+    // stays in the handler (home.js imports no view).
+    install: () => {
+      const platform = detectInstallPlatform({
+        installed: !!state.install?.installed,
+        promptReady: !!state.install?.promptReady,
+        ua: '',
+      });
+      if (
+        !shouldShowInstallInvite({
+          activeDayCount: activeDays(state.statistics || {}),
+          platform,
+          deferral: state.settings.installDeferral,
+          dismissedInvites: dismissed,
+          date: today,
+        })
+      )
+        return '';
+      const act =
+        platform === 'prompt'
+          ? `<button type="button" class="panel--nudge__cta home-invite__act" data-action="home-invite-install">${icon('download', { size: 13 })} ${escapeHTML(t('home.invite.installCtaPrompt', lang))}</button>`
+          : `<button type="button" class="panel--nudge__cta home-invite__act" data-action="home-invite-install">${escapeHTML(t('home.invite.installCtaSteps', lang))} ${goIcon(lang, 12)}</button>`;
+      const later = `<button type="button" class="home-invite__later" data-action="home-invite-install-later">${escapeHTML(t('onboarding.installLater', lang))}</button>`;
+      return card({
+        id: 'install',
+        iconName: 'download',
+        title: escapeHTML(t('home.invite.installTitle', lang)),
+        line: escapeHTML(t('home.invite.installBody', lang)),
+        extra: '',
+        cta: `<span class="home-invite__actions">${act} ${later}</span>`,
       });
     },
   };
