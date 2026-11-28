@@ -1,3 +1,8 @@
+## v5.17.189 - Install invitation on Home
+
+- A fourth Home invitation (below the adhkar grid, with the Hijri/Friday/Ramadan cards) invites a returning reader - three or more distinct active days, never a first run - to install the app. The action follows the device: the browser's own install dialog where it exists, otherwise a steps sheet per platform; the iOS sheet shows the real Share glyph and says plainly that only Safari can install.
+- "Not now" stamps the existing 7-day deferral memory and the persisted day-dismissal; the dismiss X rests the card for the day. No new storage, no server, the About/Settings install rows are unchanged.
+
 ## v5.17.188 - Adhkar window reminders
 
 - New opt-in reminders in Settings > Notifications: one toggle each for morning and evening adhkar, plus a lead-time select (at the window start, or 15/30/60 minutes in - default 30). Each window fires once per day and tapping the notification opens that adhkar category.

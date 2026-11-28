@@ -29,7 +29,7 @@ import {
   runInstallPrompt,
   shouldReofferInstall,
 } from '../../domain/install.js';
-import { liveUA } from '../../views/installRow.js';
+import { liveUA, installStepsSheetHTML } from '../../views/installRow.js';
 import { claimSpeaker } from '../audioEngine.js';
 import {
   previewAlert,
@@ -152,6 +152,55 @@ export const clickHandlers = {
     store.dispatch(
       actions.updateSettings({ dismissedInvites: { ...cur, [ds.id]: dateKey(new Date()) } })
     );
+  },
+
+  // (v5.17.189, C19) the Home install invitation's action: the one-shot
+  // browser dialog where it exists (consumed FIRST, exactly like
+  // onboarding-install — the browser never offers it twice), the steps
+  // sheet on every platform that has no dialog (iOS Share steps included).
+  'home-invite-install': async () => {
+    const state = store.getState();
+    const lang = state.settings.language;
+    const platform = detectInstallPlatform({
+      installed: !!state.install?.installed,
+      promptReady: !!state.install?.promptReady,
+      ua: liveUA(),
+    });
+    if (platform === 'installed') return;
+    if (platform !== 'prompt') {
+      openModal(installStepsSheetHTML(platform, lang), { labelledBy: 'modal-title-install' });
+      return;
+    }
+    const prompt = rt.deferredInstallPrompt;
+    if (!prompt) return;
+    rt.deferredInstallPrompt = null;
+    store.dispatch(actions.installPromptClear());
+    const outcome = await runInstallPrompt(prompt);
+    if (outcome) store.dispatch(actions.installPromptDone(outcome));
+    if (outcome === 'accepted') {
+      showToast(t('onboarding.installAccepted', lang));
+    } else if (outcome === 'dismissed') {
+      store.dispatch(
+        actions.updateSettings({
+          installDeferral: recordInstallDeferral(store.getState().settings.installDeferral),
+        })
+      );
+      showToast(t('onboarding.installDeferred', lang));
+    }
+  },
+
+  // (v5.17.189, C19) "Not now" on the Home card: the existing 7-day
+  // deferral memory AND the persisted day-dismissal — tomorrow the card
+  // may render again, but the cooldown keeps it quiet until it passes.
+  'home-invite-install-later': () => {
+    const cur = store.getState().settings.dismissedInvites || {};
+    store.dispatch(
+      actions.updateSettings({
+        installDeferral: recordInstallDeferral(store.getState().settings.installDeferral),
+        dismissedInvites: { ...cur, install: dateKey(new Date()) },
+      })
+    );
+    showToast(t('onboarding.installDeferred', store.getState().settings.language));
   },
 
   'calendar-open-day': (ds) => {

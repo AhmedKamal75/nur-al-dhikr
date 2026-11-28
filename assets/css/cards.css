@@ -1235,6 +1235,40 @@ a.home-today__cell:hover {
   gap: var(--space-3);
 }
 
+/* (v5.17.189, C19) the install invitation's action row: the CTA is a
+   button wearing the link style (button reset), "Not now" a quiet ghost
+   beside it. Existing tokens only, logical properties only. */
+.home-invite__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+button.home-invite__act {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.home-invite__later {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-size: var(--fs-sm);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 /* Quick actions — modern horizontal cards: tinted icon tile + bold label.
    No markup change: the icon svg becomes its own tile via CSS. */
 .quick-actions {

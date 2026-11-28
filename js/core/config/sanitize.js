@@ -466,7 +466,7 @@ function sanitizeHiddenHome(raw) {
  * crafted backup can at most hide a card for a day, never inject markup
  * (stamps are compared, never rendered).
  */
-const HOME_INVITE_ID_SET = new Set(['hijri', 'friday', 'ramadan']);
+const HOME_INVITE_ID_SET = new Set(['hijri', 'friday', 'ramadan', 'install']);
 const DAY_KEY_RE = /^(\d{4})-(\d{2})-(\d{2})$/;
 /** Strict calendar day: the components must round-trip (2025-02-30 rolls
  *  over in Date and is therefore rejected, like sanitizeNudgeState). */

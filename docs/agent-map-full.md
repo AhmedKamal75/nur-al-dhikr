@@ -4,7 +4,7 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 This is the exhaustive dump. For the one-page version — chrome spine, where-to-change table, counted inventory — read `docs/AGENT-MAP.md` instead. This file is ~530 KB by design; it is meant to be searched for one named thing, not read end to end.
 
-- js modules: 261 — data files: 29 — tests: 314
+- js modules: 261 — data files: 29 — tests: 315
 
 Conventions: `js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;
 `js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;
@@ -554,7 +554,7 @@ job: app/handlers — feature-scoped controller modules. Each exports a partial 
 
 - exports: `clickHandlers` (object), `changeHandlers` (const), `inputHandlers` (const)
 - emits: `checklist-toggle`, `sunnah-toggle`, `toggle-prayer-quiet`, `toggle-prayer-quiet-cancel`
-- handles: `calendar-delete-note`, `calendar-edit-note`, `calendar-goto-fasting`, `calendar-new-note`, `calendar-open-day`, `fasting-cycle-remind-time`, `fasting-toggle-category`, `fasting-toggle-remind`, `gap-telemetry-clear`, `home-invite-dismiss`, `install-later`, `install-reoffer`, `khatma-ramadan-preset`, `location-profile-apply`, `location-profile-remove`, `location-profile-save`, `notifications-enable`, `nudge-dismiss`, `onboarding-comfort`, `onboarding-confirm`, `onboarding-dismiss`, `onboarding-install`, `onboarding-language`, `onboarding-reshow`, `onboarding-step`, `plog-month-shift`, `plog-month-today`, `prayer-adhan-clear`, `prayer-adhan-import`, `prayer-enable-notifications`, `prayer-log-cycle`, `prayer-set-alert-mode`, `prayer-test-sound`, `qada-add`, `qada-clear-prayer`, `qada-complete`, `ramadan-enable-notifications`, `ramadan-planner-toggle`, `ramadan-toggle-fast`, `sadaqah-history-more`, `sadaqah-log`, `sadaqah-open-editor`, `sadaqah-remove`, `stats-heatmap-export`, `stats-heatmap-shift`, `toggle-prayer-alert`, `toggle-ramadan-alert`, `checklist-toggle` (change/input), `sunnah-toggle` (change/input), `toggle-prayer-quiet` (change/input), `toggle-prayer-quiet-cancel` (change/input)
+- handles: `calendar-delete-note`, `calendar-edit-note`, `calendar-goto-fasting`, `calendar-new-note`, `calendar-open-day`, `fasting-cycle-remind-time`, `fasting-toggle-category`, `fasting-toggle-remind`, `gap-telemetry-clear`, `home-invite-dismiss`, `home-invite-install`, `home-invite-install-later`, `install-later`, `install-reoffer`, `khatma-ramadan-preset`, `location-profile-apply`, `location-profile-remove`, `location-profile-save`, `notifications-enable`, `nudge-dismiss`, `onboarding-comfort`, `onboarding-confirm`, `onboarding-dismiss`, `onboarding-install`, `onboarding-language`, `onboarding-reshow`, `onboarding-step`, `plog-month-shift`, `plog-month-today`, `prayer-adhan-clear`, `prayer-adhan-import`, `prayer-enable-notifications`, `prayer-log-cycle`, `prayer-set-alert-mode`, `prayer-test-sound`, `qada-add`, `qada-clear-prayer`, `qada-complete`, `ramadan-enable-notifications`, `ramadan-planner-toggle`, `ramadan-toggle-fast`, `sadaqah-history-more`, `sadaqah-log`, `sadaqah-open-editor`, `sadaqah-remove`, `stats-heatmap-export`, `stats-heatmap-shift`, `toggle-prayer-alert`, `toggle-ramadan-alert`, `checklist-toggle` (change/input), `sunnah-toggle` (change/input), `toggle-prayer-quiet` (change/input), `toggle-prayer-quiet-cancel` (change/input)
 - i18n: `common.error`, `common.retry`, `khatma.presetFilled`, `onboarding.installAccepted`, `onboarding.installDeferred`, `plog.allLoggedToast`, `prayer.adhanCleared`, `prayer.notifGranted`, `profiles.applied`, `profiles.namePlaceholder`, `profiles.namePrompt`, `profiles.saved`, `qada.added`, `qada.cleared`, `qada.doneOne`, `qada.offerAdd`, `qada.offerMissed`, `ramadan.alertsDenied`, `stats.gapCleared`, `stats.heatmapSaved` (+1 more)
 - routes: `VIEWS.SETTINGS`
 
@@ -1284,7 +1284,7 @@ job: Hifz (memorization) support, v3.17. Two halves, both DOM-free: 1. A lightwe
 
 job: (v5.17.56, merged-plan item 9) the three below-fold home invitations: a Hijri date note, a Friday Al-Kahf invitation, and a Ramadan countdown/companion invitation.
 
-- exports: `INVITE_IDS` (const), `RAMADAN_COUNTDOWN_DAYS` (const), `inviteDayKey` (function), `fridayOf` (function), `isFridayInviteDay` (function), `ramadanInviteState` (function), `hijriInviteState` (function), `isInviteDismissed` (function), `shouldShowInvite` (function)
+- exports: `INVITE_IDS` (const), `RAMADAN_COUNTDOWN_DAYS` (const), `inviteDayKey` (function), `fridayOf` (function), `isFridayInviteDay` (function), `ramadanInviteState` (function), `hijriInviteState` (function), `isInviteDismissed` (function), `shouldShowInvite` (function), `shouldShowInstallInvite` (function)
 - emits: —
 - handles: —
 - i18n: —
@@ -1304,7 +1304,7 @@ job: Home panel order + visibility. Pure helpers over the persisted settings.hom
 
 job: Pure install-path logic for the in-app PWA install flow. The browser owns the only real dialog (beforeinstallprompt can be consumed exactly once; iOS Safari never fires it at all), so everything
 
-- exports: `INSTALL_REOFFER_DAYS` (const), `INSTALL_MAX_DEFERRALS` (const), `defaultInstallDeferral` (function), `sanitizeInstallDeferral` (function), `recordInstallDeferral` (function), `shouldReofferInstall` (function), `detectInstallPlatform` (function), `installStepsKey` (function), `normalizeInstallOutcome` (function), `runInstallPrompt` (function), `swInstallMessageAction` (function)
+- exports: `INSTALL_REOFFER_DAYS` (const), `INSTALL_INVITE_MIN_ACTIVE_DAYS` (const), `INSTALL_MAX_DEFERRALS` (const), `defaultInstallDeferral` (function), `sanitizeInstallDeferral` (function), `recordInstallDeferral` (function), `shouldReofferInstall` (function), `detectInstallPlatform` (function), `installStepsKey` (function), `normalizeInstallOutcome` (function), `runInstallPrompt` (function), `swInstallMessageAction` (function)
 - emits: —
 - handles: —
 - i18n: —
@@ -2487,19 +2487,19 @@ job: shared hadith card builders. (v5.2.18) Extracted from views/hadith.js so Ho
 job: (header names file only — no job line)
 
 - exports: `quickTilesHTML` (function), `worshipTodayCardHTML` (function), `resumePanelHTML` (function), `nudgeCardHTML` (function), `resolveBrowserWindow` (function), `prayerRibbonHTML` (function), `adhkarWindowLabel` (function), `rankBrowserDocuments` (function), `docCorpusCount` (function), `rankBrowserCategories` (function), `homeTodayStripHTML` (function), `homeInvitesHTML` (function), `adhkarBrowserHTML` (function), `renderHome` (function), `hifzReviewCardHTML` (function), `reviewDigestCardHTML` (function), `sadaqahHistoryHTML` (function), `buildSadaqahEditor` (function)
-- emits: `home-invite-dismiss`, `home-recents-more`, `modal-close`, `mushaf-open-at-surah`, `navigate`, `nudge-dismiss`, `practice-start`, `quick-tile`, `sadaqah-history-more`, `sadaqah-log`, `sadaqah-open-editor`, `sadaqah-remove`
+- emits: `home-invite-dismiss`, `home-invite-install`, `home-invite-install-later`, `home-recents-more`, `modal-close`, `mushaf-open-at-surah`, `navigate`, `nudge-dismiss`, `practice-start`, `quick-tile`, `sadaqah-history-more`, `sadaqah-log`, `sadaqah-open-editor`, `sadaqah-remove`
 - handles: —
-- i18n: `app.name`, `app.tagline`, `calendar.estimateNote`, `category.progressToday`, `certificate.title`, `checklist.today`, `collections.itemCount`, `common.am`, `common.delete`, `common.pm`, `editor.cancel`, `editor.save`, `hifz.availableHint`, `hifz.cardTitle`, `hifz.memorizedBadge`, `hifz.openLedger`, `hifz.suggestHint`, `home.blankPage`, `home.browserSub`, `home.browserTitle` (+84 more)
+- i18n: `app.name`, `app.tagline`, `calendar.estimateNote`, `category.progressToday`, `certificate.title`, `checklist.today`, `collections.itemCount`, `common.am`, `common.delete`, `common.pm`, `editor.cancel`, `editor.save`, `hifz.availableHint`, `hifz.cardTitle`, `hifz.memorizedBadge`, `hifz.openLedger`, `hifz.suggestHint`, `home.blankPage`, `home.browserSub`, `home.browserTitle` (+89 more)
 - routes: `VIEWS.CALENDAR`, `VIEWS.CATEGORY`, `VIEWS.CERTIFICATE`, `VIEWS.CHECKLIST`, `VIEWS.COLLECTION`, `VIEWS.COLLECTIONS`, `VIEWS.FAVORITES`, `VIEWS.HADITH`, `VIEWS.HOME`, `VIEWS.LIBRARY`, `VIEWS.MOOD`, `VIEWS.MUSHAF`, `VIEWS.PRAYER`, `VIEWS.QUIZ`, `VIEWS.QURAN`, `VIEWS.RAMADAN`, `VIEWS.SETTINGS`, `VIEWS.STATISTICS`, `VIEWS.TAJWEED_COURSE`, `VIEWS.TASBIH`, `VIEWS.ZAKAT`
 
 ### `js/views/installRow.js`
 
 job: The one persistent install row, shared by About and Settings (and its copy reused by the onboarding step body): title, honest status, and the action this platform actually has — the browser dialog wh…
 
-- exports: `liveUA` (function), `liveInstallPlatform` (function), `installRowHTML` (function)
+- exports: `liveUA` (function), `liveInstallPlatform` (function), `installRowHTML` (function), `installStepsSheetHTML` (function)
 - emits: `install-later`, `install-reoffer`, `onboarding-install`
 - handles: —
-- i18n: `onboarding.install`, `onboarding.installAction`, `onboarding.installHint`, `onboarding.installLater`, `onboarding.installReoffer`, `sw.shellReady`
+- i18n: `onboarding.install`, `onboarding.installAction`, `onboarding.installHint`, `onboarding.installIosSafariNote`, `onboarding.installLater`, `onboarding.installReoffer`, `sw.shellReady`
 - routes: —
 
 ### `js/views/journal.js`
@@ -2983,6 +2983,8 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `hifz-test`: emitted by `js/views/quran.js`; handled in `js/app/handlers/hifz.js`
 - `hifz-toggle`: emitted by `js/views/quran.js`; handled in `js/app/handlers/hifz.js`
 - `home-invite-dismiss`: emitted by `js/views/home.js`; handled in `js/app/handlers/worship.js`
+- `home-invite-install`: emitted by `js/views/home.js`; handled in `js/app/handlers/worship.js`
+- `home-invite-install-later`: emitted by `js/views/home.js`; handled in `js/app/handlers/worship.js`
 - `home-panel-move`: emitted by `js/views/settings.js`; handled in `js/app/handlers/system.js`
 - `home-panel-toggle`: emitted by `js/app/handlers/system.js`, `js/views/settings.js`; handled in `js/app/handlers/system.js`
 - `home-recents-more`: emitted by `js/views/home.js`; handled in `js/app/handlers/navigation.js`
@@ -3333,6 +3335,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `HOME_PRIMARY_PANEL_IDS`: `js/domain/homePanels.js`
 - `HOME_QUICK_TILE_DEFAULTS`: `js/domain/quickTiles.js`
 - `ICON_SIZES`: `js/core/config/app.js`
+- `INSTALL_INVITE_MIN_ACTIVE_DAYS`: `js/domain/install.js`
 - `INSTALL_MAX_DEFERRALS`: `js/domain/install.js`
 - `INSTALL_REOFFER_DAYS`: `js/domain/install.js`
 - `INTERNAL_ONLY_ROUTES`: `js/ui/shell.js`
@@ -4049,6 +4052,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `installMediaHandlers`: `js/services/mediaSession.js`
 - `installRowHTML`: `js/views/installRow.js`
 - `installStepsKey`: `js/domain/install.js`
+- `installStepsSheetHTML`: `js/views/installRow.js`
 - `intensityBucket`: `js/domain/statistics.js`
 - `invalidateLazyFetches`: `js/app/lazyData.js`
 - `inviteDayKey`: `js/domain/homeInvitations.js`
@@ -4691,6 +4695,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `shouldFire`: `js/services/notifications.js`
 - `shouldMarkViewEnter`: `js/app/renderer.js`
 - `shouldReofferInstall`: `js/domain/install.js`
+- `shouldShowInstallInvite`: `js/domain/homeInvitations.js`
 - `shouldShowInvite`: `js/domain/homeInvitations.js`
 - `shouldShowNudge`: `js/domain/nudge.js`
 - `shouldShowOnboarding`: `js/domain/onboarding.js`
@@ -4906,7 +4911,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `action`: `js/core/state/reducer.js`, `js/core/state/slices/hadith.js`, `js/domain/quickTiles.js`, `js/services/speech.js`, `js/ui/menus.js`, `js/views/installRow.js`
 - `actions`: `js/app/handlers/content.js`, `js/core/state/actions.js`, `js/core/state.js`, `js/domain/statistics.js`, `js/services/soundDesign.js`, `js/views/ayahStudy.js`
 - `activatemushafautofit`: `js/app/autoFit.js`
-- `active`: `js/domain/locations.js`, `js/domain/tasbihMeaning.js`
+- `active`: `js/domain/install.js`, `js/domain/locations.js`, `js/domain/tasbihMeaning.js`
 - `activedays`: `js/domain/statistics.js`
 - `activedaysinlastdays`: `js/domain/statistics.js`
 - `activefastingcategories`: `js/domain/fasting.js`
@@ -6091,6 +6096,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `installrow`: `js/views/backupSummary.js`
 - `installrowhtml`: `js/views/installRow.js`
 - `installstepskey`: `js/domain/install.js`
+- `installstepssheethtml`: `js/views/installRow.js`
 - `instant`: `js/domain/onboarding.js`, `js/views/onboardingPanel.js`
 - `intensitybucket`: `js/domain/statistics.js`
 - `intent`: `js/domain/launchIntents.js`, `js/views/settings.js`
@@ -6107,7 +6113,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `inventory`: `js/domain/offline.js`
 - `invitation`: `js/domain/homeInvitations.js`
 - `invitations`: `js/domain/homeInvitations.js`, `js/views/library.js`
-- `invite`: `js/domain/homeInvitations.js`
+- `invite`: `js/domain/homeInvitations.js`, `js/domain/install.js`
 - `invitedaykey`: `js/domain/homeInvitations.js`
 - `isactive`: `js/services/surahPlayback.js`
 - `isautoadvancependingfor`: `js/app/focusRuntime.js`
@@ -7356,6 +7362,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `shouldfire`: `js/services/notifications.js`
 - `shouldmarkviewenter`: `js/app/renderer.js`
 - `shouldreofferinstall`: `js/domain/install.js`
+- `shouldshowinstallinvite`: `js/domain/homeInvitations.js`
 - `shouldshowinvite`: `js/domain/homeInvitations.js`
 - `shouldshownudge`: `js/domain/nudge.js`
 - `shouldshowonboarding`: `js/domain/onboarding.js`
@@ -7965,6 +7972,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/icons.test.js` — (no header comment) (pins: `../js/core/icons.js`, `./helpers/icon-audit.mjs`)
 - `tests/idb-boundary.test.js` — B4 regressions: a blocked upgrade settles (never a forever-pending promise), a failed open is retried (never memoized), and a version-changed connection is evicted. (pins: `../js/core/idb/openDB.js`)
 - `tests/install-path.test.js` — the install-path gap pins: 1. deferral memory is pure and hostile-safe (default / sanitize / record / cooldown), with the clock injected; (pins: `../js/app/events.js`, `../js/core/config.js`, `../js/core/config/sanitize.js`, `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/core/state/actions.js`, `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/domain/install.js`, `../js/domain/onboarding.js`, `../js/views/about.js`, `../js/views/installRow.js`, `../js/views/onboardingPanel.js`, `../js/views/settings.js`)
+- `tests/installInvite.test.js` — the Home install invitation: one card in the homeInvitations family, shown only to a returning reader (3 distinct active days, never first run), action per (pins: `../js/app/events.js`, `../js/core/config/sanitize.js`, `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/core/utils.js`, `../js/domain/homeInvitations.js`, `../js/domain/install.js`, `../js/domain/statistics.js`, `../js/views/home.js`, `../js/views/installRow.js`)
 - `tests/journalEdit.test.js` — item 6 (journal edit + pagination) gates: 1. DUA_JOURNAL_EDIT / REFLECTION_EDIT update text in place (order and timestamps untouched; empty or unknown edits no-op; caps hold); (pins: `../js/core/state/actions.js`, `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/views/journal.js`)
 - `tests/khatma-row-5.2.80.test.js` — UP-05: statistics closes the loop with a khatma % line linking back into the Mushaf. Pure render checks. (pins: `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/core/state/initial.js`, `../js/views/statistics.js`)
 - `tests/khatma.test.js` — pure planner math for the Khatma scheduler (pins: `../js/domain/khatma.js`)

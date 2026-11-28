@@ -61,6 +61,11 @@ export const PATHS = {
   list: '<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.3" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="4.5" cy="18" r="1.3" fill="currentColor" stroke="none"/>',
   share:
     '<circle cx="18" cy="5" r="2.3"/><circle cx="6" cy="12" r="2.3"/><circle cx="18" cy="19" r="2.3"/><path d="m8.1 10.8 7.8-4.1M8.1 13.2l7.8 4.1"/>',
+  // (v5.17.189, C19) the iOS Share glyph (box with up arrow) — the button
+  // a reader must find in Safari to install. Distinct from `share` (the
+  // three-node text-share glyph) on purpose: only this one means iOS Share.
+  'ios-share':
+    '<path d="M12 15.5v-11m0 0-4 4m4-4 4 4"/><path d="M8 9H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-2"/>',
   // (ORG-06 fix) share-as-image card: mountains-and-sun, the near-
   // universal picture glyph. Distinct from `share` (text share) on
   // purpose — adjacent twin share icons would fail ORG-05 clarity.

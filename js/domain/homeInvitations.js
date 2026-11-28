@@ -32,9 +32,10 @@
 import { toHijri, islamicEventsForYear } from './calendar.js';
 import { ramadanInfo, nextRamadan } from './ramadan.js';
 import { fridayAnchor, dayKey } from './reminderPresets.js';
+import { shouldReofferInstall, INSTALL_INVITE_MIN_ACTIVE_DAYS } from './install.js';
 
-/** The three invitation ids, in render order. */
-export const INVITE_IDS = Object.freeze(['hijri', 'friday', 'ramadan']);
+/** The invitation ids, in render order. */
+export const INVITE_IDS = Object.freeze(['hijri', 'friday', 'ramadan', 'install']);
 
 /**
  * Ramadan countdown window: outside it the card stays silent most of the
@@ -129,5 +130,32 @@ export function shouldShowInvite(id, date = new Date(), dismissedInvites = {}) {
   if (isInviteDismissed(dismissedInvites, id, date)) return false;
   if (id === 'hijri') return true;
   if (id === 'friday') return isFridayInviteDay(date);
-  return ramadanInviteState(date).mode !== 'far';
+  if (id === 'ramadan') return ramadanInviteState(date).mode !== 'far';
+  // 'install' needs device + activity inputs this signature does not
+  // carry — shouldShowInstallInvite below owns that trigger.
+  return false;
+}
+
+/**
+ * (v5.17.189, C19) the install invitation's trigger. Shown only to a
+ * returning reader — INSTALL_INVITE_MIN_ACTIVE_DAYS distinct active days
+ * (statistics owns what "active" means), so never on a first run — and
+ * only while this device still has something to install: not already
+ * installed, no "not now" inside its 7-day cooldown (install.js owns the
+ * deferral memory), and today's calm dismissal clear. Every input is
+ * injected; the view derives them from the store.
+ */
+export function shouldShowInstallInvite({
+  activeDayCount = 0,
+  platform = 'desktop',
+  deferral = null,
+  dismissedInvites = {},
+  date = new Date(),
+} = {}) {
+  if (platform === 'installed') return false;
+  if (!Number.isFinite(activeDayCount) || activeDayCount < INSTALL_INVITE_MIN_ACTIVE_DAYS) {
+    return false;
+  }
+  if (!shouldReofferInstall(deferral, date.getTime())) return false;
+  return !isInviteDismissed(dismissedInvites, 'install', date);
 }

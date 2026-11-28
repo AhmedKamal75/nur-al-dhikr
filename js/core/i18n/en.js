@@ -2025,6 +2025,8 @@ export const en = {
     'From the browser menu, tap “Install app” or “Add to Home Screen”.',
   'onboarding.installDesktopSteps': 'From the address bar or the browser menu, choose “Install”.',
   'onboarding.installLater': 'Not now',
+  'onboarding.installIosSafariNote':
+    'Only Safari can install apps on iPhone and iPad — if you are reading this in another browser, open this page in Safari first.',
   'onboarding.installReoffer': 'Show install again',
   'onboarding.installAccepted': 'Install accepted — finish it in the browser dialog.',
   'onboarding.installDeferred': 'Understood — install will be offered again later.',
@@ -2142,6 +2144,11 @@ export const en = {
   'home.invite.ramadanBodyNear':
     '{n} days until 1 Ramadan (estimated) — no preparation needed, the door is open.',
   'home.invite.ramadanCta': 'Open the Ramadan companion',
+  'home.invite.installTitle': 'One tap from your home screen',
+  'home.invite.installBody':
+    'Install Nur al-Dhikr on this device — it opens like an app and keeps working fully offline. Free, no account.',
+  'home.invite.installCtaPrompt': 'Install',
+  'home.invite.installCtaSteps': 'See how',
   'quran.recitersLink': 'Reciters',
   'quran.immersiveEnter': 'Immersive reading',
   'quran.immersiveExit': 'Exit immersive reading',
