@@ -15,6 +15,7 @@ import { toHijri } from '../domain/calendar.js';
 import { ramadanAlertTimes } from '../domain/ramadan.js';
 import { daysUntilHawl } from '../domain/zakat.js';
 import { remindCategoriesFor, FASTING_CATEGORIES } from '../domain/fasting.js';
+import { adhkarReminderState } from '../domain/adhkarTiming.js';
 
 let checkTimer = null;
 const firedToday = new Set();
@@ -453,6 +454,57 @@ function tick(
         t('preset.dailyVerseBody', lang),
         'daily-verse',
         '#/'
+      );
+    }
+  }
+
+  // (v5.17.188, C18) Adhkar window reminders: opt-in per window, firing
+  // once per day per window at window start + lead (default 30 min
+  // after). Window bounds come from the same helper the Home badge uses
+  // (real sun times with a location, fixed clock windows without), so
+  // the reminder and the badge never disagree. Silent rather than late:
+  // a closed window or uncomputable times never fire, and the opt-in
+  // quiet-hours cancel mirrors the prayer-alert path (skip WITHOUT
+  // marking fired — a window still open when quiet ends can still fire).
+  const adhkar = appSettings?.adhkarReminders;
+  if (adhkar && (adhkar.morning === true || adhkar.evening === true)) {
+    const hasLoc = prayerSettings?.latitude != null && prayerSettings?.longitude != null;
+    let sunTimes = null;
+    if (hasLoc) {
+      const tzOffsetHours = -now.getTimezoneOffset() / 60;
+      sunTimes = calculateTimes({
+        date: now,
+        latitude: prayerSettings.latitude,
+        longitude: prayerSettings.longitude,
+        timezoneOffsetHours: tzOffsetHours,
+        method: prayerSettings.method,
+        asr: prayerSettings.asr,
+        offsets: prayerSettings.offsets,
+      });
+    }
+    for (const w of ['morning', 'evening']) {
+      if (adhkar[w] !== true) continue;
+      // A boundary folded onto another calendar day (polar fallback —
+      // same unreachable flag the prayer-alert path honors) makes the
+      // window uncomputable here: stay silent, never fall back to the
+      // clock windows behind a configured location's back.
+      if (hasLoc) {
+        if (w === 'morning' && (sunTimes?.unreachable?.fajr || sunTimes?.unreachable?.dhuhr))
+          continue;
+        if (w === 'evening' && (sunTimes?.unreachable?.asr || sunTimes?.unreachable?.isha))
+          continue;
+      }
+      const state = adhkarReminderState(w, now, hasLoc ? sunTimes : null, adhkar.lead);
+      if (state !== 'due') continue;
+      if (prayerSettings?.quietCancels === true && isQuietNow(prayerSettings, now)) continue;
+      const fireKey = `adhkar-${w}|${todayKey}`;
+      if (wasDayFired(fireKey, todayKey)) continue;
+      markDayFired(fireKey, todayKey);
+      notify(
+        t('adhkar.remindTitle', lang),
+        t(`adhkar.remindBody.${w}`, lang),
+        `adhkar-${w}`,
+        `#/category/${w}`
       );
     }
   }

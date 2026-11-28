@@ -42,6 +42,19 @@ function sanitizeClockSetting(raw, dflt) {
   return { enabled: p.enabled === true, time };
 }
 
+const ADHKAR_LEAD_VALUES = [0, 15, 30, 60];
+
+/** (v5.17.188) Sanitize the adhkar window reminder setting. */
+function sanitizeAdhkarReminders(raw, dflt) {
+  const d = dflt || { morning: false, evening: false, lead: 30 };
+  const p = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
+  return {
+    morning: asBool(p.morning, d.morning),
+    evening: asBool(p.evening, d.evening),
+    lead: ADHKAR_LEAD_VALUES.includes(p.lead) ? p.lead : d.lead,
+  };
+}
+
 const MUSHAF_FONT_IDS = new Set(MUSHAF_FONTS.map((f) => f.id));
 const ARABIC_TEXT_FONT_IDS = new Set(ARABIC_TEXT_FONTS.map((f) => f.id));
 // Kept here rather than imported from domain/tajweedCourse.js because config
@@ -401,6 +414,7 @@ export function sanitizeSettings(raw) {
       d.dailyVerseNotification
     ),
     zakatFitrReminder: asBool(s.zakatFitrReminder, d.zakatFitrReminder),
+    adhkarReminders: sanitizeAdhkarReminders(s.adhkarReminders, d.adhkarReminders),
     audio: sanitizeAudio(s.audio),
     customReciters: sanitizeCustomReciters(s.customReciters),
     prayer: sanitizePrayer(s.prayer),

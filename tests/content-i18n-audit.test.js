@@ -392,6 +392,7 @@ describe('dict: en/ar parity, no orphan keys', () => {
     // families like prayer.* — the gate still catches fully-dead families
     // (about.forAI*, the ~70 legacy keys pruned in the sweep).
     const DYNAMIC_PREFIXES = [
+      'adhkar.remindBody.',
       'ambient.mode',
       'fasting.cat.',
       'garden.stage.',
@@ -418,6 +419,7 @@ describe('dict: en/ar parity, no orphan keys', () => {
       'prayer.methodRegion.',
       'prayer.sound.',
       'profiles.save_',
+      'settings.adhkarLead.',
       'settings.themeMode.',
       'sunnah.',
       'title.',

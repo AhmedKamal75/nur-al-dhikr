@@ -1,3 +1,8 @@
+## v5.17.188 - Adhkar window reminders
+
+- New opt-in reminders in Settings > Notifications: one toggle each for morning and evening adhkar, plus a lead-time select (at the window start, or 15/30/60 minutes in - default 30). Each window fires once per day and tapping the notification opens that adhkar category.
+- Windows follow your real prayer times when a location is set (morning Fajr-to-Dhuhr, evening Asr-to-Isha, the same windows the Home badge uses) and fall back to fixed clock windows (4:00-12:00, 15:00-21:00) without one. If quiet-hours cancel is on, quiet hours win; a window that has closed or whose times can't be computed stays silent rather than firing late.
+
 ## v5.17.187 - Memorize mode polish
 
 - Memorize bar on the Mushaf wraps cleanly at very narrow widths and 200% zoom: the label takes its own row and the Hide-again/End chips share the row below instead of squeezing or overlapping.

@@ -4,7 +4,7 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 This is the exhaustive dump. For the one-page version — chrome spine, where-to-change table, counted inventory — read `docs/AGENT-MAP.md` instead. This file is ~530 KB by design; it is meant to be searched for one named thing, not read end to end.
 
-- js modules: 261 — data files: 29 — tests: 313
+- js modules: 261 — data files: 29 — tests: 314
 
 Conventions: `js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;
 `js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;
@@ -524,7 +524,7 @@ job: app/handlers — feature-scoped controller modules. Each exports a partial 
 
 - exports: `clickHandlers` (object), `changeHandlers` (const), `inputHandlers` (const)
 - emits: `home-panel-toggle`, `quick-tile-toggle`, `toggle-elder-mode`, `toggle-kids-mode`, `toggle-mushaf-pref`, `toggle-reminder`, `toggle-setting`
-- handles: `add-preset`, `add-reminder`, `backup-link-file`, `confirm-reset-all`, `delete-reminder`, `delete-reminder-confirmed`, `export-backup`, `export-plan`, `home-panel-move`, `import-backup`, `import-backup-confirmed`, `import-plan`, `import-plan-confirmed`, `kids-exit`, `kids-gate-answer`, `profile-create`, `profile-delete`, `profile-delete-confirmed`, `profile-switch`, `quick-tile-move`, `reset-all-data`, `restore-auto-backup`, `retry-load`, `set-setting`, `toggle-dailyverse-reminder`, `toggle-jumuah-reminder`, `toggle-zakatfitr-reminder`, `verify-backup`, `home-panel-toggle` (change/input), `quick-tile-toggle` (change/input), `toggle-elder-mode` (change/input), `toggle-kids-mode` (change/input), `toggle-mushaf-pref` (change/input), `toggle-reminder` (change/input), `toggle-setting` (change/input)
+- handles: `add-preset`, `add-reminder`, `backup-link-file`, `confirm-reset-all`, `delete-reminder`, `delete-reminder-confirmed`, `export-backup`, `export-plan`, `home-panel-move`, `import-backup`, `import-backup-confirmed`, `import-plan`, `import-plan-confirmed`, `kids-exit`, `kids-gate-answer`, `profile-create`, `profile-delete`, `profile-delete-confirmed`, `profile-switch`, `quick-tile-move`, `reset-all-data`, `restore-auto-backup`, `retry-load`, `set-setting`, `toggle-adhkar-evening-reminder`, `toggle-adhkar-morning-reminder`, `toggle-dailyverse-reminder`, `toggle-jumuah-reminder`, `toggle-zakatfitr-reminder`, `verify-backup`, `home-panel-toggle` (change/input), `quick-tile-toggle` (change/input), `toggle-elder-mode` (change/input), `toggle-kids-mode` (change/input), `toggle-mushaf-pref` (change/input), `toggle-reminder` (change/input), `toggle-setting` (change/input)
 - i18n: `audio.voiceModeAyah`, `backup.importConfirm`, `backup.importDone`, `kids.exitDone`, `kids.gateWrong`, `plan.exported`, `plan.importDone`, `preset.added`, `preset.dailyVerseBody`, `preset.dailyVerseLabel`, `preset.exists`, `preset.jumuahBody`, `preset.jumuahTitle`, `reminder.deleteConfirm`, `settings.backupExported`, `settings.backupFileSaved`, `settings.profileDeleteActive`, `settings.profileDeleteConfirm`, `settings.profileDeleted`, `settings.profileNamePh` (+3 more)
 - routes: `VIEWS.HOME`, `VIEWS.KIDS`
 
@@ -1094,7 +1094,7 @@ _pure logic: no DOM, no store; core-only imports (compass sensor excepted)._
 
 job: Pure time-of-day helpers for surfacing the "right" adhkar at the right moment on Home. Kept separate from views so it stays trivially testable (same philosophy as ramadan.js / zakat.js).
 
-- exports: `MORNING_WINDOW` (const), `EVENING_WINDOW` (const), `recommendedAdhkarWindow` (function)
+- exports: `MORNING_WINDOW` (const), `EVENING_WINDOW` (const), `recommendedAdhkarWindow` (function), `adhkarWindowTimes` (function), `ADHKAR_LEAD_CHOICES` (const), `adhkarReminderState` (function)
 - emits: —
 - handles: —
 - i18n: —
@@ -2081,8 +2081,8 @@ job: Schedules local (client-side only) reminders using the Notification API and
 - exports: `DAY_DEDUP_KEY_FOR_TESTS` (const), `handleDayFiredStorageEvent` (function), `wasDayFired` (function), `markDayFired` (function), `permissionState` (function), `requestPermission` (function), `startScheduler` (function), `stopScheduler` (function), `shouldFire` (function), `tickForTests` (function), `makeReminder` (function)
 - emits: —
 - handles: —
-- i18n: `app.name`, `fasting.remindBody`, `fasting.remindTitle`, `home.dailyProgress`, `prayer.`, `prayer.timeFor`, `preset.dailyVerseBody`, `preset.dailyVerseLabel`, `preset.jumuahBody`, `preset.jumuahTitle`, `ramadan.alertIftarBody`, `ramadan.alertIftarTitle`, `ramadan.alertSuhoorBody`, `ramadan.alertSuhoorTitle`, `zakat.fitrReminderBody`, `zakat.fitrReminderTitle`, `zakat.hawlAlertBody`, `zakat.hawlAlertTitle`
-- routes: —
+- i18n: `adhkar.remindTitle`, `app.name`, `fasting.remindBody`, `fasting.remindTitle`, `home.dailyProgress`, `prayer.`, `prayer.timeFor`, `preset.dailyVerseBody`, `preset.dailyVerseLabel`, `preset.jumuahBody`, `preset.jumuahTitle`, `ramadan.alertIftarBody`, `ramadan.alertIftarTitle`, `ramadan.alertSuhoorBody`, `ramadan.alertSuhoorTitle`, `zakat.fitrReminderBody`, `zakat.fitrReminderTitle`, `zakat.hawlAlertBody`, `zakat.hawlAlertTitle`
+- routes: `#/category`
 
 ### `js/services/player.js`
 
@@ -2729,7 +2729,7 @@ job: Settings reorganized into calm, purposeful sections — one panel per inten
 - exports: `settingsSectionIds` (function), `settingsSlugForSection` (function), `settingsSectionForSlug` (function), `openSettingsSectionFor` (function), `deferredSetupHTML` (function), `settingRow` (function), `SETTINGS_SECTIONS` (const), `SETTINGS_GROUPS` (const), `matchSettingsSection` (function), `renderSettings` (function)
 - emits: `add-preset`, `add-reminder`, `backup-link-file`, `content-restore-all`, `delete-reminder`, `export-backup`, `export-plan`, `home-panel-move`, `home-panel-toggle`, `import-backup`, `import-plan`, `mushaf-set-tafsir`, `navigate`, `onboarding-reshow`, `profile-create`, `profile-delete`, `profile-switch`, `quick-tile-move`, `quick-tile-toggle`, `reset-all-data`, `restore-auto-backup`, `schedule-open-manager`, `set-setting`, `toggle-elder-mode`, `toggle-kids-mode`, `toggle-reminder`, `toggle-setting`, `verify-backup` (+ dynamic `data-action="${...}"`)
 - handles: —
-- i18n: `audio.noSecondVoice`, `common.delete`, `editor.emptyState`, `library.sheet.restoreAll`, `nav.offline`, `onboarding.deferHint`, `onboarding.deferTitle`, `onboarding.reshow`, `preset.dailyVerse`, `preset.jumuah`, `quran.quickActions`, `schedule.manager`, `settings.accessibility`, `settings.addReminder`, `settings.appearance`, `settings.arabicFontSize`, `settings.arabicTypeface`, `settings.audioManager`, `settings.autoAdvanceFocus`, `settings.autoAdvanceFocusHint` (+73 more)
+- i18n: `audio.noSecondVoice`, `common.delete`, `editor.emptyState`, `library.sheet.restoreAll`, `nav.offline`, `onboarding.deferHint`, `onboarding.deferTitle`, `onboarding.reshow`, `preset.dailyVerse`, `preset.jumuah`, `quran.quickActions`, `schedule.manager`, `settings.accessibility`, `settings.addReminder`, `settings.adhkarEveningReminder`, `settings.adhkarMorningReminder`, `settings.adhkarReminderHint`, `settings.adhkarReminderLead`, `settings.appearance`, `settings.arabicFontSize` (+77 more)
 - routes: `#/offline`, `VIEWS.AUDIO`, `VIEWS.OFFLINE`
 
 ### `js/views/statistics.js`
@@ -3238,6 +3238,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `ADHAN_MAX_BYTES`: `js/services/audioStore.js`
 - `ADHAN_MODES`: `js/services/prayerSound.js`
 - `ADHAN_MOSHAF_ID`: `js/services/audioStore.js`
+- `ADHKAR_LEAD_CHOICES`: `js/domain/adhkarTiming.js`
 - `ALIASES`: `js/core/icons.js`
 - `AMBIENT_MODES`: `js/core/config/views.js`
 - `APP_MENU_ENTRIES`: `js/core/config/nav.js`
@@ -3536,7 +3537,9 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `addItemToCategory`: `js/services/contentPrefs.js`
 - `adhanPanelHTML`: `js/views/prayer.js`
 - `adhkarBrowserHTML`: `js/views/home.js`
+- `adhkarReminderState`: `js/domain/adhkarTiming.js`
 - `adhkarWindowLabel`: `js/views/home.js`
+- `adhkarWindowTimes`: `js/domain/adhkarTiming.js`
 - `advanceClassifyRound`: `js/app/practice.js`
 - `advancePracticeRound`: `js/app/practice.js`
 - `alertStatusHTML`: `js/views/prayer.js`
@@ -4922,7 +4925,9 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `adhanpanelhtml`: `js/views/prayer.js`
 - `adhkar`: `js/domain/adhkarTiming.js`, `js/domain/grades.js`, `js/services/checklist.js`, `js/services/shareCard.js`, `js/views/checklist.js`, `js/views/library.js`, `js/views/mood.js`, `js/views/palette.js`, `js/views/search.js`
 - `adhkarbrowserhtml`: `js/views/home.js`, `js/views/library.js`
+- `adhkarreminderstate`: `js/domain/adhkarTiming.js`
 - `adhkarwindowlabel`: `js/views/home.js`
+- `adhkarwindowtimes`: `js/domain/adhkarTiming.js`
 - `advance`: `js/app/focusRuntime.js`, `js/services/focusQueue.js`
 - `advanceclassifyround`: `js/app/practice.js`
 - `advancepracticeround`: `js/app/practice.js`
@@ -5259,7 +5264,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `checkofflineroom`: `js/app/offlineJobs.js`
 - `chip`: `js/ui/missingData.js`
 - `choice`: `js/core/config/app.js`, `js/views/mushafBookmarks.js`, `js/views/quiz.js`
-- `choices`: `js/core/config/views.js`, `js/domain/sleepTimer.js`, `js/domain/tajweed.js`, `js/services/surahPlayback.js`
+- `choices`: `js/core/config/views.js`, `js/domain/adhkarTiming.js`, `js/domain/sleepTimer.js`, `js/domain/tajweed.js`, `js/services/surahPlayback.js`
 - `chrome`: `js/core/config/nav.js`, `js/core/i18n/ar.js`, `js/core/i18n/en.js`, `js/core/i18n.js`, `js/views/ambient.js`
 - `circle`: `js/domain/qibla.js`
 - `citation`: `js/domain/tajweedSources.js`
@@ -6235,6 +6240,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `lazily`: `js/services/audioCatalog.js`, `js/services/audioContext.js`, `js/ui/skeleton.js`, `js/views/quran.js`
 - `lazy`: `js/app/hadithData.js`, `js/app/renderer.js`, `js/services/hadith.js`, `js/views/tajweedCourseView.js`
 - `lazydata`: `js/app/net.js`
+- `lead`: `js/domain/adhkarTiming.js`
 - `leak`: `js/domain/tafsirSearch.js`
 - `lean`: `js/views/mushafPlayer.js`
 - `learned`: `js/services/moshafAvailability.js`
@@ -7854,6 +7860,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/adhkar-browser.test.js` — the Azkar section browser (IA-7). The AZKAR section (#/library) IS the adhkar browser: named category tiles with live counts and a Read-now action per tile; the 12 moods ride (pins: `../js/core/config.js`, `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/core/router.js`, `../js/core/schema.js`, `../js/core/state/initial.js`, `../js/core/utils.js`, `../js/domain/moods.js`, `../js/views/home.js`, `../js/views/library.js`)
 - `tests/adhkar-gates.test.js` — (no header comment) (pins: `../js/core/schema.js`, `./helpers/seedMode.mjs`)
 - `tests/adhkar-session.test.js` — merged-plan item 5 (v5.17.52), permanent. Adhkar session player + progressive disclosure: 1. Disclosure render — translation/virtue/grade/transliteration ride ONE (pins: `../js/core/config.js`, `../js/core/state/initial.js`, `../js/core/utils.js`, `../js/domain/grades.js`, `../js/domain/reflections.js`, `../js/ui/card.js`, `../js/views/category.js`, `../js/views/focus.js`)
+- `tests/adhkarReminder.test.js` — the adhkar window reminders: opt-in per window, once per day per window at window start + lead (default 30 min), quiet-hours cancel, silent rather than late when the (pins: `../js/core/config/sanitize.js`, `../js/core/utils.js`, `../js/domain/adhkarTiming.js`, `../js/domain/prayer.js`, `../js/services/notifications.js`)
 - `tests/adhkarTiming.test.js` — time-of-day recommendation windows (pins: `../js/domain/adhkarTiming.js`)
 - `tests/agent-map.test.js` — The agent map is generated, not hand-written: scripts/agent-map.mjs walks js/ + data/.json and emits TWO files. docs/AGENT-MAP.md the index an agent actually reads (spine, lookup (pins: —)
 - `tests/alertTriggers.test.js` — v3.20 prayer-alert reliability. The pure plan builder (next-24h of adhan alerts from the real settings shape), the hostile-shape sanitizer, the catch-up due-alert selector, (pins: `../js/core/state.js`, `../js/services/alertTriggers.js`)
