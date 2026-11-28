@@ -367,13 +367,32 @@ body.has-player .ayah-card {
   text-shadow: none !important;
 }
 .qword--hifz-hidden {
-  background: color-mix(in srgb, var(--cat-violet) 7%, transparent);
-  outline: 1.5px dashed color-mix(in srgb, var(--cat-violet) 55%, transparent);
+  /* (v5.17.187) the word span stays display:inline — layout is
+     byte-identical to the unhidden line, so line breaks never move when
+     memorize turns on (planner-measured regression with inline-block).
+     The uniform blank paints on an absolutely positioned ::after
+     instead: classic cloze geometry (1.1em, vertically centered), so
+     adjacent blanks tile evenly instead of stacking their washes into
+     darker bands where per-word inline boxes differ in height. The
+     pseudo-element is out of flow and takes no taps. */
+  position: relative;
   /* the study-affordance underline sets an explicit decoration color, so
      it would survive the transparent glyphs — drop it while hidden. */
   text-decoration: none !important;
 }
-.qword--hifz-hidden:hover {
+.qword--hifz-hidden::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: 50%;
+  height: 1.1em;
+  transform: translateY(-50%);
+  border-radius: var(--radius-xs);
+  background: color-mix(in srgb, var(--cat-violet) 7%, transparent);
+  outline: 1.5px dashed color-mix(in srgb, var(--cat-violet) 55%, transparent);
+  pointer-events: none;
+}
+.qword--hifz-hidden:hover::after {
   background: color-mix(in srgb, var(--cat-violet) 16%, transparent);
 }
 .qword--underline {
@@ -759,7 +778,11 @@ body.tajweed-underlines-off .tajweed {
   background: color-mix(in srgb, var(--cat-violet) 6%, transparent);
 }
 .mushaf-hifz-bar__label {
-  flex: 1;
+  /* (v5.17.187) basis instead of bare grow: the label claims a full row
+     once the row can't hold it next to the chips, so at ~195 CSS px
+     (200% zoom on a 390 phone) the chips wrap BELOW it side by side
+     instead of squeezing it into a tall multi-line column. */
+  flex: 1 1 11em;
   min-width: 0;
   display: inline-flex;
   align-items: center;
@@ -767,6 +790,13 @@ body.tajweed-underlines-off .tajweed {
   font-size: var(--fs-sm);
   font-weight: 650;
   color: var(--cat-violet-text);
+}
+.mushaf-hifz-bar .chip {
+  /* (v5.17.187) wrapped chips share their row evenly and never squeeze
+     under their content or wrap their own text. */
+  flex: 1 1 auto;
+  justify-content: center;
+  white-space: nowrap;
 }
 .mushaf-topbar__title {
   flex: 1;

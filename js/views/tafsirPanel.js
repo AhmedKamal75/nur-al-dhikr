@@ -53,14 +53,6 @@ import {
 /* ------------------------------------------------------------------ */
 
 /**
- * Renders an ayah's *official* app text (already exactly what ships in
- * data/quran or data/mushaf — never altered) as a run of tappable
- * per-word spans, position-matched (1-based, whitespace-split) against
- * the fetched grammar/gloss records for that ayah. Falls back to plain
- * escaped text — with zero risk to text fidelity — when word study is
- * off or data hasn't loaded yet.
- */
-/**
  * (v5.17.186, C17) memorize chrome under the mushaf topbar while a
  * word-level session covers a surah on the page: surah name +
  * Hide-again + End. Pure template, same builders' home as the mushaf
@@ -86,6 +78,14 @@ export function buildMushafHifzBar(state, chapter) {
   return `<div class="mushaf-hifz-bar"><span class="mushaf-hifz-bar__label">${icon('eye', { size: 14 })} ${escapeHTML(t('hifz.memorizeMode', lang))} · ${escapeHTML(name)}</span> <button type="button" class="chip" data-action="hifz-rehide">${icon('eyeOff', { size: 13 })} ${t('hifz.rehide', lang)}</button> <button type="button" class="chip" data-action="mushaf-hifz-toggle" data-surah="${Number(sess.surah)}">${t('hifz.endSession', lang)}</button></div>`;
 }
 
+/**
+ * Renders an ayah's *official* app text (already exactly what ships in
+ * data/quran or data/mushaf — never altered) as a run of tappable
+ * per-word spans, position-matched (1-based, whitespace-split) against
+ * the fetched grammar/gloss records for that ayah. Falls back to plain
+ * escaped text — with zero risk to text fidelity — when word study is
+ * off or data hasn't loaded yet.
+ */
 export function renderAyahWords(
   officialText,
   wordRecords,

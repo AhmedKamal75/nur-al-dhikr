@@ -1,16 +1,16 @@
 {
-  "version": "5.17.186",
+  "version": "5.17.187",
   "files": {
     "index.html": "fb7741ae58391b597cfb84d72726296749c6d9f99e2b386a327928c850830ad2",
     "offline.html": "d68f3af959b6c2ddcd3a2ac490207de02ee1daa1cfe2ee34519931a09889b266",
     "favicon.ico": "c22c052f94e0ff0c329258ef5e87d2a1ee347db8545c3004774839d0a7d296fd",
-    "manifest.json": "e3ad6a8b938e7100624acfa2290c47022de70ca039df11e607a56fece4287e94",
+    "manifest.json": "5f7111169d491e91f6a9f85cd03030a5ddd1db6e4e052ca109d1e986ee11b949",
     "assets/css/variables.css": "ac5f0036072fff1806d5cb6a26c651e82f15eb142ce189d3922740ad60e70be0",
     "assets/css/base.css": "e7e5af46db23c2ed72fa5a9d7542dee9ca127b01ce828ddcc23dfc8063c58d5e",
     "assets/css/layout.css": "18aee200a2019ab12d4241f2b161a166c95f89c629a87d05f956d60476da074f",
     "assets/css/components.css": "1cc6c819edcbb4a10654e9709f9468261df8dfdbca0e1f73a83ab77cfaf271ee",
     "assets/css/cards.css": "d34cd9212ac0e653271a2037d8c3a34b1b63c9b9d4fc6658ff7a2acac10c70b2",
-    "assets/css/quran.css": "42004ed213edeb9d48c77b4aa0ff464a2c6b1eaa2b61a20ae3dbb339b64791b4",
+    "assets/css/quran.css": "97e488f93d9170eef4e4487b970b26734ba1babb7da9a8a5f2851d18b6ef3124",
     "assets/css/tajweed-course.css": "357219a9aba8c38657e92c446fb970fb71afa97fe8e304a26dbcf4fff98f7ca1",
     "assets/css/animations.css": "248895a7e5f93fe108af454b1bc068c340d19d430dae2136e3639e77a1c87aea",
     "assets/css/desktop.css": "eb200d865341ddb6287f2d4800796279b6ac792dbcf4f290d11cb8d0e281729f",
@@ -71,7 +71,7 @@
     "js/app/tafsirSearch.js": "d115fc908ebf75937098e00b0d1601eb735d93c7f1314abe83f9a06d5df435a7",
     "js/app/tickers.js": "151d274647f824f58bd0b38f770e8fa974eeb89aa8180cfa4ee06318e0d19290",
     "js/app/triggers.js": "45ea466de28bf5f848746e0ba7f57303c03cd2fe5e3082575ebf44548f0fd509",
-    "js/core/config.js": "b73d9fe7e42b6412b375552283a32ebc17e96b9a6cf0a395223db732a7ce161e",
+    "js/core/config.js": "48cdb090e8f98cb82178ab550fed5a568d3c2fbb983323ad1d5d0750667635fa",
     "js/core/config/app.js": "b8237b2ea9a82475822d0644fc591d95786e7cd017e92b5f5b5c8ac143363a39",
     "js/core/config/nav.js": "d5cbb42594260f138fabfb537dbde622abb1b4cf37872f7fedf5d7b6e7e4eeda",
     "js/core/config/quran.js": "9c381a47577d36d9dad78d8180f4335a8e99dcef9b64eff851806a2cad4dfade",
@@ -270,7 +270,7 @@
     "js/views/settings.js": "e832e618e1f3c433ebf70d4f30e878600d127efc4588cef664281e4f6f0ccbf6",
     "js/views/statistics.js": "dc7a9bb071445a3fc659fa78fc82af4d76980dbdd8c715337d9fb88b30ca397e",
     "js/views/studyTray.js": "e4c1f71defb362e51b7b8fc61934f0d61c4d4306f45aeb6f3310515516596ab4",
-    "js/views/tafsirPanel.js": "f78a2fb172ef9cc93253fa25266dd4b4259bee8ae19de9a367a0d67636a24713",
+    "js/views/tafsirPanel.js": "b6404269c93a9e2ed257ad99c6770f038ad7e1898574c6230905e6b418e1ec9e",
     "js/views/tajweedSettings.js": "6cfe3367ef7fede71ec12079eba83e754924b463567d30161b7f8295aaf4598a",
     "js/views/tajweedConvention.js": "72333a2e04c20d2abcffc2eb09aeba186187249f8f0a4013a9cf71bb8102a1c3",
     "js/views/tajweedPracticeView.js": "48b2469c121900f66773b23e47a6989316921aea01fd5836761bbda3676b4f59",
@@ -295,6 +295,6 @@
     "assets/fonts/ScheherazadeNew-Bold.woff2": "6b6d12c4d0d9f2ec3ed790cc168ec10af7bd57862a0aaf6be112624b027ae0ef",
     "assets/fonts/ScheherazadeNew-OFL.txt": "5b9fd21ce2377fc542debebd9edfe1c48f2d3525e78a2a8abdba4a0ec3280163",
     "assets/fonts/OFL.txt": "18aabf190848725e2576eefb5c29ba06aac1029d02132252a7f312eac2e50cf3",
-    "sw.js": "5e23faac0fbedfb63316e137db46b92672e1dee262f94f5bc631fc3cf544ea22"
+    "sw.js": "d6598d5c3047e8a3bd80e3411be3e392a82af7264340827808eb456d6cfa4053"
   }
 }
