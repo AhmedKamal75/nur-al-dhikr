@@ -599,6 +599,9 @@ export const DEFAULT_SETTINGS = Object.freeze({
   dailyVerseNotification: { enabled: false, time: '08:00' },
   // (v4.4) Zakat al-Fitr reminder — fires on 28 Ramadan each year.
   zakatFitrReminder: false,
+  // (v5.17.188) Adhkar window reminders — opt-in morning/evening toggles
+  // plus a lead time (0/15/30/60 min after the window starts).
+  adhkarReminders: { morning: false, evening: false, lead: 30 },
   // Mushaf reading & study preferences — separate from the general app
   // theme, exactly like a real Mushaf's paper looks the same in every room.
   mushafPrefs: {

@@ -21,6 +21,7 @@ import {
   EVENING_WINDOW,
 } from '../js/domain/adhkarTiming.js';
 import { calculateTimes } from '../js/domain/prayer.js';
+import { sanitizeSettings } from '../js/core/config/sanitize.js';
 import { dateKey } from '../js/core/utils.js';
 
 const shown = [];
@@ -65,14 +66,14 @@ const mkDay = (d) => (h, m) => new Date(2026, 7, d, h, m, 0, 0);
 const LOC = { latitude: 30.04, longitude: 31.24, method: 'MWL', asr: 'Standard', alerts: {} };
 
 // The REAL computed sun times for a date (what the scheduler will use).
-function sunFor(date) {
+function sunFor(date, loc = LOC) {
   return calculateTimes({
     date,
-    latitude: LOC.latitude,
-    longitude: LOC.longitude,
+    latitude: loc.latitude,
+    longitude: loc.longitude,
     timezoneOffsetHours: -date.getTimezoneOffset() / 60,
-    method: LOC.method,
-    asr: LOC.asr,
+    method: loc.method,
+    asr: loc.asr,
   });
 }
 
@@ -221,10 +222,10 @@ test('high-latitude wrap: evening window open past midnight fires and closes cor
   const day = mkDay(21);
   assert.equal(adhkarReminderState('evening', day(18, 50), wrapped, 30), 'pending');
   assert.equal(adhkarReminderState('evening', day(19, 0), wrapped, 30), 'due');
-  // 01:00 next clock day: the window is still open (closes 1:30) and the
-  // fire time is behind us — due (fires under the NEW day's key, so the
-  // coming evening's own fire is consumed: still once per day).
-  assert.equal(adhkarReminderState('evening', day(1, 0), wrapped, 30), 'due');
+  // 01:00 next clock day: the window is still open (closes 1:30), but it
+  // belongs to the day it STARTED — 'due' here would fire the same window
+  // again under the new calendar day's dedup key. Closed.
+  assert.equal(adhkarReminderState('evening', day(1, 0), wrapped, 30), 'closed');
   // 01:45: the wrapped window has closed, and today's own window opens at
   // 18:30 — pending for today, never a late fire for yesterday.
   assert.equal(adhkarReminderState('evening', day(1, 45), wrapped, 30), 'pending');
@@ -279,4 +280,55 @@ test('garbage settings never throw inside the tick', () => {
   } finally {
     removeFakes();
   }
+});
+
+test('wrapped window never double-fires past midnight (tick-level)', () => {
+  installFakes();
+  // Planner repro: UmmAlQura, 56N 10E, 21 June — the evening window wraps
+  // past midnight. Pre-fix the 00:05 tick fired a second reminder under
+  // the new calendar day's dedup key.
+  const polar = { latitude: 56, longitude: 10, method: 'UmmAlQura', asr: 'Standard', alerts: {} };
+  const jun21 = (h, m) => new Date(2026, 5, 21, h, m, 0, 0);
+  const jun22 = (h, m) => new Date(2026, 5, 22, h, m, 0, 0);
+  try {
+    const sun = sunFor(jun21(19, 30), polar);
+    const eveningOnly = { adhkarReminders: { morning: false, evening: true, lead: 30 } };
+    const fireMin = Math.floor((sun.asr + 0.5) * 60) + 2;
+    const fireTick = atMin(jun21)(fireMin);
+    // Self-check: the scheduler recomputes times from its `now`, and the
+    // engine's output varies slightly with the hour of the date argument.
+    assert.equal(adhkarReminderState('evening', fireTick, sunFor(fireTick, polar), 30), 'due');
+    tickForTests([], 'en', [], polar, [], null, eveningOnly, fireTick);
+    assert.equal(shown.length, 1, 'fires once inside the window');
+    tickForTests([], 'en', [], polar, [], null, eveningOnly, jun21(23, 50));
+    assert.equal(shown.length, 1, 'dedup holds before midnight');
+    // The window must still be open at 00:05 (wrap), or this test proves
+    // nothing: the tick-level scheduler recomputes times from its `now`.
+    const sunAtTick = sunFor(jun22(0, 5), polar);
+    assert.ok(sunAtTick.isha >= 24, `expected a wrapped window, isha=${sunAtTick.isha}`);
+    assert.equal(adhkarReminderState('evening', jun22(0, 5), sunAtTick, 30), 'closed');
+    tickForTests([], 'en', [], polar, [], null, eveningOnly, jun22(0, 5));
+    assert.equal(shown.length, 1, 'no second fire after midnight');
+  } finally {
+    removeFakes();
+  }
+});
+
+test('adhkarReminders survives sanitizeSettings (load/restore round-trip)', () => {
+  const clean = sanitizeSettings({
+    adhkarReminders: { morning: true, evening: true, lead: 15 },
+    zakatFitrReminder: true,
+  });
+  assert.deepEqual(clean.adhkarReminders, { morning: true, evening: true, lead: 15 });
+  const dflt = { morning: false, evening: false, lead: 30 };
+  assert.deepEqual(sanitizeSettings({}).adhkarReminders, dflt);
+  assert.deepEqual(sanitizeSettings({ adhkarReminders: 'nope' }).adhkarReminders, dflt);
+  assert.deepEqual(
+    sanitizeSettings({ adhkarReminders: { morning: 'yes', lead: 45 } }).adhkarReminders,
+    dflt
+  );
+  assert.deepEqual(
+    sanitizeSettings({ adhkarReminders: { evening: true, lead: 60 } }).adhkarReminders,
+    { morning: false, evening: true, lead: 60 }
+  );
 });

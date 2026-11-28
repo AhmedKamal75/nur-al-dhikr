@@ -149,9 +149,11 @@ export function adhkarReminderState(
     // window is open — inWindow already returned true for that.)
     return h < bounds.start ? 'pending' : 'closed';
   }
+  // Wrapped tail (window open past midnight, h < start): the window
+  // belongs to the day it STARTED. Returning 'due' here would fire the
+  // same window a second time under the new calendar day's dedup key,
+  // so the tail is 'closed' — a fire belongs only to its start day.
+  if (h < bounds.start && bounds.end >= 24) return 'closed';
   const fireH = bounds.start + lead / 60;
-  // Day-relative hours: in the wrapped tail (window open past midnight,
-  // h < start) the fire time is behind us on the previous clock day.
-  const hRel = h < bounds.start && bounds.end >= 24 ? h + 24 : h;
-  return hRel >= fireH ? 'due' : 'pending';
+  return h >= fireH ? 'due' : 'pending';
 }
